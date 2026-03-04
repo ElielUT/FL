@@ -7,8 +7,7 @@ import cors from "cors";
 const app = express();
 
 //BACKEND
-const cor = cors()
-app.use(cor());
+app.use(cors());
 app.use(express.json());
 
 app.use(session({
