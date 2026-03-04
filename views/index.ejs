@@ -18,23 +18,29 @@
                 </div>
             </div>
 
-            <form>
-                <div class="input-group">
-                    <label>Correo:</label>
-                    <input type="text" placeholder="Ingrese su usuario">
+            <% if (typeof error !=='undefined' ) { %>
+                <div class="error-message" style="color: red; text-align: center; margin-bottom: 10px;">
+                    <%= error %>
                 </div>
+                <% } %>
 
-                <div class="input-group">
-                    <label>Contraseña:</label>
-                    <input type="password" placeholder="Ingrese su contraseña">
-                </div>
+                    <form action="/" method="POST">
+                        <div class="input-group">
+                            <label>Correo:</label>
+                            <input type="text" name="correo" placeholder="Ingrese su usuario" required>
+                        </div>
 
-                <button type="submit" class="btn-login">Iniciar sesión</button>
-            </form>
+                        <div class="input-group">
+                            <label>Contraseña:</label>
+                            <input type="password" name="contraseña" placeholder="Ingrese su contraseña" required>
+                        </div>
 
-            <div class="footer-links">
-                <p>¿Aún no tienes una cuenta? <a href="#">Registrarse</a></p>
-            </div>
+                        <button type="submit" class="btn-login">Iniciar sesión</button>
+                    </form>
+
+                    <div class="footer-links">
+                        <p>¿Aún no tienes una cuenta? <a href="#">Registrarse</a></p>
+                    </div>
         </div>
     </main>
 
