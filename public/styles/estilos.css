@@ -1,0 +1,79 @@
+:root {
+    /* Paleta de colores solicitada */
+    --clr-admin: #00a185;
+    /* Verde de la imagen */
+    --clr-asesor: #9b59b6;
+    /* Morado */
+    --clr-asesorado: #f1c40f;
+    /* Amarillo */
+    --clr-bg: #f4f7f6;
+    --clr-white: #ffffff;
+    --clr-text: #7c7b7b;
+}
+
+/* Barra superior verde */
+.top-bar {
+    background-color: #00a185;
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.close-icon {
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: var(--clr-bg);
+}
+
+.titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 4% 2% 4%;
+}
+
+.tituloDerecha {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.tituloDerecha h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--clr-text);
+    margin-bottom: 20px;
+}
+
+.tituloIzquierda {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.tituloIzquierda button {
+    padding: 10px 20px;
+    height: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: #0097b2;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}

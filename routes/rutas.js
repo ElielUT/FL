@@ -22,12 +22,18 @@ router.post("/", async (req, res) => {
         const data = await response.json();
 
         // El backend responde {"Inicio": 1} para tutor, 2 alumno, 3 admin. False si falla.
-        if (data.Inicio === 1 || data.Inicio === 2 || data.Inicio === 3) {
+        if (data.Inicio === 1) {
             // Guardar usuario en sesión si lo deseas
-            req.session.usuario = { correo, rol: data.Inicio };
+            req.session.usuario = data.Inicio;
 
             // Redirigir según el rol o al inicio
-            res.send("¡Inicio de sesión exitoso! (Aquí iría el redirect a tu dashboard)");
+            res.send("¡Inicio de sesión exitoso! (Tutor)");
+        } else if (data.Inicio === 2) {
+            req.session.usuario = data.Inicio;
+            res.send("¡Inicio de sesión exitoso! (Alumno)");
+        } else if (data.Inicio === 3) {
+            req.session.usuario = data.Inicio;
+            res.send("¡Inicio de sesión exitoso! (Admin)");
         } else {
             // Caso de error en credenciales
             res.render("index", { error: "Correo o contraseña incorrectos" });
@@ -36,6 +42,14 @@ router.post("/", async (req, res) => {
     } catch (error) {
         console.error("Error conectando con el backend API:", error);
         res.render("index", { error: "Error de conexión con el servidor" });
+    }
+});
+
+router.get("/gestionUsuarios", (req, res) => {
+    if (/*req.session.usuario === 3*/ true) {
+        res.render("gestionUsuarios");
+    } else {
+        res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 });
 
