@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
             res.send("¡Inicio de sesión exitoso! (Alumno)");
         } else if (data.Inicio === 3) {
             req.session.usuario = data.Inicio;
-            res.send("¡Inicio de sesión exitoso! (Admin)");
+            res.redirect("/gestionUsuarios");
         } else {
             // Caso de error en credenciales
             res.render("index", { error: "Correo o contraseña incorrectos" });
