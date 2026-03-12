@@ -1,3 +1,7 @@
+/*
+BARRA DE BUSQUEDA Y FILTROS
+*/
+
 :root {
     /* Paleta de colores solicitada */
     --clr-admin: #00a185;
@@ -76,4 +80,26 @@ body {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
+}
+
+/*
+BARRA DE BUSQUEDA Y FILTROS
+*/
+.busqueda_filtro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0% 4% 2% 4%;
+}
+
+.busqueda,
+.filtro {
+    width: 45%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    color: #666;
+    text-align: center;
 }

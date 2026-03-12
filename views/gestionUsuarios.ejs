@@ -8,8 +8,13 @@
             <button id="nuevoUsuario">+ Nuevo Usuario</button>
         </div>
     </div>
-    <main class="main-content">
-        <div class="users-grid" id="usersGrid">
-        </div>
-    </main>
+    <div class="busqueda_filtro">
+        <input type="search" placeholder="Buscar" class="busqueda">
+        <select name="" id="" class="filtro">
+            <option value="">Todos</option>
+            <option value="">Tutor</option>
+            <option value="">Alumno</option>
+            <option value="">Admin</option>
+        </select>
+    </div>
     <%- include('templates/footer.ejs') %>
