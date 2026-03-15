@@ -45,9 +45,17 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/gestionUsuarios", (req, res) => {
+router.get("/gestionUsuarios", async (req, res) => {
+    const respuesta = await fetch("http://127.0.0.1:8000/usuarios/mostraUsuarios", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    const data = await respuesta.json();
+    const usuarios = data.items;
     if (/*req.session.usuario === 3*/ true) {
-        res.render("gestionUsuarios");
+        res.render("gestionUsuarios", { usuarios: usuarios });
     } else {
         res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }

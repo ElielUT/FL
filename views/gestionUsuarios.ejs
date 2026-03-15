@@ -11,10 +11,133 @@
     <div class="busqueda_filtro">
         <input type="search" placeholder="Buscar" class="busqueda">
         <select name="" id="" class="filtro">
-            <option value="">Todos</option>
-            <option value="">Tutor</option>
-            <option value="">Alumno</option>
-            <option value="">Admin</option>
+            <option value="todos">Todos</option>
+            <option value="asesor">Asesor</option>
+            <option value="asesorado">Asesorado</option>
+            <option value="administrador">Administrador</option>
         </select>
     </div>
+    <div class="usuarios">
+        <% contador=0; usuarios.forEach(usuario=> { %>
+            <div class=<% if((contador % 2)==0){%> "usuarioIzquierda" <%}else{%> "usuarioDerecha" <%}%>>
+                        <div class="imagen-categoria">
+                            <div <% if(usuario.categoria=="asesor" ) {%> class=" contIMG asesor" <%}else
+                                    if(usuario.categoria=="asesorado" ) {%> class="contIMG asesorado" <%}else{%>
+                                        class="contIMG administrador" <%}%>>
+                                            <img src="../images/usuario.png" alt="">
+                            </div>
+                            <div <% if(usuario.categoria=="asesor" ) {%> class="categoria Casesor" <%}else
+                                    if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
+                                        class="categoria Cadministrador" <%}%>>
+                                            <p>
+                                                <%= usuario.categoria.charAt(0).toUpperCase() +
+                                                    usuario.categoria.slice(1) %>
+                                            </p>
+                            </div>
+                        </div>
+                        <div class="usuarioInfo">
+                            <h2>
+                                <%= usuario.nombres %>
+                            </h2>
+                            <p>
+                                <%= usuario.correo %>
+                            </p>
+                            <% if(usuario.categoria !="admin" ){%>
+                                <p class="info">
+                                    <%= usuario.cuatrimestre + "° Cuatrimestre -  Plantel: " + usuario.plantel %>
+                                </p>
+                                <%}%>
+                        </div>
+                        <div class="acciones" id="<%= usuario.id_usuario %>">
+                            <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+            </div>
+            <% contador++;if((contador%2)==0){%>
+    </div>
+    <div class="usuarios">
+        <% } }) %>
+    </div>
+    <script>
+
+        const btnsEliminar = document.querySelectorAll(".btnEliminar"),
+            btnsEditar = document.querySelectorAll(".btnEditar");
+
+        const inputBusqueda = document.querySelector(".busqueda");
+        const selectFiltro = document.querySelector(".filtro");
+        const usuariosItems = document.querySelectorAll(".usuarioIzquierda, .usuarioDerecha");
+
+        const filtrarUsuarios = () => {
+            const textoBusqueda = inputBusqueda.value.toLowerCase();
+            const categoriaSeleccionada = selectFiltro.value.toLowerCase();
+
+            usuariosItems.forEach(usuario => {
+                const nombre = usuario.querySelector(".usuarioInfo h2").textContent.toLowerCase();
+                const correo = usuario.querySelector(".usuarioInfo p").textContent.toLowerCase();
+                
+                const categoriaElement = usuario.querySelector(".categoria p");
+                const categoriaUsuario = categoriaElement ? categoriaElement.textContent.trim().toLowerCase() : "";
+
+                const coincideTexto = nombre.includes(textoBusqueda) || correo.includes(textoBusqueda);
+                const coincideCategoria = categoriaSeleccionada === "todos" || categoriaUsuario === categoriaSeleccionada;
+
+                if (coincideTexto && coincideCategoria) {
+                    usuario.style.display = "flex";
+                } else {
+                    usuario.style.display = "none";
+                }
+            });
+        };
+
+        inputBusqueda.addEventListener("keyup", filtrarUsuarios);
+        selectFiltro.addEventListener("change", filtrarUsuarios);
+
+        btnsEditar.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const idUsuario = btn.parentElement.id;
+                recuperarUsuario(idUsuario);
+            });
+        });
+
+        btnsEliminar.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const idUsuario = btn.parentElement.id;
+                console.log(idUsuario);
+            });
+        });
+        const eliminarUsuario = async (idUsuario) => {
+            const respuesta = await fetch("http://localhost:8000/usuarios/eliminarUsuario", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id_usuario: idUsuario })
+            });
+            const data = await respuesta.json();
+            console.log(data);
+        }
+
+        const editarUsuario = async (idUsuario) => {
+            const respuesta = await fetch("http://localhost:8000/usuarios/actualizarUsuario/" + idUsuario, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id_usuario: idUsuario })
+            });
+            const data = await respuesta.json();
+            console.log(data);
+        }
+
+        const recuperarUsuario = async (idUsuario) => {
+            const respuesta = await fetch("http://localhost:8000/usuarios/buscarUsuarioID/" + idUsuario, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await respuesta.json();
+            console.log(data.item);
+        }
+    </script>
     <%- include('templates/footer.ejs') %>
