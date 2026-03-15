@@ -30,8 +30,10 @@
                                     if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
                                         class="categoria Cadministrador" <%}%>>
                                             <p>
-                                                <%= usuario.categoria.charAt(0).toUpperCase() +
-                                                    usuario.categoria.slice(1) %>
+                                                <% if(usuario.categoria=="admin" ){%> Administrador <%}else{%>
+                                                        <%= usuario.categoria.charAt(0).toUpperCase() +
+                                                            usuario.categoria.slice(1) %>
+                                                            <%}%>
                                             </p>
                             </div>
                         </div>
