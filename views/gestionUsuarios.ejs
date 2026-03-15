@@ -37,7 +37,7 @@
                         </div>
                         <div class="usuarioInfo">
                             <h2>
-                                <%= usuario.nombres %>
+                                <%= usuario.nombres + " " + usuario.apellidos %>
                             </h2>
                             <p>
                                 <%= usuario.correo %>
@@ -74,7 +74,7 @@
             usuariosItems.forEach(usuario => {
                 const nombre = usuario.querySelector(".usuarioInfo h2").textContent.toLowerCase();
                 const correo = usuario.querySelector(".usuarioInfo p").textContent.toLowerCase();
-                
+
                 const categoriaElement = usuario.querySelector(".categoria p");
                 const categoriaUsuario = categoriaElement ? categoriaElement.textContent.trim().toLowerCase() : "";
 
