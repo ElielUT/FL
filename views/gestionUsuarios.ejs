@@ -155,15 +155,15 @@
                 <div class="nombre-correo">
                     <div class="nombre">
                         <label for="nombre">Nombre:</label>
-                        <input type="text" name="nombre" placeholder="Ingrese su nombre" required>
+                        <input type="text" name="nombre" placeholder="Ingrese su nombre" required disabled>
                     </div>
                     <div class="apellidos">
                         <label for="apellidos">Apellidos:</label>
-                        <input type="text" name="apellidos" placeholder="Ingrese sus apellidos" required>
+                        <input type="text" name="apellidos" placeholder="Ingrese sus apellidos" required disabled>
                     </div>
                     <div class="correo">
                         <label for="correo">Correo:</label>
-                        <input type="email" name="correo" placeholder="Ingrese su correo" required>
+                        <input type="email" name="correo" placeholder="Ingrese su correo" required disabled>
                     </div>
                 </div>
                 <div class="rol-carrera-cuatrimestre">
@@ -236,6 +236,8 @@
         const selectFiltro = document.querySelector(".filtro");
         const usuariosItems = document.querySelectorAll(".usuarioIzquierda, .usuarioDerecha");
 
+        var catACT = "";
+
         const filtrarUsuarios = () => {
             const textoBusqueda = inputBusqueda.value.toLowerCase();
             const categoriaSeleccionada = selectFiltro.value.toLowerCase();
@@ -261,20 +263,24 @@
         inputBusqueda.addEventListener("keyup", filtrarUsuarios);
         selectFiltro.addEventListener("change", filtrarUsuarios);
 
+        var id_User = 0;
+
         btnsEditar.forEach(btn => {
-            btn.addEventListener("click", () => {
+            btn.addEventListener("click", async () => {
                 const idUsuario = btn.parentElement.id;
-                recuperarUsuario(idUsuario);
+                id_User = idUsuario;
+                await recuperarUsuario(idUsuario);
                 editUsuario.classList.remove("ocultar");
             });
         });
         btnCancelarEditar.addEventListener("click", () => {
             editUsuario.classList.add("ocultar");
         });
-        btnGuardarEditar.addEventListener("click", () => {
-            const idUsuario = btnGuardarEditar.parentElement.id;
-            //editarUsuario(idUsuario);
+        btnGuardarEditar.addEventListener("click", async () => {
+            const idUsuario = id_User;
+            await editarUsuario(idUsuario);
             editUsuario.classList.add("ocultar");
+            window.location.reload();
         });
 
         btnsEliminar.forEach(btn => {
@@ -295,16 +301,71 @@
             console.log(data);
         }
 
+
         const editarUsuario = async (idUsuario) => {
+            const cuatrimestre = parseInt(form.querySelector('select[name="cuatrimestre"]').value);
             const respuesta = await fetch("http://localhost:8000/usuarios/actualizarUsuario/" + idUsuario, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ id_usuario: idUsuario })
+                body: JSON.stringify({ nombres: null, apellidos: null, contraseña: null, categoria: form.querySelector('select[name="rol"]').value, cuatrimestre: cuatrimestre, plantel: null })
             });
             const data = await respuesta.json();
             console.log(data);
+            const catSel = form.querySelector('select[name="rol"]').value;
+            const carrera = form.querySelector('select[name="carrera"]').value
+            if (catSel != catACT) {
+                if (catSel == "admin") {
+                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    const elAlum = await eliminarAlumno.json();
+                    const eliminarAsesor = await fetch("http://localhost:8000/asesores/eliminarAsesorForaneo/" + idUsuario, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    const elAse = await eliminarAsesor.json();
+                } else if (catSel == "asesor") {
+                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    const elAlum = await eliminarAlumno.json();
+                    var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
+                    const subirAsesor = await fetch("http://127.0.0.1:8000/asesores/crearAsesor", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ id_usuario2: parseInt(idUsuario), carrera, disponible, categoria: categoriaAS, contacto })
+                    })
+                    user = await subirAsesor.json();
+                } else if (catSel == "asesorado") {
+                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    const elAlum = await eliminarAlumno.json();
+                    const subirAsesorado = await fetch("http://localhost:8000/alumnos", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ id_usuario1: parseInt(idUsuario), carrera })
+                    })
+                    const user = await subirAsesorado.json();
+                }
+            }
         }
 
         const recuperarUsuario = async (idUsuario) => {
@@ -316,12 +377,13 @@
             });
             const data = await respuesta.json();
             const usuario = data.item;
-            form.querySelector('input[name="id_usuario"]').value = usuario.id_usuario;
+            form.querySelector('input[name="id_usuario"]').value = idUsuario;
             form.querySelector('input[name="nombre"]').value = usuario.nombres;
             form.querySelector('input[name="apellidos"]').value = usuario.apellidos;
             form.querySelector('input[name="correo"]').value = usuario.correo;
             form.querySelector('select[name="rol"]').value = usuario.categoria;
             form.querySelector('select[name="cuatrimestre"]').value = usuario.cuatrimestre;
+            catACT = usuario.categoria;
         }
 
         const nuevoUsuario = document.getElementById("nuevoUsuario");
