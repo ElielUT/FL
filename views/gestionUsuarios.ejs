@@ -1,12 +1,91 @@
 <%- include('templates/header.ejs') %>
     <div class="titulo">
-        <div class="tituloDerecha">
+        <div class="tituloIzquierda">
             <h1>Gestión de Usuarios</h1>
             <h2>Administrar Roles y permisos de los usuarios</h2>
         </div>
-        <div class="tituloIzquierda">
+        <div class="tituloDerecha">
             <button id="nuevoUsuario">+ Nuevo Usuario</button>
         </div>
+    </div>
+    <div class="crearUsuario ocultar" id="crearUsuario">
+        <div class="titulo" id="tituloCrearUsuarios">
+            <div class="tituloIzquierda">
+                <h2 id="tituloCrearUsuario">Agregar nuevo usuario</h2>
+            </div>
+            <div class="tituloDerecha">
+                <button id="cancelar">Cancelar</button>
+                <button id="guardar">Guardar</button>
+            </div>
+        </div>
+        <form action="" method="post" id="formCrearUsuario">
+            <div class="nombre-correo">
+                <div class="nombre">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+                </div>
+                <div class="apellidos">
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" id="apellidos" name="apellidos" placeholder="Ingrese sus apellidos" required>
+                </div>
+                <div class="correo">
+                    <label for="correo">Correo:</label>
+                    <input type="email" id="correo" name="correo" placeholder="Ingrese su correo" required>
+                </div>
+            </div>
+            <div class="rol-carrera-cuatrimestre">
+                <div class="rol">
+                    <label for="rol">Rol:</label>
+                    <select name="rol" id="rol">
+                        <option value="asesorado">Asesorado</option>
+                        <option value="asesor">Asesor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="carrera">
+                    <label for="carrera">Carrera:</label>
+                    <select name="carrera" id="carrera">
+                        <option value="QF">Ing. Química Farmacéutica</option>
+                        <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)</option>
+                        <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                        <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                        <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                        <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                            Desarrollo de Software Multiplataforma)</option>
+                        <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En Entornos
+                            Virtuales y Negocios Digitales)</option>
+                        <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU. Inteligencia
+                            Artificial)</option>
+                        <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                            Datos)
+                        </option>
+                        <option value="MI">ING. Mantenimiento Industrial</option>
+                        <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                        <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                        <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                        <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                    </select>
+                </div>
+                <div class="cuatrimestre">
+                    <label for="cuatrimestre">Cuatrimestre:</label>
+                    <select name="cuatrimestre" id="cuatrimestre">
+                        <option value="1">1° Cuatrimestre</option>
+                        <option value="2">2° Cuatrimestre</option>
+                        <option value="3">3° Cuatrimestre</option>
+                        <option value="4">4° Cuatrimestre</option>
+                        <option value="5">5° Cuatrimestre</option>
+                        <option value="6">6° Cuatrimestre</option>
+                        <option value="7">7° Cuatrimestre</option>
+                        <option value="8">8° Cuatrimestre</option>
+                        <option value="9">9° Cuatrimestre</option>
+                        <option value="10">10° Cuatrimestre</option>
+                        <option value="11">11° Cuatrimestre</option>
+                    </select>
+                </div>
+                <input type="hidden" name="contraseña" id="contraseña" value="default">
+            </div>
+        </form>
     </div>
     <div class="busqueda_filtro">
         <input type="search" placeholder="Buscar" class="busqueda">
@@ -60,11 +139,99 @@
     <div class="usuarios">
         <% } }) %>
     </div>
+    <div class="editarUsuario ocultar" id="editarUsuario">
+        <div class="interno">
+            <div class="titulo" id="tituloEditarUsuarios">
+                <div class="tituloIzquierda">
+                    <h2 id="tituloEditarUsuario">Editar usuario</h2>
+                </div>
+                <div class="tituloDerecha">
+                    <button id="cancelarEditar">Cancelar</button>
+                    <button id="guardarEditar">Guardar</button>
+                </div>
+            </div>
+            <form action="" method="post" id="formEditarUsuario">
+                <input type="hidden" name="id_usuario" id="id_usuario">
+                <div class="nombre-correo">
+                    <div class="nombre">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" name="nombre" placeholder="Ingrese su nombre" required>
+                    </div>
+                    <div class="apellidos">
+                        <label for="apellidos">Apellidos:</label>
+                        <input type="text" name="apellidos" placeholder="Ingrese sus apellidos" required>
+                    </div>
+                    <div class="correo">
+                        <label for="correo">Correo:</label>
+                        <input type="email" name="correo" placeholder="Ingrese su correo" required>
+                    </div>
+                </div>
+                <div class="rol-carrera-cuatrimestre">
+                    <div class="rol">
+                        <label for="rol">Rol:</label>
+                        <select name="rol">
+                            <option value="asesorado">Asesorado</option>
+                            <option value="asesor">Asesor</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="carrera">
+                        <label for="carrera">Carrera:</label>
+                        <select name="carrera">
+                            <option value="QF">Ing. Química Farmacéutica</option>
+                            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                            </option>
+                            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                                Desarrollo de Software Multiplataforma)</option>
+                            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Entornos
+                                Virtuales y Negocios Digitales)</option>
+                            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                                Inteligencia
+                                Artificial)</option>
+                            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                                Datos)
+                            </option>
+                            <option value="MI">ING. Mantenimiento Industrial</option>
+                            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                        </select>
+                    </div>
+                    <div class="cuatrimestre">
+                        <label for="cuatrimestre">Cuatrimestre:</label>
+                        <select name="cuatrimestre">
+                            <option value="1">1° Cuatrimestre</option>
+                            <option value="2">2° Cuatrimestre</option>
+                            <option value="3">3° Cuatrimestre</option>
+                            <option value="4">4° Cuatrimestre</option>
+                            <option value="5">5° Cuatrimestre</option>
+                            <option value="6">6° Cuatrimestre</option>
+                            <option value="7">7° Cuatrimestre</option>
+                            <option value="8">8° Cuatrimestre</option>
+                            <option value="9">9° Cuatrimestre</option>
+                            <option value="10">10° Cuatrimestre</option>
+                            <option value="11">11° Cuatrimestre</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
 
         const btnsEliminar = document.querySelectorAll(".btnEliminar"),
-            btnsEditar = document.querySelectorAll(".btnEditar");
+            btnsEditar = document.querySelectorAll(".btnEditar"),
+            btnCancelarEditar = document.querySelector("#cancelarEditar"),
+            btnGuardarEditar = document.querySelector("#guardarEditar"),
+            editUsuario = document.querySelector("#editarUsuario");
 
+        const form = document.querySelector("#formEditarUsuario");
         const inputBusqueda = document.querySelector(".busqueda");
         const selectFiltro = document.querySelector(".filtro");
         const usuariosItems = document.querySelectorAll(".usuarioIzquierda, .usuarioDerecha");
@@ -98,7 +265,16 @@
             btn.addEventListener("click", () => {
                 const idUsuario = btn.parentElement.id;
                 recuperarUsuario(idUsuario);
+                editUsuario.classList.remove("ocultar");
             });
+        });
+        btnCancelarEditar.addEventListener("click", () => {
+            editUsuario.classList.add("ocultar");
+        });
+        btnGuardarEditar.addEventListener("click", () => {
+            const idUsuario = btnGuardarEditar.parentElement.id;
+            //editarUsuario(idUsuario);
+            editUsuario.classList.add("ocultar");
         });
 
         btnsEliminar.forEach(btn => {
@@ -139,7 +315,35 @@
                 }
             });
             const data = await respuesta.json();
-            console.log(data.item);
+            const usuario = data.item;
+            form.querySelector('input[name="id_usuario"]').value = usuario.id_usuario;
+            form.querySelector('input[name="nombre"]').value = usuario.nombres;
+            form.querySelector('input[name="apellidos"]').value = usuario.apellidos;
+            form.querySelector('input[name="correo"]').value = usuario.correo;
+            form.querySelector('select[name="rol"]').value = usuario.categoria;
+            form.querySelector('select[name="cuatrimestre"]').value = usuario.cuatrimestre;
         }
+
+        const nuevoUsuario = document.getElementById("nuevoUsuario");
+        const crearUsuario = document.getElementById("crearUsuario");
+        const cancelar = document.getElementById("cancelar");
+        const guardar = document.getElementById("guardar");
+        const formCrearUsuario = document.getElementById("formCrearUsuario");
+
+        nuevoUsuario.addEventListener("click", () => {
+            crearUsuario.classList.remove("ocultar");
+        });
+
+        cancelar.addEventListener("click", () => {
+            crearUsuario.classList.add("ocultar");
+            formCrearUsuario.reset();
+        });
+
+        guardar.addEventListener("click", () => {
+            crearUsuario.classList.add("ocultar");
+            const data = new FormData(formCrearUsuario);
+            console.log(data.get("nombre"));
+            formCrearUsuario.submit();
+        });
     </script>
     <%- include('templates/footer.ejs') %>
