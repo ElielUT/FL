@@ -188,10 +188,6 @@ body {
     cursor: pointer;
 }
 
-
-/*
-BARRA DE BUSQUEDA Y FILTROS
-*/
 .busqueda_filtro {
     display: flex;
     justify-content: space-between;
@@ -211,7 +207,6 @@ BARRA DE BUSQUEDA Y FILTROS
     text-align: center;
 }
 
-/* Estilos para los Inputs */
 .campo-edicion {
     width: 100%;
     background-color: #f0f0f0;
