@@ -54,3 +54,4 @@ router.get("/gestionUsuarios", (req, res) => {
 });
 
 export default router;
+
