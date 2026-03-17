@@ -134,6 +134,10 @@ router.post("/gestionUsuarios", async (req, res) => {
     }
 });
 
+router.get('/perfil-asesor', (req, res) => {
+    res.render('perfilasesor'); 
+});
+
 router.get('/perfil-asesorado', (req, res) => {
     res.render('perfilasesorado'); 
 });
