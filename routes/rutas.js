@@ -134,7 +134,6 @@ router.post("/gestionUsuarios", async (req, res) => {
     }
 });
 
-const express = require('express');
 router.get('/perfil-asesorado', (req, res) => {
     res.render('perfilasesorado'); 
 });
@@ -153,6 +152,6 @@ router.post('/guardar-perfil', (req, res) => {
     // Al terminar, rediriges al perfil normal
     res.redirect('/perfil-asesorado');
 });
-module.exports = router;
+
 export default router;
 
