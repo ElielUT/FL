@@ -134,4 +134,11 @@ router.post("/gestionUsuarios", async (req, res) => {
     }
 });
 
+const express = require('express');
+router.get('/perfil-asesorado', (req, res) => {
+    res.render('perfilasesorado'); 
+});
+
+module.exports = router;
 export default router;
+
