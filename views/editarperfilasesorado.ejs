@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil</title>
+    <link rel="stylesheet" href="/styles/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="header-verde">
+        <a href="/perfil-asesorado" style="text-decoration: none; color: white; text-align: center;">
+            <i class="fas fa-reply"></i><br>
+            <small>Volver</small>
+        </a>
+        <i class="fas fa-times-circle" style="font-size: 1.5rem; cursor: pointer;"></i>
+    </header>
+
+    <div class="contenedor-perfil">
+        <h1 style="text-align: left; margin-left: 10%; color: #333;">Mi perfil</h1>
+
+        <div class="tarjeta-identidad">
+            <div class="avatar-circular">
+                <i class="fas fa-user" style="font-size: 3rem; color: #999;"></i>
+            </div>
+            <div style="text-align: left;">
+                <h2 style="margin: 0;">Mariana Rodriguez</h2>
+                <p style="margin: 5px 0; font-size: 0.9rem; opacity: 0.9;">marianarp@utsjr.edu.mx</p>
+            </div>
+        </div>
+
+        <form action="/guardar-perfil" method="POST" style="width: 80%; margin: 0 auto; text-align: left;">
+            
+            <label>Nombre completo:</label>
+            <input type="text" name="nombre" class="campo-edicion" placeholder="Ingrese su nombre">
+
+            <label>Carrera:</label>
+            <input type="text" name="carrera" class="campo-edicion" placeholder="Ingrese su carrera">
+
+            <label>Cuatrimestre:</label>
+            <select name="cuatrimestre" class="campo-edicion select-edicion">
+                <option value="3">3º cuatrimestre</option>
+                <option value="4">4º cuatrimestre</option>
+                <option value="5">5º cuatrimestre</option>
+            </select>
+
+            <div class="contenedor-botones">
+                <button type="button" class="btn-cancelar" onclick="window.history.back()">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar cambios</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

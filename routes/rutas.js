@@ -139,6 +139,20 @@ router.get('/perfil-asesorado', (req, res) => {
     res.render('perfilasesorado'); 
 });
 
+// En rutas.js
+router.get('/editar-perfil', (req, res) => {
+    res.render('editarperfil');
+});
+
+router.post('/guardar-perfil', (req, res) => {
+    const { nombre, carrera, cuatrimestre } = req.body;
+    
+    // Aquí iría tu consulta SQL o de MongoDB para actualizar
+    console.log(`Actualizando a: ${nombre}, ${carrera}, ${cuatrimestre}`);
+    
+    // Al terminar, rediriges al perfil normal
+    res.redirect('/perfil-asesorado');
+});
 module.exports = router;
 export default router;
 
