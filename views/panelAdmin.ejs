@@ -1,0 +1,22 @@
+<%- include('templates/headerPanel.ejs') %>
+    <div class="cuerpo">
+        <div class="componentesDerechos">
+            <div class="botonesAdmin">
+                <button id="gestionarUsuarios">Gestionar usuarios</button>
+                <button id="supervisarAsesorias">Supervisar asesorías</button>
+            </div>
+        </div>
+        <div class="componentesIzquierdos">
+
+        </div>
+    </div>
+    <script>
+        document.getElementById("gestionarUsuarios").addEventListener("click", function () {
+            window.location.href = "/gestionUsuarios";
+        });
+        document.getElementById("supervisarAsesorias").addEventListener("click", function () {
+            //window.location.href = "/supervisarAsesorias";
+            console.log("Futura redirection");
+        });
+    </script>
+    <%- include('templates/footer.ejs') %>

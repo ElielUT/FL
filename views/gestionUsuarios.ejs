@@ -394,11 +394,13 @@
 
         nuevoUsuario.addEventListener("click", () => {
             crearUsuario.classList.remove("ocultar");
+            nuevoUsuario.classList.add("ocultar");
         });
 
         cancelar.addEventListener("click", () => {
             crearUsuario.classList.add("ocultar");
             formCrearUsuario.reset();
+            nuevoUsuario.classList.remove("ocultar");
         });
 
         guardar.addEventListener("click", () => {
