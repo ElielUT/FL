@@ -252,3 +252,57 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
+
+:root {
+    --verde-primario: #00a884;
+    --verde-claro: #4dc4ac;
+    --gris-fondo: #f4f4f4;
+    --gris-suave: #eeeeee;
+}
+
+.perfil-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.card-usuario {
+    background-color: var(--verde-primario);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.foto-perfil {
+    width: 120px;
+    height: 120px;
+    background-color: #ccc;
+    border-radius: 50%;
+}
+
+.lista-materias .materia {
+    background-color: var(--verde-claro);
+    color: white;
+    padding: 12px;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.materia:last-child {
+    background-color: var(--verde-primario);
+}
+
+.horario-item {
+    background-color: var(--gris-suave);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+    color: #555;
+}

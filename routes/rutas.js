@@ -157,5 +157,12 @@ router.post('/guardar-perfil', (req, res) => {
     res.redirect('/perfil-asesorado');
 });
 
+const express = require('express');
+
+router.get('/perfil-asesor', (req, res) => {
+    res.render('perfilasesor'); // No necesitas poner .ejs
+});
+
+module.exports = router;
 export default router;
 
