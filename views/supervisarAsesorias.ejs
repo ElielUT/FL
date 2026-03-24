@@ -1,0 +1,180 @@
+<%- include('templates/header.ejs') %>
+
+<div class="supervisar-container">
+    <div class="supervisar-header">
+        <h1>Supervisar asesorías</h1>
+        <p>Monitorea todas las solicitudes, sesiones y cancelaciones</p>
+    </div>
+
+    <div class="supervisar-stats">
+        <div class="stat-card">
+            <h4>Total</h4>
+            <p><%= (estadisticas && estadisticas.totales) ? estadisticas.totales : 0 %></p>
+        </div>
+        <div class="stat-card">
+            <h4>Pendientes</h4>
+            <p><%= (estadisticas && estadisticas.pendientes) ? estadisticas.pendientes : 0 %></p>
+        </div>
+        <div class="stat-card">
+            <h4>En proceso</h4>
+            <p><%= (estadisticas && estadisticas.aceptadas) ? estadisticas.aceptadas : 0 %></p>
+        </div>
+        <div class="stat-card">
+            <h4>Completadas</h4>
+            <p><%= (estadisticas && estadisticas.completadas) ? estadisticas.completadas : 0 %></p>
+        </div>
+    </div>
+
+    <div class="supervisar-filters-container">
+        <h4>Filtros</h4>
+        <div class="filtros-acciones">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Buscar asesorado, asesor o materia...">
+                <i class="fas fa-times clear-search" style="cursor: pointer;" onclick="document.getElementById('searchInput').value=''; filterAsesorias()"></i>
+            </div>
+            <select id="stateFilter" onchange="filterAsesorias()">
+                <option value="all">Todos los estados</option>
+                <option value="Pendiente">Pendientes</option>
+                <option value="Aceptada">En proceso (Aceptada)</option>
+                <option value="Completadas">Completadas</option>
+            </select>
+            <select id="subjectFilter" onchange="filterAsesorias()">
+                <option value="all">Todas las materias</option>
+                <% 
+                    if (asesorias && asesorias.length > 0) {
+                        const matters = new Set();
+                        asesorias.forEach(a => {
+                            if(a.asesoria && a.asesoria.materia && a.asesoria.materia.nombre) {
+                                matters.add(a.asesoria.materia.nombre);
+                            }
+                        });
+                        Array.from(matters).forEach(m => {
+                %>
+                <option value="<%= m %>"><%= m %></option>
+                <%      }); 
+                    }
+                %>
+            </select>
+        </div>
+    </div>
+
+    <div class="asesorias-grid" id="asesoriasList">
+        <% if (asesorias && asesorias.length > 0) { %>
+            <% asesorias.forEach(asesoria => { 
+                let nombreMateria = "Sin Materia";
+                if(asesoria.asesoria && asesoria.asesoria.materia && asesoria.asesoria.materia.nombre) {
+                    nombreMateria = asesoria.asesoria.materia.nombre;
+                }
+
+                let nombreAsesorado = "Desconocido";
+                if(asesoria.alumno && asesoria.alumno.usuario) {
+                    nombreAsesorado = `${asesoria.alumno.usuario.nombres} ${asesoria.alumno.usuario.apellidos}`;
+                }
+
+                let nombreAsesor = "Desconocido";
+                if(asesoria.asesor && asesoria.asesor.usuario) {
+                    nombreAsesor = `${asesoria.asesor.usuario.nombres} ${asesoria.asesor.usuario.apellidos}`;
+                }
+
+                let estado = "Desconocido";
+                let calificacion = asesoria.calificacion;
+                if(!asesoria.fecha) estado = "Pendiente";
+                else if(asesoria.fecha && (!calificacion || calificacion == 0)) estado = "Aceptada";
+                else if(asesoria.fecha && calificacion > 0) estado = "Completadas";
+
+                let clasEstado = estado === "Aceptada" ? "badge-red" : (estado === "Pendiente" ? "badge-cyan" : "badge-green");
+            %>
+            <div class="asesoria-card" data-state="<%= estado %>" data-subject="<%= nombreMateria %>" data-text="<%= (nombreMateria + " " + nombreAsesor + " " + nombreAsesorado).toLowerCase() %>">
+                <div class="card-header-info">
+                    <h3><%= nombreMateria %></h3>
+                    <span class="card-id">ID: <%= asesoria.id_asesor3 || asesoria.id_asesoria2 || '-' %></span>
+                </div>
+                <div class="card-users">
+                    <span class="user-info"><b>Asesorado:</b> <%= nombreAsesorado %></span>
+                    <span class="user-info"><b>Asesor:</b> <%= nombreAsesor %></span>
+                </div>
+                <div class="card-datetime">
+                    <span><i class="far fa-calendar-alt"></i> Fecha: <%= asesoria.fecha || '--/--/--' %></span>
+                    <span><i class="far fa-clock"></i> Hora: <%= asesoria.hora_in ? asesoria.hora_in.substring(0,5) : '--:--' %></span>
+                </div>
+                <div class="card-footer">
+                    <span class="req-date">Solicitada el <%= asesoria.fecha || '--/--/--' %></span>
+                    <span class="status-badge <%= clasEstado %>"><%= estado %></span>
+                </div>
+                <% if(estado === "Completadas") { %>
+                <div class="card-eval">
+                    <div class="eval-header">
+                        <span>Evaluación del estudiante:</span>
+                        <span><%= calificacion %>/5 <i class="fas fa-paw"></i></span>
+                    </div>
+                    <div class="eval-comment">
+                        "Excelente explicación, muy clara y con buenos ejemplos..."
+                    </div>
+                </div>
+                <% } %>
+            </div>
+            <% }) %>
+        <% } else { %>
+            <div style="width: 100%; text-align: center; color: #aaa; margin: 40px 0;">No hay asesorías disponibles.</div>
+        <% } %>
+    </div>
+    
+    <div class="supervisar-resumen-container">
+        <h4>Resumen</h4>
+        <div class="resumen-stats">
+            <div class="r-stat">
+                <h2 id="r-total"><%= asesorias ? asesorias.length : 0 %></h2>
+                <p>Total mostradas</p>
+            </div>
+            <div class="r-stat">
+                <h2 id="r-pendientes"><%= (estadisticas && estadisticas.pendientes) ? estadisticas.pendientes : 0 %></h2>
+                <p>Pendientes</p>
+            </div>
+            <div class="r-stat">
+                <h2 id="r-completadas"><%= (estadisticas && estadisticas.completadas) ? estadisticas.completadas : 0 %></h2>
+                <p>Completadas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterAsesorias() {
+    const text = document.getElementById('searchInput').value.toLowerCase();
+    const state = document.getElementById('stateFilter').value;
+    const subject = document.getElementById('subjectFilter').value;
+    
+    const cards = document.querySelectorAll('.asesoria-card');
+    let shown = 0;
+    let pend = 0;
+    let comp = 0;
+
+    cards.forEach(card => {
+        const cText = card.getAttribute('data-text') || "";
+        const cState = card.getAttribute('data-state');
+        const cSubject = card.getAttribute('data-subject');
+        
+        const matchText = cText.includes(text);
+        const matchState = state === 'all' || cState === state;
+        const matchSubject = subject === 'all' || cSubject === subject;
+        
+        if (matchText && matchState && matchSubject) {
+            card.style.display = 'flex';
+            shown++;
+            if (cState === 'Pendiente') pend++;
+            if (cState === 'Completadas') comp++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    document.getElementById('r-total').innerText = shown;
+    document.getElementById('r-pendientes').innerText = pend;
+    document.getElementById('r-completadas').innerText = comp;
+}
+
+document.getElementById('searchInput').addEventListener('input', filterAsesorias);
+</script>
+
+<%- include('templates/footer.ejs') %>

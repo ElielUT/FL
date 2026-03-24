@@ -93,7 +93,7 @@
             <option value="todos">Todos</option>
             <option value="asesor">Asesor</option>
             <option value="asesorado">Asesorado</option>
-            <option value="admin">Administrador</option>
+            <option value="administrador">Administrador</option>
         </select>
     </div>
     <div class="usuarios">
@@ -394,11 +394,13 @@
 
         nuevoUsuario.addEventListener("click", () => {
             crearUsuario.classList.remove("ocultar");
+            nuevoUsuario.classList.add("ocultar");
         });
 
         cancelar.addEventListener("click", () => {
             crearUsuario.classList.add("ocultar");
             formCrearUsuario.reset();
+            nuevoUsuario.classList.remove("ocultar");
         });
 
         guardar.addEventListener("click", () => {
