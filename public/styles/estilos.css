@@ -211,9 +211,6 @@ body {
 }
 
 
-/*
-BARRA DE BUSQUEDA Y FILTROS
-*/
 .busqueda_filtro {
     display: flex;
     justify-content: space-between;
@@ -459,6 +456,170 @@ BARRA DE BUSQUEDA Y FILTROS
     padding: 10px 30px;
     border-radius: 20px;
     border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Reset general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #fff;
+}
+
+/* --- HEADER --- */
+.header-nav {
+    background-color: #00a884;
+    color: white;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    width: 100%;
+}
+
+.back-link {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+.close-container {
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* --- LAYOUT --- */
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr; /* Dos columnas claras */
+    gap: 80px;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.main-title {
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+}
+
+/* --- TARJETA VERDE --- */
+.card-green {
+    background-color: #00a884;
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #fff;
+    object-fit: cover;
+}
+
+.user-info h2 {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+}
+
+.badge-wrapper {
+    margin-top: 18px; /* BAJAMOS EL BOTÓN ASESOR */
+}
+
+.badge-asesor {
+    background-color: #52c7b8;
+    color: white;
+    padding: 8px 22px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* --- INFO TEXTO --- */
+.text-info-group {
+    line-height: 1.8;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* --- COLUMNA DERECHA --- */
+.sub-title {
+    margin-bottom: 20px;
+}
+
+.gray-box {
+    background-color: #f3f3f3;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: #777;
+    margin-bottom: 12px;
+}
+
+/* MATERIAS Y CALIF */
+.grid-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.subject {
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+}
+.color-1 { background-color: #52c7b8; }
+.color-2 { background-color: #1ebba3; }
+.color-3 { background-color: #00a884; }
+
+/* PATITAS Y SCORE */
+.paws-container {
+    display: flex;
+    gap: 8px;
+    color: #7a8ba3; /* Color gris de las patitas */
+    font-size: 1.5rem;
+    margin: 15px 0;
+}
+
+.score-number {
+    font-size: 5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* BOTÓN EDITAR */
+.btn-align-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-edit {
+    background-color: #a8e6d9;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 12px;
     font-weight: bold;
     cursor: pointer;
 }

@@ -2,6 +2,7 @@ import { Router } from "express";
 import 'dotenv/config';
 import session from "express-session";
 
+
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -222,7 +223,6 @@ router.get('/supervisarAsesorias', async (req, res) => {
     }
 });
 
-
 router.get("/borrarSesion", (req, res) => {
     req.session.destroy();
     res.clearCookie("session_id", { path: "/" });
@@ -233,12 +233,10 @@ router.get('/solicitarAsesoria', (req, res) => {
     res.render('solicitarAsesoria');
 });
 
-const express = require('express');
-
-router.get('/perfil-asesor', (req, res) => {
-    res.render('perfilasesor'); // No necesitas poner .ejs
+router.get("/perfil-asesor", (req, res) => {
+    // Aquí podrías pasar datos reales desde una DB más adelante
+    res.render("perfilasesor"); 
 });
 
-module.exports = router;
 export default router;
 

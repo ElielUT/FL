@@ -2,52 +2,88 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Asesor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/styles/estilos.css">
 </head>
 <body>
 
-    <div class="perfil-container">
-        <h1>Mi perfil</h1>
-
-        <div class="card-usuario">
-            <div class="foto-perfil"></div>
-            <div class="info-texto">
-                <h2 style="margin:0;">Eimi Camila Cervantes</h2>
-                <p>eimicaci.ti24@utsjr.edu.mx</p>
-                <span style="background: var(--verde-claro); padding: 5px 15px; border-radius: 5px;">Asesor</span>
-            </div>
+    <header class="header-nav">
+        <div class="back-link" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i>
+            <span>Volver</span>
         </div>
+        <div class="close-container">
+            <i class="fas fa-times-circle"></i>
+        </div>
+    </header>
 
-        <div style="display: flex; gap: 50px; margin-top: 30px;">
-            <div style="flex: 1;">
-                <h3>Carrera:</h3>
-                <p>Tecnologías de la información</p>
-                
-                <h3>Cuatrimestre:</h3>
-                <p>3° cuatrimestre</p>
-
-                <div class="lista-materias" style="margin-top: 20px;">
-                    <h3>Materias</h3>
-                    <div class="materia">Bases de datos</div>
-                    <div class="materia">Cálculo diferencial</div>
-                    <div class="materia">Programación (POO)</div>
+    <main class="main-container">
+        
+        <section class="column">
+            <h1 class="main-title">Mi perfil</h1>
+            
+            <div class="card-green">
+                <div class="avatar-container">
+                    <img src="/images/usuario.png" alt="Usuario" class="avatar-img">
+                </div>
+                <div class="user-info">
+                    <h2>Eimi Camila Cervantes</h2>
+                    <p>eimicaci.ti24@utsjr.edu.mx</p>
+                    <div class="badge-wrapper">
+                        <span class="badge-asesor">Asesor</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="flex: 1;">
-                <h3>Disponibilidad</h3>
-                <div class="horario-item">Lunes 14:00-16:00</div>
-                <div class="horario-item">Miércoles 14:00-16:00</div>
-                <div class="horario-item">Viernes 14:00-16:00</div>
-
-                <div style="margin-top: 40px;">
-                    <h3>Calificaciones</h3>
-                    <div style="font-size: 48px; font-weight: bold; color: #333;">5.0</div>
+            <div class="text-info-group">
+                <div class="info-item">
+                    <span class="label">Carrera:</span>
+                    <p>Tecnologías de la información</p>
+                </div>
+                <div class="info-item">
+                    <span class="label">Cuatrimestre:</span>
+                    <p>3º cuatrimestre</p>
                 </div>
             </div>
-        </div>
-    </div>
+
+            <div class="btn-align-right">
+                <button class="btn-edit">Editar perfil</button>
+            </div>
+        </section>
+
+        <section class="column">
+            <h2 class="sub-title">Disponibilidad</h2>
+            <div class="availability-list">
+                <div class="gray-box">Lunes 14:00-16:00</div>
+                <div class="gray-box">Miércoles 14:00-16:00</div>
+                <div class="gray-box">Viernes 14:00-16:00</div>
+            </div>
+
+            <div class="grid-stats">
+                <div class="stats-box">
+                    <h3><i class="fas fa-briefcase"></i> Materias</h3>
+                    <div class="subject color-1">Bases de datos</div>
+                    <div class="subject color-2">Cálculo diferencial</div>
+                    <div class="subject color-3">Programación (POO)</div>
+                </div>
+
+                <div class="stats-box">
+                    <h3><i class="fas fa-ribbon"></i> Calificaciones</h3>
+                    <div class="paws-container">
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="score-number">5.0</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
 </body>
 </html>
