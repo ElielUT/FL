@@ -5,9 +5,94 @@
                 <button id="gestionarUsuarios">Gestionar usuarios</button>
                 <button id="supervisarAsesorias">Supervisar asesorías</button>
             </div>
+            <div class="estadisticas">
+                <h3>Estadísticas generales</h3>
+                <div class="estadisticas-cuentas">
+                    <div class="estadisticas-item">
+                        <p>Total de usuarios: <i class="bi bi-person icon-total"></i></p>
+                        <p>
+                            <%= usuarios %>
+                        </p>
+                    </div>
+                    <div class="estadisticas-item">
+                        <p>Total de Asesores: <i class="bi bi-person icon-asesores"></i></p>
+                        <p>
+                            <%= adsesores %>
+                        </p>
+                    </div>
+                    <div class="estadisticas-item">
+                        <p>Total de Asesorados: <i class="bi bi-person icon-asesorados"></i></p>
+                        <p>
+                            <%= asesorados %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="estadisticas">
+                <h3>Estado de asesorías</h3>
+                <div class="estadisticas-cuentas">
+                    <div class="estadisticas-item estado-asesorias">
+                        <p>Totales: <i class="bi bi-people icon-total"></i></p>
+                        <p>
+                            <%= totalAsesorias %>
+                        </p>
+                    </div>
+                    <div class="estadisticas-item estado-asesorias">
+                        <p>Pendientes: <i class="bi bi-hourglass-top icon-asesorados"></i></p>
+                        <p>
+                            <%= pendientes %>
+                        </p>
+                    </div>
+                    <div class="estadisticas-item estado-asesorias">
+                        <p>Aceptadas: <i class="bi bi-hourglass-split icon-asesores"></i></p>
+                        <p>
+                            <%= aceptadas %>
+                        </p>
+                    </div>
+                    <div class="estadisticas-item estado-asesorias">
+                        <p>Completadas: <i class="bi bi-hourglass-bottom icon-azul"></i></p>
+                        <p>
+                            <%= completadas %>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="componentesIzquierdos">
-
+            <div class="distribucion">
+                <h3>Distribución de usuarios</h3>
+                <div class="distribucion-cuentas">
+                    <div class="distribucion-item">
+                        <p>Asesorados:</p>
+                        <progress value="<%= asesorados %>" max="<%= usuarios %>"></progress>
+                    </div>
+                    <div class="distribucion-item">
+                        <p>Asesores:</p>
+                        <progress value="<%= adsesores %>" max="<%= usuarios %>"></progress>
+                    </div>
+                    <div class="distribucion-item">
+                        <p>Administradores:</p>
+                        <progress value="<%= administradores %>" max="<%= usuarios %>"></progress>
+                    </div>
+                </div>
+            </div>
+            <div class="distribucion" style="margin-top: 0%;">
+                <h3>Estado de asesorías</h3>
+                <div class="distribucion-cuentas">
+                    <div class="distribucion-item">
+                        <p>Pendientes:</p>
+                        <progress value="<%= pendientes %>" max="<%= totalAsesorias %>"></progress>
+                    </div>
+                    <div class="distribucion-item">
+                        <p>Aceptadas:</p>
+                        <progress value="<%= aceptadas %>" max="<%= totalAsesorias %>"></progress>
+                    </div>
+                    <div class="distribucion-item">
+                        <p>Completadas:</p>
+                        <progress value="<%= completadas %>" max="<%= totalAsesorias %>"></progress>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -15,8 +100,7 @@
             window.location.href = "/gestionUsuarios";
         });
         document.getElementById("supervisarAsesorias").addEventListener("click", function () {
-            //window.location.href = "/supervisarAsesorias";
-            console.log("Futura redirection");
+            window.location.href = "/supervisarAsesorias";
         });
     </script>
     <%- include('templates/footer.ejs') %>

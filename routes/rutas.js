@@ -162,9 +162,61 @@ router.post('/guardar-perfil', (req, res) => {
     res.redirect('/perfil-asesorado');
 });
 
-router.get('/panelAdmin', (req, res) => {
+router.get('/panelAdmin', async (req, res) => {
     if (req.session.usuario == 3) {
-        res.render('panelAdmin', { rol: "Administrador" });
+        const respuesta = await fetch("http://127.0.0.1:8000/usuarios/cantidadUsuarios", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const data = await respuesta.json();
+        const usuarios = data.Total;
+        const adsesores = data.Asesores;
+        const asesorados = data.Asesorados;
+        const administradores = data.Administradores;
+
+        const respuesta2 = await fetch("http://127.0.0.1:8000/toma/estadisticas", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const data2 = await respuesta2.json();
+        const totalAsesorias = data2.totales;
+        const pendientes = data2.pendientes;
+        const aceptadas = data2.aceptadas;
+        const completadas = data2.completadas;
+
+        res.render('panelAdmin', { rol: "Administrador", usuarios: usuarios, adsesores: adsesores, asesorados: asesorados, administradores: administradores, totalAsesorias: totalAsesorias, pendientes: pendientes, aceptadas: aceptadas, completadas: completadas });
+    } else {
+        res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+});
+
+router.get('/supervisarAsesorias', async (req, res) => {
+    if (req.session.usuario == 3) {
+        try {
+            const respuestaEstadisticas = await fetch("http://127.0.0.1:8000/toma/estadisticas", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataEstadisticas = await respuestaEstadisticas.json();
+
+            const respuestaTomas = await fetch("http://127.0.0.1:8000/toma/mostrarToma/", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataTomas = await respuestaTomas.json();
+
+            res.render('supervisarAsesorias', { 
+                estadisticas: dataEstadisticas, 
+                asesorias: dataTomas.items || [] 
+            });
+        } catch (error) {
+            console.error("Error fetching supervisar data:", error);
+            res.render('supervisarAsesorias', { estadisticas: {totales:0, pendientes:0, aceptadas:0, completadas:0}, asesorias: [] });
+        }
     } else {
         res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
