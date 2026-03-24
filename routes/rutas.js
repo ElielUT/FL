@@ -229,5 +229,9 @@ router.get("/borrarSesion", (req, res) => {
     res.redirect("/")
 })
 
+router.get('/solicitarAsesoria', (req, res) => {
+    res.render('solicitarAsesoria');
+});
+
 export default router;
 

@@ -1,0 +1,97 @@
+<%- include('templates/header.ejs') %>
+
+<div class="solicitar-container">
+    <div class="solicitar-header">
+        <h1>Solicitar asesoría</h1>
+        <p>Busca la materia en la que necesitas apoyo y programa tu asesoría</p>
+    </div>
+
+    <div class="buscador-materias">
+        <div class="search-box-materias">
+            <i class="fas fa-search"></i>
+            <input type="text" id="buscadorMaterias" placeholder="Buscar materia...">
+            <i class="fas fa-times clear-search" id="limpiarBusqueda" style="cursor: pointer; display: none;"></i>
+        </div>
+    </div>
+
+    <div class="materias-grid" id="materiasGrid">
+        <!-- Materias precargadas -->
+        <div class="materia-card" data-nombre="Programación Orientada a Objetos">
+            <h3>Programación Orientada a Objetos</h3>
+            <p>Ingeniería de Software</p>
+        </div>
+        <div class="materia-card" data-nombre="Cálculo diferencial">
+            <h3>Cálculo diferencial</h3>
+            <p>Tronco común</p>
+        </div>
+        <div class="materia-card" data-nombre="Probabilidad y estadística">
+            <h3>Probabilidad y estadística</h3>
+            <p>Tronco común</p>
+        </div>
+        <div class="materia-card" data-nombre="Física I">
+            <h3>Física I</h3>
+            <p>Tronco común</p>
+        </div>
+        <div class="materia-card" data-nombre="Bases de datos">
+            <h3>Bases de datos</h3>
+            <p>Ingeniería de Software</p>
+        </div>
+        <div class="materia-card" data-nombre="Estructura de datos">
+            <h3>Estructura de datos</h3>
+            <p>Ingeniería de Software</p>
+        </div>
+    </div>
+
+    <div class="no-resultados" id="noResultados" style="display: none;">
+        <p>No se encontraron materias con ese nombre.</p>
+    </div>
+</div>
+
+<script>
+    const buscador = document.getElementById('buscadorMaterias');
+    const materiasGrid = document.getElementById('materiasGrid');
+    const noResultados = document.getElementById('noResultados');
+    const limpiarBusqueda = document.getElementById('limpiarBusqueda');
+
+    function filtrarMaterias() {
+        const texto = buscador.value.toLowerCase().trim();
+        const cards = materiasGrid.querySelectorAll('.materia-card');
+        let hayResultados = false;
+
+        if (texto === '') {
+            limpiarBusqueda.style.display = 'none';
+        } else {
+            limpiarBusqueda.style.display = 'block';
+        }
+
+        cards.forEach(card => {
+            const nombre = card.getAttribute('data-nombre').toLowerCase();
+            if (nombre.includes(texto)) {
+                card.style.display = 'block';
+                hayResultados = true;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        noResultados.style.display = hayResultados ? 'none' : 'block';
+    }
+
+    buscador.addEventListener('input', filtrarMaterias);
+
+    limpiarBusqueda.addEventListener('click', () => {
+        buscador.value = '';
+        filtrarMaterias();
+        buscador.focus();
+    });
+
+    // Redirección al hacer clic en una materia
+    document.querySelectorAll('.materia-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const materia = card.getAttribute('data-nombre');
+            window.location.href = `/agendar-asesoria?materia=${encodeURIComponent(materia)}`;
+        });
+    });
+</script>
+
+<%- include('templates/footer.ejs') %>

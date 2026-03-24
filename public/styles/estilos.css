@@ -874,3 +874,112 @@ PANEL DE ADMINISTRADOR
     color: #666;
     margin: 0;
 }
+
+/*
+SOLICITAR ASESORÍA
+*/
+.solicitar-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto;
+    font-family: 'Poppins', sans-serif;
+}
+
+.solicitar-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.solicitar-header p {
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+}
+
+.buscador-materias {
+    margin-bottom: 30px;
+}
+
+.search-box-materias {
+    display: flex;
+    align-items: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    padding: 12px 20px;
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.search-box-materias:focus-within {
+    border-color: var(--clr-admin);
+    box-shadow: 0 0 0 3px rgba(0, 161, 133, 0.1);
+}
+
+.search-box-materias i {
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+.search-box-materias i:first-child {
+    margin-right: 12px;
+}
+
+.search-box-materias i:last-child {
+    margin-left: 12px;
+    color: #999;
+    cursor: pointer;
+}
+
+.search-box-materias input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.materias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.materia-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eef2f0;
+}
+
+.materia-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+    border-color: var(--clr-admin);
+}
+
+.materia-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2c3e2f;
+}
+
+.materia-card p {
+    font-size: 0.85rem;
+    color: #88a08b;
+    margin: 0;
+}
+
+.no-resultados {
+    text-align: center;
+    padding: 50px;
+    background-color: white;
+    border-radius: 20px;
+    color: #aaa;
+    font-size: 1rem;
+}
