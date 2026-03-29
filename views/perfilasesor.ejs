@@ -1,89 +1,420 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil Asesor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles/estilos1.css">
+    <!-- Fuente Montserrat como en el diseño -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome para los íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ----- Header Top Bar ----- */
+        .top-bar {
+            background-color: #0fb88f;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-nav {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-nav i {
+            font-size: 20px;
+        }
+
+        .btn-nav.volver i {
+            transform: scaleX(-1);
+        }
+
+        .btn-nav.close i {
+            font-size: 26px;
+        }
+
+        /* ----- Main Layout ----- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .ventana {
+            background-color: white;
+            width: 100%;
+            max-width: 950px;
+            border-radius: 12px;
+            padding: 40px 50px;
+            position: relative;
+            box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eaeaea;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        /* ----- Columna Izquierda ----- */
+        .titulo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 25px;
+        }
+
+        .tarjeta-verde {
+            background-color: #0fb88f;
+            padding: 25px 30px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 15px rgba(15, 184, 143, 0.2);
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar i {
+            font-size: 50px;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .info-usuario h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .info-usuario p {
+            font-size: 12px;
+            opacity: 0.95;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .badge-asesor {
+            background-color: #51cdae;
+            padding: 6px 20px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        .datos-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .datos-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .etiqueta {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .valor {
+            font-size: 15px;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .btn-editar {
+            background: linear-gradient(135deg, #a7ebd8 0%, #68d1b7 100%);
+            border: none;
+            color: #16644f;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            height: fit-content;
+        }
+
+        .btn-editar:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ----- Columna Derecha ----- */
+        .seccion-titulo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .seccion-titulo i {
+            font-size: 18px;
+            color: #444;
+        }
+
+        .disponibilidad-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 35px;
+            margin-top: 10px;
+        }
+
+        .disponibilidad-item {
+            background-color: #f2f2f2;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            color: #888;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .bottom-right-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        .materias-lista {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .materia-item {
+            padding: 10px 15px;
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .materia-item:nth-child(1) {
+            background-color: #4eb99f;
+        }
+
+        .materia-item:nth-child(2) {
+            background-color: #17c19a;
+        }
+
+        .materia-item:nth-child(3) {
+            background-color: #03a885;
+        }
+
+        .calificaciones-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+
+        .huellas {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            color: #6c757d;
+        }
+
+        .huellas i {
+            font-size: 24px;
+        }
+
+        .calificacion-numero {
+            font-size: 42px;
+            font-weight: 900;
+            color: #161a29;
+            line-height: 1;
+        }
+
+        @media (max-width: 850px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+            .bottom-right-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <header class="header-nav">
-        <div class="back-link" onclick="history.back()">
-            <i class="fas fa-arrow-left"></i>
-            <span>Volver</span>
-        </div>
-        <div class="close-container">
-            <i class="fas fa-times-circle"></i>
-        </div>
-    </header>
+    <!-- Header Verde Superior -->
+    <div class="top-bar">
+        <button class="btn-nav volver" onclick="window.history.back()">
+            <i class="fa-solid fa-reply"></i> Volver
+        </button>
+        <button class="btn-nav close" onclick="window.location.href='/'">
+            <i class="fa-regular fa-circle-xmark"></i>
+        </button>
+    </div>
 
-    <main class="main-container">
-        
-        <section class="column">
-            <h1 class="main-title">Mi perfil</h1>
-            
-            <div class="card-green">
-                <div class="avatar-container">
-                    <img src="/images/usuario.png" alt="Usuario" class="avatar-img">
-                </div>
-                <div class="user-info">
-                    <h2>Eimi Camila Cervantes</h2>
-                    <p>eimicaci.ti24@utsjr.edu.mx</p>
-                    <div class="badge-wrapper">
-                        <span class="badge-asesor">Asesor</span>
+    <!-- Contenido Principal -->
+    <div class="main-container">
+        <!-- Tarjeta Blanca Principal -->
+        <div class="ventana">
+            <div class="layout-grid">
+
+                <!-- Columna Izquierda -->
+                <div class="col-izq">
+                    <h1 class="titulo">Mi perfil</h1>
+
+                    <div class="tarjeta-verde">
+                        <div class="avatar">
+                            <% if (typeof asesor !== 'undefined' && asesor.fotoUrl) { %>
+                                <img src="<%= asesor.fotoUrl %>" alt="Foto del Asesor">
+                            <% } else { %>
+                                <i class="fa-solid fa-user"></i>
+                            <% } %>
+                        </div>
+                        <div class="info-usuario">
+                            <h2><%= typeof asesor !== 'undefined' && asesor.nombre ? asesor.nombre : 'Eimi Camila Cervantes' %></h2>
+                            <p><%= typeof asesor !== 'undefined' && asesor.correo ? asesor.correo : 'eimicaci.ti24@utsjr.edu.mx' %></p>
+                            <div class="badge-asesor">Asesor</div>
+                        </div>
+                    </div>
+
+                    <div class="datos-fila">
+                        <div class="datos-col">
+                            <div class="dato-grupo">
+                                <div class="etiqueta">Carrera:</div>
+                                <div class="valor">
+                                    <%= typeof asesor !== 'undefined' && asesor.carrera ? asesor.carrera : 'Tecnologías de la información' %>
+                                </div>
+                            </div>
+                            <div class="dato-grupo">
+                                <div class="etiqueta">Cuatrimestre</div>
+                                <div class="valor">
+                                    <%= typeof asesor !== 'undefined' && asesor.cuatrimestre ? asesor.cuatrimestre : '3º cuatrimestre' %>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-editar">Editar perfil</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="text-info-group">
-                <div class="info-item">
-                    <span class="label">Carrera:</span>
-                    <p>Tecnologías de la información</p>
-                </div>
-                <div class="info-item">
-                    <span class="label">Cuatrimestre:</span>
-                    <p>3º cuatrimestre</p>
-                </div>
-            </div>
-
-            <div class="btn-align-right">
-                <button class="btn-edit">Editar perfil</button>
-            </div>
-        </section>
-
-        <section class="column">
-            <h2 class="sub-title">Disponibilidad</h2>
-            <div class="availability-list">
-                <div class="gray-box">Lunes 14:00-16:00</div>
-                <div class="gray-box">Miércoles 14:00-16:00</div>
-                <div class="gray-box">Viernes 14:00-16:00</div>
-            </div>
-
-            <div class="grid-stats">
-                <div class="stats-box">
-                    <h3><i class="fas fa-briefcase"></i> Materias</h3>
-                    <div class="subject color-1">Bases de datos</div>
-                    <div class="subject color-2">Cálculo diferencial</div>
-                    <div class="subject color-3">Programación (POO)</div>
-                </div>
-
-                <div class="stats-box">
-                    <h3><i class="fas fa-ribbon"></i> Calificaciones</h3>
-                    <div class="paws-container">
-                        <i class="fas fa-paw"></i>
-                        <i class="fas fa-paw"></i>
-                        <i class="fas fa-paw"></i>
-                        <i class="fas fa-paw"></i>
-                        <i class="fas fa-paw"></i>
+                <!-- Columna Derecha -->
+                <div class="col-der">
+                    <!-- Disponibilidad -->
+                    <h2 class="seccion-titulo" style="font-size: 22px;">Disponibilidad</h2>
+                    <div class="disponibilidad-lista">
+                        <% if (typeof asesor !== 'undefined' && asesor.disponibilidad && asesor.disponibilidad.length > 0) { %>
+                            <% asesor.disponibilidad.forEach(function(horario) { %>
+                                <div class="disponibilidad-item"><%= horario %></div>
+                            <% }); %>
+                        <% } else { %>
+                            <div class="disponibilidad-item">Lunes 14:00-16:00</div>
+                            <div class="disponibilidad-item">Miércoles 14:00-16:00</div>
+                            <div class="disponibilidad-item">Viernes 14:00-16:00</div>
+                        <% } %>
                     </div>
-                    <div class="score-number">5.0</div>
-                </div>
-            </div>
-        </section>
 
-    </main>
+                    <div class="bottom-right-grid">
+                        <!-- Materias -->
+                        <div class="materias-seccion">
+                            <h2 class="seccion-titulo">
+                                <i class="fa-regular fa-folder-open" style="color: #111;"></i> Materias
+                            </h2>
+                            <div class="materias-lista">
+                                <% if (typeof asesor !== 'undefined' && asesor.materias && asesor.materias.length > 0) { %>
+                                    <% asesor.materias.forEach(function(materia) { %>
+                                        <div class="materia-item"><%= materia %></div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="materia-item">Bases de datos</div>
+                                    <div class="materia-item" style="background-color: #17c19a;">Cálculo diferencial</div>
+                                    <div class="materia-item" style="background-color: #03a885;">Programación (POO)</div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Calificaciones -->
+                        <div class="calificaciones-seccion">
+                            <h2 class="seccion-titulo">
+                                <i class="fa-solid fa-award" style="color: #111;"></i> Calificaciones
+                            </h2>
+                            <div class="calificaciones-container">
+                                <div class="huellas">
+                                    <i class="fa-solid fa-paw"></i>
+                                    <i class="fa-solid fa-paw"></i>
+                                    <i class="fa-solid fa-paw"></i>
+                                    <i class="fa-solid fa-paw"></i>
+                                    <i class="fa-solid fa-paw"></i>
+                                </div>
+                                <div class="calificacion-numero">
+                                    <%= typeof asesor !== 'undefined' && asesor.calificacion ? asesor.calificacion.toFixed(1) : '5.0' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </body>
+
 </html>

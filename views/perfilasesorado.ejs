@@ -1,44 +1,260 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Mi Perfil - Asesorado</title>
-    <link rel="stylesheet" href="styles/estilos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <!-- Incluimos una fuente de Google parecida a la del diseño (Montserrat o Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para los íconos de la barra superior y avatar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            /* Fondo ligeramente gris, para que la ventana blanca de en medio resalte bien */
+            background-color: #f7f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ----- Barra de Navegación (Header) ----- */
+        .top-bar {
+            background-color: #0fb88f;
+            /* Verde azulado */
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-nav {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .btn-nav.volver i {
+            font-size: 20px;
+            /* Invertir el ícono de respuesta para simular la flecha curva tipo 'undo' de Windows */
+            transform: scaleX(-1);
+        }
+
+        .btn-nav.close i {
+            font-size: 26px;
+        }
+
+        /* ----- Contenedor del Perfil (Caja central) ----- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .ventana {
+            background-color: white;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 12px;
+            padding: 50px 60px;
+            position: relative;
+            /* Sombra en la caja que forma ese marco gris sutil en la esquina inferior derecha */
+            box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eaeaea;
+        }
+
+        .titulo {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 30px;
+        }
+
+        .contenido-perfil {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Centramos el bloque desde la mitad de la pantalla */
+        }
+
+        /* Alineamos la tarjeta y las etiquetas en un bloque ajustado al centro */
+        .bloque-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            /* Todo alineado a la izquierda... dentro del bloque centrado */
+        }
+
+        /* ----- Tarjeta Verde Central (Avatar y Nombre) ----- */
+        .tarjeta-verde {
+            background-color: #0fb88f;
+            padding: 25px 35px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+            margin-bottom: 35px;
+            min-width: 350px;
+            box-shadow: 0 8px 20px rgba(15, 184, 143, 0.2);
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            background-color: #c9c9c9;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .avatar i {
+            font-size: 40px;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .info-usuario h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .info-usuario p {
+            font-size: 13px;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        /* ----- Textos Inferiores ----- */
+        .etiqueta {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .valor {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        /* ----- Botón Editar Perfil ----- */
+        .btn-editar {
+            align-self: center;
+            /* Se centra relativo a este bloque de info */
+            background: linear-gradient(180deg, #7adfc9 0%, #46c1a8 100%);
+            border: none;
+            color: #1b6d57;
+            /* Texto verde oscuro */
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-editar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
 </head>
+
 <body>
 
-    <header class="header-verde">
-        <div style="text-align: center; cursor: pointer;">
-            <i class="fas fa-reply"></i><br>
-            <small>Volver</small>
-        </div>
-        <i class="fas fa-times-circle" style="font-size: 1.5rem; cursor: pointer;"></i>
-    </header>
+    <!-- Header Verde Superior -->
+    <div class="top-bar">
+        <!-- Volver atrás usando el historial de Windows -->
+        <button class="btn-nav volver" onclick="window.history.back()">
+            <i class="fa-solid fa-reply"></i> Volver
+        </button>
+        <!-- Icono de cerrar que dirige a una parte segura de forma preventiva, como localhost:port/ o /dashboard -->
+        <button class="btn-nav close" onclick="window.location.href='/'">
+            <i class="fa-regular fa-circle-xmark"></i>
+        </button>
+    </div>
 
-    <div class="contenedor-perfil">
-        <h1 style="text-align: left; margin-left: 10%; color: #333;">Mi perfil</h1>
+    <!-- Contenido Principal -->
+    <div class="main-container">
+        <!-- Tarjeta Blanca Principal -->
+        <div class="ventana">
+            <h1 class="titulo">Mi perfil</h1>
 
-        <div class="tarjeta-identidad">
-            <div class="avatar-circular">
-                <i class="fas fa-user text-gray-400" style="font-size: 3rem; color: #999;"></i>
+            <div class="contenido-perfil">
+                <div class="bloque-info">
+
+                    <!-- Tarjeta con Nombre y Email -->
+                    <div class="tarjeta-verde">
+                        <div class="avatar">
+                            <!-- Ejemplo en Node con EJS para poner la imagen. Por defecto usa FontAwesome. -->
+                            <!-- <img src="<%= typeof asesor !== 'undefined' ? asesor.fotoUrl : '/imgs/default-user.jpg' %>" alt="Foto"> -->
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="info-usuario">
+                            <!-- Valores inyectados por Node/EJS dinámicamente -->
+                            <h2>
+                                <%= typeof asesor !=='undefined' && asesor.nombre ? asesor.nombre : 'Mariana Rodriguez'
+                                    %>
+                            </h2>
+                            <p>
+                                <%= typeof asesor !=='undefined' && asesor.correo ? asesor.correo
+                                    : 'marianarp@utsjr.edu.mx' %>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Datos Generales -->
+                    <div class="etiqueta">Carrera:</div>
+                    <div class="valor">
+                        <%= typeof asesor !=='undefined' && asesor.carrera ? asesor.carrera
+                            : 'Tecnologías de la información' %>
+                    </div>
+
+                    <div class="etiqueta">Cuatrimestre</div>
+                    <div class="valor">
+                        <%= typeof asesor !=='undefined' && asesor.cuatrimestre ? asesor.cuatrimestre
+                            : '3º cuatrimestre' %>
+                    </div>
+
+                    <button class="btn-editar" onclick="window.location.href='/editar-perfil'">Editar perfil</button>
+                </div>
             </div>
-            <div style="text-align: left;">
-                <h2 style="margin: 0;">Mariana Rodriguez</h2>
-                <p style="margin: 5px 0; font-size: 0.9rem; opacity: 0.9;">marianarp@utsjr.edu.mx</p>
-            </div>
         </div>
-
-        <div class="info-academica">
-            <p><strong>Carrera:</strong></p>
-            <p style="color: #666;">Tecnologías de la información</p>
-            
-            <p style="margin-top: 20px;"><strong>Cuatrimestre</strong></p>
-            <p style="color: #666;">3º cuatrimestre</p>
-        </div>
-
-        <button class="btn-editar">Editar perfil</button>
     </div>
 
 </body>
+
 </html>

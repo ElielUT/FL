@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Asesorado</title>
+    <!-- Fuente Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome para los íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ----- Barra Superior (Header) ----- */
+        .header {
+            background-color: #0fb88f;
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left .title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-left .subtitle {
+            font-size: 15px;
+            font-weight: 700;
+            opacity: 0.95;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            gap: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item:hover {
+            opacity: 0.8;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .divider {
+            width: 1px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 0 5px;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-close:hover {
+            transform: scale(1.1);
+        }
+
+        /* ----- Contenido Principal ----- */
+        .container {
+            flex: 1;
+            padding: 50px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        /* --- Lado Izquierdo --- */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .btn-solicitar {
+            background-color: #0fb88f;
+            color: white;
+            border-radius: 16px;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-decoration: none;
+            width: fit-content;
+            box-shadow: 0 8px 15px rgba(15, 184, 143, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .btn-solicitar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(15, 184, 143, 0.25);
+        }
+
+        .btn-solicitar .icon-wrapper {
+            width: 35px;
+            height: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-solicitar i {
+            font-size: 16px;
+        }
+
+        .btn-solicitar span {
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.2;
+            max-width: 120px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border: 2px dashed #64d1b3;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            min-height: 120px;
+        }
+
+        .stat-header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .stat-header span {
+            font-size: 13px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        .stat-icon {
+            font-size: 22px;
+        }
+
+        .icon-cal { color: #8faebe; }
+        .icon-check { color: #5bcdae; border-radius: 50%; }
+        .icon-star { color: #8dedcf; }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 500;
+            color: #000;
+            margin-top: 15px;
+            line-height: 1;
+        }
+
+        /* --- Lado Derecho --- */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 15px;
+        }
+
+        .asesorias-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Scrollbar visual hint */
+            padding-right: 15px;
+            position: relative;
+        }
+
+        /* Simulación del scrollbar sugerido por el diseño */
+        .scroll-track {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background-color: transparent;
+            border-radius: 10px;
+        }
+        
+        .scroll-thumb {
+            position: absolute;
+            right: 0;
+            top: 20px;
+            height: 40px;
+            width: 6px;
+            background-color: #d1d5db;
+            border-radius: 10px;
+        }
+
+        .asesoria-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f3f5;
+            position: relative;
+        }
+
+        .btn-cancelar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-cancelar:hover {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 4px;
+            padding-right: 30px;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a0b2bd;
+        }
+
+        .info-item i {
+            font-size: 16px;
+            color: #0fb88f; /* Íconos base en color teal */
+        }
+
+        .badge-pendiente {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: #fce789;
+            color: #bfa000;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        @media (max-width: 950px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 30px 20px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="title">Panel de asesorado</h1>
+            <div class="subtitle">
+                <%= typeof usuario !== 'undefined' && usuario.nombre ? usuario.nombre : 'Nombre del usuario' %>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <a href="/perfil-asesorado" class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="/borrarSesion" class="nav-item">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Salir</span>
+            </a>
+            <button class="btn-close" onclick="window.location.href='/'">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        
+        <!-- --- Left Panel --- -->
+        <div class="left-panel">
+            
+            <a href="/solicitarAsesoria" class="btn-solicitar">
+                <div class="icon-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <span>Solicitar nueva asesoría</span>
+            </a>
+
+            <div class="stats-grid">
+                <!-- Pendientes -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Pendientes</span>
+                        <i class="fa-regular fa-calendar stat-icon icon-cal"></i>
+                    </div>
+                    <div class="stat-number">
+                        <%= typeof estadisticas !== 'undefined' ? estadisticas.pendientes : '1' %>
+                    </div>
+                </div>
+
+                <!-- Aceptadas -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Aceptadas</span>
+                        <i class="fa-regular fa-circle-check stat-icon icon-check"></i>
+                    </div>
+                    <div class="stat-number">
+                        <%= typeof estadisticas !== 'undefined' ? estadisticas.aceptadas : '1' %>
+                    </div>
+                </div>
+
+                <!-- Completadas -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Completadas</span>
+                        <i class="fa-solid fa-star stat-icon icon-star"></i>
+                    </div>
+                    <div class="stat-number">
+                        <%= typeof estadisticas !== 'undefined' ? estadisticas.completadas : '1' %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- --- Right Panel --- -->
+        <div class="right-panel">
+            
+            <!-- Programadas -->
+            <div>
+                <h2 class="section-title">Asesorías programadas</h2>
+                <div class="asesorias-lista">
+                    <div class="scroll-track"><div class="scroll-thumb"></div></div>
+                    
+                    <% if (typeof asesoriasProgramadas !== 'undefined' && asesoriasProgramadas.length > 0) { %>
+                        <% asesoriasProgramadas.forEach(function(asesoria) { %>
+                            <div class="asesoria-card">
+                                <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                                <div class="card-title"><%= asesoria.materia %></div>
+                                <div class="card-subtitle">Asesor: <%= asesoria.asesor %></div>
+                                <div class="card-footer">
+                                    <div class="info-item">
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                        <%= asesoria.fecha %>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <%= asesoria.hora %> hrs
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <!-- Dummy Cards based on design -->
+                        <div class="asesoria-card">
+                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                            <div class="card-title">Programación Orientada a Objetos</div>
+                            <div class="card-subtitle">Asesor: Eimi Camila Cervantes</div>
+                            <div class="card-footer">
+                                <div class="info-item">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    09/03/26
+                                </div>
+                                <div class="info-item">
+                                    <i class="fa-solid fa-clock"></i>
+                                    14:00 hrs
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="asesoria-card">
+                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                            <div class="card-title">Bases de datos</div>
+                            <div class="card-subtitle">Asesor: Eliel Priske Alanis</div>
+                            <div class="card-footer">
+                                <div class="info-item">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    09/03/26
+                                </div>
+                                <div class="info-item">
+                                    <i class="fa-solid fa-clock"></i>
+                                    13:00 hrs
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                    
+                </div>
+            </div>
+
+            <!-- Pendientes -->
+            <div style="margin-top: 5px;">
+                <h2 class="section-title">Solicitudes pendientes</h2>
+                <div class="asesorias-lista">
+                    <div class="scroll-track"><div class="scroll-thumb"></div></div>
+
+                    <% if (typeof solicitudesPendientes !== 'undefined' && solicitudesPendientes.length > 0) { %>
+                        <% solicitudesPendientes.forEach(function(asesoria) { %>
+                            <div class="asesoria-card">
+                                <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                                <div class="card-title"><%= asesoria.materia %></div>
+                                <div class="card-subtitle">Asesor: <%= asesoria.asesor %></div>
+                                <div class="card-footer">
+                                    <div class="info-item">
+                                        <i class="fa-regular fa-calendar-days"></i>
+                                        <%= asesoria.fecha %>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fa-solid fa-clock"></i>
+                                        <%= asesoria.hora %> hrs
+                                    </div>
+                                </div>
+                                <div class="badge-pendiente">Pendiente</div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <!-- Dummy Card based on design -->
+                        <div class="asesoria-card">
+                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                            <div class="card-title">Proyecto integrador</div>
+                            <div class="card-subtitle">Asesor: Yael Izaid Meza</div>
+                            <div class="card-footer">
+                                <div class="info-item">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    09/03/26
+                                </div>
+                                <div class="info-item">
+                                    <i class="fa-solid fa-clock"></i>
+                                    15:00 hrs
+                                </div>
+                            </div>
+                            <div class="badge-pendiente">Pendiente</div>
+                        </div>
+                    <% } %>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

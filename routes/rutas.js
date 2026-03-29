@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
             res.send("¡Inicio de sesión exitoso! (Tutor)");
         } else if (data.Inicio === 2) {
             req.session.usuario = data.Inicio;
-            res.send("¡Inicio de sesión exitoso! (Alumno)");
+            res.redirect("/panelAsesorado");
         } else if (data.Inicio === 3) {
             req.session.usuario = data.Inicio;
             res.redirect("/panelAdmin");
@@ -150,7 +150,7 @@ router.get('/perfil-asesorado', (req, res) => {
 
 // En rutas.js
 router.get('/editar-perfil', (req, res) => {
-    res.render('editarperfil');
+    res.render('editarperfilasesorado');
 });
 
 router.post('/guardar-perfil', (req, res) => {
@@ -231,6 +231,18 @@ router.get("/borrarSesion", (req, res) => {
 
 router.get('/solicitarAsesoria', (req, res) => {
     res.render('solicitarAsesoria');
+});
+
+router.get('/panelAsesorado', (req, res) => {
+    // Puedes quitar la validación de sesión si estás probando, pero esto lo protege
+    if (req.session.usuario == 2) {
+        res.render('panelAsesorado');
+    } else {
+        // Si no es nivel 2 (alumno), puede que quieras mandarlo a un panel distinto
+        // Para pruebas, si no funciona el login descomenta la línea de abajo y comenta el rest:
+        // res.render('panelAsesorado');
+        res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
 });
 
 router.get("/perfil-asesor", (req, res) => {
