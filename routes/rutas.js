@@ -249,5 +249,12 @@ router.get("/perfil-asesor", (req, res) => {
     res.render("perfilasesor");
 });
 
-export default router;
+router.get("/historialAsesorias", (req, res) => {
+    res.render("historialAsesorias");
+});
 
+router.get("/solicitudesDisponibles", (req, res) => {
+    res.render("solicitudesDisponibles");
+});
+
+export default router;
