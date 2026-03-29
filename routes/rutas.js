@@ -1,7 +1,11 @@
 import { Router } from "express";
 import 'dotenv/config';
 import session from "express-session";
+import { createClient } from '@supabase/supabase-js';
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const router = Router();
 
@@ -13,6 +17,21 @@ router.post("/", async (req, res) => {
     const { correo, contraseña } = req.body;
 
     try {
+        if (correo !== "admin") {
+            const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({
+                email: correo,
+                password: contraseña,
+            });
+
+            if (supaError) {
+                if (supaError.message.includes("Email not confirmed")) {
+                    return res.render("index", { error: "📧 Tu correo no ha sido verificado. Revisa tu bandeja de entrada." });
+                } else {
+                    return res.render("index", { error: "Credenciales incorrectas" });
+                }
+            }
+        }
+
         const response = await fetch("http://localhost:8000/usuarios/inicio", {
             method: "POST",
             headers: {
