@@ -286,19 +286,19 @@
         btnsEliminar.forEach(btn => {
             btn.addEventListener("click", () => {
                 const idUsuario = btn.parentElement.id;
-                console.log(idUsuario);
+                eliminarUsuario(parseInt(idUsuario));
             });
         });
         const eliminarUsuario = async (idUsuario) => {
-            const respuesta = await fetch("http://localhost:8000/usuarios/eliminarUsuario", {
-                method: "DELETE",
+            const respuesta = await fetch("http://localhost:8000/usuarios/eliminarUsuario/" + idUsuario, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ id_usuario: idUsuario })
+                }
             });
             const data = await respuesta.json();
             console.log(data);
+            window.location.reload();
         }
 
 

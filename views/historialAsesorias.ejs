@@ -1,0 +1,130 @@
+<%- include('templates/header.ejs') %>
+
+    <div class="supervisar-container">
+        <div class="supervisar-header">
+            <h1>Historial de asesorías</h1>
+            <p>Registro de todas las sesiones completadas</p>
+        </div>
+
+        <!-- Indicadores / Estadísticas -->
+        <div class="supervisar-stats">
+            <div class="stat-card">
+                <div class="card-header-info">
+                    <h4>Total de sesiones</h4>
+                    <i class="fas fa-history icon-total fa-lg"></i>
+                </div>
+                <p>1</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-header-info">
+                    <h4>Tiempo total</h4>
+                    <i class="far fa-clock icon-total fa-lg"></i>
+                </div>
+                <p>1 h 30 min</p>
+            </div>
+        </div>
+
+        <!-- Vista de Historial / Asesorias Grid -->
+        <div class="asesorias-grid">
+            <div class="asesoria-card" style="cursor: pointer;" onclick="abrirModal()">
+                <!-- Título y Estado -->
+                <div class="card-header-info">
+                    <h3>Proyecto integrador</h3>
+                    <span class="status-badge badge-green">Completada</span>
+                </div>
+
+                <!-- Integrantes / Tema -->
+                <div class="card-users">
+                    <span>
+                        Estudiante: Yael Izaid Meza
+                        <br>
+                        Tema: Capítulo 3
+                    </span>
+                </div>
+
+                <!-- Fecha y hora y Calificación en el footer de la tarjeta -->
+                <div class="card-footer">
+                    <div class="card-datetime">
+                        <span><i class="far fa-calendar-alt"></i> 09/03/26</span>
+                        <span><i class="far fa-clock"></i> 90 min</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <i class="fas fa-paw"></i>
+                        <small>5/5</small>
+                    </div>
+                </div>
+
+                <!-- Comentario de evaluación -->
+                <div class="card-eval">
+                    <div class="eval-comment">"Excelente explicación, muy clara y con buenos ejemplos..."</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal (oculto usando clases del CSS global) -->
+    <div id="modalAsesoria" class="editarUsuario ocultar">
+        <div class="asesoria-card" style="width: 90%; max-width: 600px;">
+            <div class="card-header-info">
+                <h3 style="font-size: 1.5rem;">Proyecto integrador</h3>
+                <span class="status-badge badge-green">Completada</span>
+            </div>
+
+            <div class="card-users" style="font-size: 1rem; margin-top: 10px;">
+                <span>
+                    Estudiante: Yael Izaid Meza
+                    <br>
+                    Tema: Capítulo 3
+                </span>
+            </div>
+
+            <div class="card-footer" style="margin-top: 20px;">
+                <div class="card-datetime" style="font-size: 1rem;">
+                    <span><i class="far fa-calendar-alt"></i> 09/03/26</span>
+                    <span><i class="far fa-clock"></i> 90 min</span>
+                </div>
+                <div style="font-size: 1.2rem;">
+                    <i class="fas fa-paw"></i>
+                    <i class="fas fa-paw"></i>
+                    <i class="fas fa-paw"></i>
+                    <i class="fas fa-paw"></i>
+                    <i class="fas fa-paw"></i>
+                    <small>5/5</small>
+                </div>
+            </div>
+
+            <div class="card-eval" style="padding: 20px; margin-top: 20px;">
+                <div class="eval-comment" style="font-size: 1rem;">"Excelente explicación, muy clara y con buenos
+                    ejemplos. Pude resolver el problema de mi proyecto integrador a tiempo y el asesor fue muy empático
+                    y paciente durante toda la resolución de dudas que tuve sobre los capítulos más técnicos del
+                    avance."</div>
+            </div>
+
+            <div class="contenedor-botones" style="margin-top: 20px;">
+                <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cerrar detalles</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            document.getElementById('modalAsesoria').classList.remove('ocultar');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalAsesoria').classList.add('ocultar');
+        }
+
+        // Cerrar si se da click fuera del cuadro blanco
+        document.getElementById('modalAsesoria').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
+    </script>
+
+    <%- include('templates/footer.ejs') %>

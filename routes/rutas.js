@@ -1,7 +1,11 @@
 import { Router } from "express";
 import 'dotenv/config';
 import session from "express-session";
+import { createClient } from '@supabase/supabase-js';
 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const router = Router();
 
@@ -13,6 +17,21 @@ router.post("/", async (req, res) => {
     const { correo, contraseña } = req.body;
 
     try {
+        if (correo !== "admin") {
+            const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({
+                email: correo,
+                password: contraseña,
+            });
+
+            if (supaError) {
+                if (supaError.message.includes("Email not confirmed")) {
+                    return res.render("index", { error: "📧 Tu correo no ha sido verificado. Revisa tu bandeja de entrada." });
+                } else {
+                    return res.render("index", { error: "Credenciales incorrectas" });
+                }
+            }
+        }
+
         const response = await fetch("http://localhost:8000/usuarios/inicio", {
             method: "POST",
             headers: {
@@ -25,17 +44,21 @@ router.post("/", async (req, res) => {
 
         // El backend responde {"Inicio": 1} para tutor, 2 alumno, 3 admin. False si falla.
         if (data.Inicio === 1) {
-            // Guardar usuario en sesión si lo deseas
+            // Guardar usuario en sesión
             req.session.usuario = data.Inicio;
-
-            // Redirigir según el rol o al inicio
-            res.send("¡Inicio de sesión exitoso! (Tutor)");
+            req.session.save(() => {
+                res.send("¡Inicio de sesión exitoso! (Tutor)");
+            });
         } else if (data.Inicio === 2) {
             req.session.usuario = data.Inicio;
-            res.redirect("/panelAsesorado");
+            req.session.save(() => {
+                res.redirect("/panelAsesorado");
+            });
         } else if (data.Inicio === 3) {
             req.session.usuario = data.Inicio;
-            res.redirect("/panelAdmin");
+            req.session.save(() => {
+                res.redirect("/panelAdmin");
+            });
         } else {
             // Caso de error en credenciales
             res.render("index", { error: "Correo o contraseña incorrectos" });
@@ -165,31 +188,36 @@ router.post('/guardar-perfil', (req, res) => {
 
 router.get('/panelAdmin', async (req, res) => {
     if (req.session.usuario == 3) {
-        const respuesta = await fetch("http://127.0.0.1:8000/usuarios/cantidadUsuarios", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const data = await respuesta.json();
-        const usuarios = data.Total;
-        const adsesores = data.Asesores;
-        const asesorados = data.Asesorados;
-        const administradores = data.Administradores;
+        try {
+            const [respuestaUsuarios, respuestaEstadisticas] = await Promise.all([
+                fetch("http://127.0.0.1:8000/usuarios/cantidadUsuarios", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                }),
+                fetch("http://127.0.0.1:8000/toma/estadisticas", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                })
+            ]);
 
-        const respuesta2 = await fetch("http://127.0.0.1:8000/toma/estadisticas", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const data2 = await respuesta2.json();
-        const totalAsesorias = data2.totales;
-        const pendientes = data2.pendientes;
-        const aceptadas = data2.aceptadas;
-        const completadas = data2.completadas;
+            const dataUsuarios = await respuestaUsuarios.json();
+            const dataEstadisticas = await respuestaEstadisticas.json();
 
-        res.render('panelAdmin', { rol: "Administrador", usuarios: usuarios, adsesores: adsesores, asesorados: asesorados, administradores: administradores, totalAsesorias: totalAsesorias, pendientes: pendientes, aceptadas: aceptadas, completadas: completadas });
+            res.render('panelAdmin', {
+                rol: "Administrador",
+                usuarios: dataUsuarios.Total,
+                adsesores: dataUsuarios.Asesores,
+                asesorados: dataUsuarios.Asesorados,
+                administradores: dataUsuarios.Administradores,
+                totalAsesorias: dataEstadisticas.totales,
+                pendientes: dataEstadisticas.pendientes,
+                aceptadas: dataEstadisticas.aceptadas,
+                completadas: dataEstadisticas.completadas
+            });
+        } catch (error) {
+            console.error("Error fetching admin data:", error);
+            res.render("index", { error: "Error al cargar datos del panel" });
+        }
     } else {
         res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
@@ -198,25 +226,27 @@ router.get('/panelAdmin', async (req, res) => {
 router.get('/supervisarAsesorias', async (req, res) => {
     if (req.session.usuario == 3) {
         try {
-            const respuestaEstadisticas = await fetch("http://127.0.0.1:8000/toma/estadisticas", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
-            const dataEstadisticas = await respuestaEstadisticas.json();
+            const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
+                fetch("http://127.0.0.1:8000/toma/estadisticas", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                }),
+                fetch("http://127.0.0.1:8000/toma/mostrarToma/", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                })
+            ]);
 
-            const respuestaTomas = await fetch("http://127.0.0.1:8000/toma/mostrarToma/", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            });
+            const dataEstadisticas = await respuestaEstadisticas.json();
             const dataTomas = await respuestaTomas.json();
 
-            res.render('supervisarAsesorias', { 
-                estadisticas: dataEstadisticas, 
-                asesorias: dataTomas.items || [] 
+            res.render('supervisarAsesorias', {
+                estadisticas: dataEstadisticas,
+                asesorias: dataTomas.items || []
             });
         } catch (error) {
             console.error("Error fetching supervisar data:", error);
-            res.render('supervisarAsesorias', { estadisticas: {totales:0, pendientes:0, aceptadas:0, completadas:0}, asesorias: [] });
+            res.render('supervisarAsesorias', { estadisticas: { totales: 0, pendientes: 0, aceptadas: 0, completadas: 0 }, asesorias: [] });
         }
     } else {
         res.render("index", { error: "No tienes permiso para acceder a esta página" });
@@ -247,8 +277,15 @@ router.get('/panelAsesorado', (req, res) => {
 
 router.get("/perfil-asesor", (req, res) => {
     // Aquí podrías pasar datos reales desde una DB más adelante
-    res.render("perfilasesor"); 
+    res.render("perfilasesor");
+});
+
+router.get("/historialAsesorias", (req, res) => {
+    res.render("historialAsesorias");
+});
+
+router.get("/solicitudesDisponibles", (req, res) => {
+    res.render("solicitudesDisponibles");
 });
 
 export default router;
-

@@ -3,9 +3,11 @@ import session from "express-session";
 import rutas from "./routes/rutas.js"
 import 'dotenv/config';
 import cors from "cors";
+import compression from "compression";
 
 const app = express();
 
+app.use(compression());
 //BACKEND
 app.use(cors());
 app.use(express.json());
