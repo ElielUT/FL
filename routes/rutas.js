@@ -405,6 +405,4 @@ router.get("/solicitudesDisponibles", (req, res) => {
     res.render("solicitudesDisponibles");
 });
 
-const axios = require('axios');
-
 export default router;
