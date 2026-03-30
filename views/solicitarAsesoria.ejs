@@ -15,31 +15,20 @@
     </div>
 
     <div class="materias-grid" id="materiasGrid">
-        <!-- Materias precargadas -->
-        <div class="materia-card" data-nombre="Programación Orientada a Objetos">
-            <h3>Programación Orientada a Objetos</h3>
-            <p>Ingeniería de Software</p>
-        </div>
-        <div class="materia-card" data-nombre="Cálculo diferencial">
-            <h3>Cálculo diferencial</h3>
-            <p>Tronco común</p>
-        </div>
-        <div class="materia-card" data-nombre="Probabilidad y estadística">
-            <h3>Probabilidad y estadística</h3>
-            <p>Tronco común</p>
-        </div>
-        <div class="materia-card" data-nombre="Física I">
-            <h3>Física I</h3>
-            <p>Tronco común</p>
-        </div>
-        <div class="materia-card" data-nombre="Bases de datos">
-            <h3>Bases de datos</h3>
-            <p>Ingeniería de Software</p>
-        </div>
-        <div class="materia-card" data-nombre="Estructura de datos">
-            <h3>Estructura de datos</h3>
-            <p>Ingeniería de Software</p>
-        </div>
+        <% if (materias && materias.length > 0) { %>
+            <% materias.forEach(materia => { %>
+                <div class="materia-card" 
+                     data-id="<%= materia.id_materia %>" 
+                     data-nombre="<%= materia.nombre %>">
+                    <h3><%= materia.nombre %></h3>
+                    <p><%= materia.carrera %> - <%= materia.cuatrimestre %>° Cuatrimestre</p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="no-materias">
+                <p>No hay materias disponibles en este momento.</p>
+            </div>
+        <% } %>
     </div>
 
     <div class="no-resultados" id="noResultados" style="display: none;">
@@ -88,8 +77,9 @@
     // Redirección al hacer clic en una materia
     document.querySelectorAll('.materia-card').forEach(card => {
         card.addEventListener('click', () => {
-            const materia = card.getAttribute('data-nombre');
-            window.location.href = `/agendar-asesoria?materia=${encodeURIComponent(materia)}`;
+            const materiaId = card.getAttribute('data-id');
+            const materiaNombre = card.getAttribute('data-nombre');
+            window.location.href = `/agendar-asesoria?id=${materiaId}&nombre=${encodeURIComponent(materiaNombre)}`;
         });
     });
 </script>

@@ -1,0 +1,199 @@
+<%- include('templates/header.ejs') %>
+
+<div class="agendar-container">
+    <div class="agendar-header">
+        <h1>Agendar asesoría</h1>
+        <p>Completa los siguientes datos para programar tu asesoría</p>
+    </div>
+
+    <div class="agendar-card">
+        <div class="materia-info">
+            <h2><%= materiaNombre %></h2>
+            <p>ID de materia: <%= materiaId %></p>
+        </div>
+
+        <form action="/crear-solicitud" method="POST" class="agendar-form">
+            <input type="hidden" name="materiaId" value="<%= materiaId %>">
+            <input type="hidden" name="materiaNombre" value="<%= materiaNombre %>">
+
+            <div class="form-group">
+                <label for="asesor">Selecciona un asesor:</label>
+                <select name="id_asesor" id="asesor" required>
+                    <option value="">-- Selecciona un asesor --</option>
+                    <% if (asesores && asesores.length > 0) { %>
+                        <% asesores.forEach(asesor => { %>
+                            <option value="<%= asesor.id_asesor %>">
+                                <%= asesor.usuario ? asesor.usuario.nombres + ' ' + asesor.usuario.apellidos : 'Asesor ID: ' + asesor.id_asesor %>
+                                - <%= asesor.carrera %>
+                            </option>
+                        <% }) %>
+                    <% } else { %>
+                        <option value="" disabled>No hay asesores disponibles para esta materia</option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tema">Tema de la asesoría:</label>
+                <textarea name="tema" id="tema" rows="3" placeholder="Describe brevemente el tema que necesitas ayuda..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha">Fecha preferida:</label>
+                <input type="date" name="fecha" id="fecha" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="hora_in">Hora de inicio:</label>
+                    <input type="time" name="hora_in" id="hora_in" step="1800" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora_fin">Hora de fin:</label>
+                    <input type="time" name="hora_fin" id="hora_fin" step="1800" required>
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button type="button" class="btn-cancelar" onclick="window.history.back()">Cancelar</button>
+                <button type="submit" class="btn-guardar" <%= (asesores && asesores.length > 0) ? '' : 'disabled' %>>Enviar solicitud</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.agendar-container {
+    width: 90%;
+    max-width: 700px;
+    margin: 40px auto;
+}
+
+.agendar-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.agendar-header p {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.agendar-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.materia-info {
+    background: #f0f7f5;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border-left: 4px solid var(--clr-admin);
+}
+
+.materia-info h2 {
+    margin: 0 0 5px 0;
+    color: var(--clr-admin);
+}
+
+.materia-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.agendar-form .form-group {
+    margin-bottom: 20px;
+}
+
+.agendar-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.agendar-form select,
+.agendar-form textarea,
+.agendar-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.agendar-form select:focus,
+.agendar-form textarea:focus,
+.agendar-form input:focus {
+    outline: none;
+    border-color: var(--clr-admin);
+    box-shadow: 0 0 0 3px rgba(0, 161, 133, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.botones-accion {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-cancelar {
+    background: #e0e0e0;
+    color: #666;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-guardar {
+    background: linear-gradient(90deg, var(--clr-admin), #4db6ac);
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-guardar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+    // Validar que hora_fin sea después de hora_in
+    const horaIn = document.getElementById('hora_in');
+    const horaFin = document.getElementById('hora_fin');
+
+    function validarHoras() {
+        if (horaIn.value && horaFin.value) {
+            if (horaFin.value <= horaIn.value) {
+                horaFin.setCustomValidity('La hora de fin debe ser después de la hora de inicio');
+            } else {
+                horaFin.setCustomValidity('');
+            }
+        }
+    }
+
+    horaIn.addEventListener('change', validarHoras);
+    horaFin.addEventListener('change', validarHoras);
+</script>
+
+<%- include('templates/footer.ejs') %>

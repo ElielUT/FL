@@ -983,3 +983,11 @@ SOLICITAR ASESORÍA
     color: #aaa;
     font-size: 1rem;
 }
+
+/* Título en header panel */
+.titulo-panel h4 {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
