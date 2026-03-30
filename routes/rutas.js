@@ -187,7 +187,7 @@ router.get('/panelAdmin', async (req, res) => {
     if (req.session.usuario !== 3) {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
-    
+
     try {
         const [respuestaUsuarios, respuestaEstadisticas] = await Promise.all([
             fetch("http://127.0.0.1:8000/usuarios/cantidadUsuarios", {
@@ -224,7 +224,7 @@ router.get('/supervisarAsesorias', async (req, res) => {
     if (req.session.usuario !== 3) {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
-    
+
     try {
         const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
             fetch("http://127.0.0.1:8000/toma/estadisticas", {
