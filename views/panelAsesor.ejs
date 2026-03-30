@@ -1,0 +1,444 @@
+<%- include('templates/headerPanel.ejs', { rol: "Asesor" }) %>
+<div class="panel-asesor-container">
+    <div class="panel-header">
+        <h1>Panel de asesor</h1>
+        <p>Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
+    </div>
+
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon pendientes-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Solicitudes pendientes</h3>
+                <p class="stat-number"><%= pendientes %></p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon completadas-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Asesorías completadas</h3>
+                <p class="stat-number"><%= completadas %></p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon calificacion-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-info">
+                <h3>Calificación promedio</h3>
+                <p class="stat-number"><%= calificacionPromedio %></p>
+                <div class="stars">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                        <% if (i <= Math.round(calificacionPromedio)) { %>
+                            <i class="fas fa-paw"></i>
+                        <% } else { %>
+                            <i class="far fa-paw"></i>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Próximas asesorías -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Próximas asesorías</h2>
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="card-body">
+                <% if (proximasAsesorias && proximasAsesorias.length > 0) { %>
+                    <% proximasAsesorias.forEach(asesoria => { %>
+                        <div class="asesoria-item">
+                            <div class="asesoria-info">
+                                <h3><%= asesoria.materia %></h3>
+                                <p><i class="fas fa-user"></i> Estudiante: <%= asesoria.estudiante %></p>
+                                <div class="fecha-hora">
+                                    <span><i class="fas fa-calendar"></i> <%= asesoria.fecha %></span>
+                                    <span><i class="fas fa-clock"></i> <%= asesoria.hora %> hrs</span>
+                                </div>
+                            </div>
+                            <button class="btn-registrar" onclick="registrarAsesoria('<%= asesoria.id_toma %>')">
+                                Registrar
+                            </button>
+                        </div>
+                    <% }) %>    
+                <% } else { %>
+                    <p class="sin-datos">No hay próximas asesorías</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Evaluaciones recientes -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h2>Evaluaciones recientes</h2>
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="card-body">
+                <% if (evaluacionesRecientes && evaluacionesRecientes.length > 0) { %>
+                    <% evaluacionesRecientes.forEach(evaluacion => { %>
+                        <div class="evaluacion-item">
+                            <div class="evaluacion-header">
+                                <h3><%= evaluacion.materia %></h3>
+                                <div class="calificacion">
+                                    <%= evaluacion.calificacion %>/5
+                                    <i class="fas fa-paw"></i>
+                                </div>
+                            </div>
+                            <p><i class="fas fa-user"></i> Estudiante: <%= evaluacion.estudiante %></p>
+                            <p class="comentario">"<%= evaluacion.comentario %>"</p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="sin-datos">No hay evaluaciones recientes</p>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Solicitudes pendientes -->
+        <div class="dashboard-card full-width">
+            <div class="card-header">
+                <h2>Solicitudes pendientes</h2>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="card-body">
+                <% if (solicitudesPendientes && solicitudesPendientes.length > 0) { %>
+                    <div class="solicitudes-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Materia</th>
+                                    <th>Estudiante</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% solicitudesPendientes.forEach(solicitud => { %>
+                                    <tr>
+                                        <td><%= solicitud.materia %></td>
+                                        <td><%= solicitud.estudiante %></td>
+                                        <td><%= solicitud.fecha %></td>
+                                        <td><%= solicitud.hora %></td>
+                                        <td class="acciones">
+                                            <button class="btn-aceptar" onclick="aceptarSolicitud('<%= solicitud.id_toma %>')">
+                                                <i class="fas fa-check"></i> Aceptar
+                                            </button>
+                                            <button class="btn-rechazar" onclick="rechazarSolicitud('<%= solicitud.id_toma %>')">
+                                                <i class="fas fa-times"></i> Rechazar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <p class="sin-datos">No hay solicitudes pendientes</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.panel-asesor-container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.panel-header {
+    margin-bottom: 30px;
+}
+
+.panel-header h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.panel-header p {
+    color: #666;
+}
+
+/* Tarjetas de estadísticas */
+.stats-cards {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+}
+
+.pendientes-icon {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.completadas-icon {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+}
+
+.calificacion-icon {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.stat-info h3 {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.stars {
+    color: #f1c40f;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* Grid principal */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 2px solid var(--clr-admin);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #333;
+}
+
+.card-header i {
+    font-size: 1.5rem;
+    color: var(--clr-admin);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Items de asesorías */
+.asesoria-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.asesoria-item:last-child {
+    border-bottom: none;
+}
+
+.asesoria-info h3 {
+    font-size: 1rem;
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.asesoria-info p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+.fecha-hora {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.btn-registrar {
+    background: linear-gradient(90deg, var(--clr-admin), #4db6ac);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: transform 0.2s;
+}
+
+.btn-registrar:hover {
+    transform: scale(1.05);
+}
+
+/* Evaluaciones */
+.evaluacion-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+}
+
+.evaluacion-item:last-child {
+    border-bottom: none;
+}
+
+.evaluacion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.evaluacion-header h3 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.calificacion {
+    color: #f1c40f;
+    font-weight: bold;
+}
+
+.comentario {
+    font-style: italic;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Tabla de solicitudes */
+.solicitudes-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 12px;
+    background: #f8f9fa;
+    color: #555;
+    font-weight: 600;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.acciones {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-aceptar {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.btn-rechazar {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.sin-datos {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+}
+</style>
+
+<script>
+    // Función para registrar asesoría (completar)
+    function registrarAsesoria(idToma) {
+        console.log("Registrar asesoría:", idToma);
+        alert("Función en desarrollo: Registrar asesoría " + idToma);
+    }
+
+    // Función para aceptar solicitud
+    function aceptarSolicitud(idToma) {
+        console.log("Aceptar solicitud:", idToma);
+        alert("Función en desarrollo: Aceptar solicitud " + idToma);
+    }
+
+    // Función para rechazar solicitud
+    function rechazarSolicitud(idToma) {
+        console.log("Rechazar solicitud:", idToma);
+        alert("Función en desarrollo: Rechazar solicitud " + idToma);
+    }
+
+    // Cargar nombre del usuario (desde sesión o backend)
+    // TODO: Obtener nombre real del asesor logueado
+    document.getElementById('nombreUsuario').innerText = "Asesor";
+</script>
+
+<%- include('templates/footer.ejs') %>
