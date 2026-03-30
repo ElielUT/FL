@@ -259,8 +259,27 @@ router.get("/borrarSesion", (req, res) => {
     res.redirect("/")
 })
 
-router.get('/solicitarAsesoria', (req, res) => {
-    res.render('solicitarAsesoria');
+router.get('/solicitarAsesoria', async (req, res) => {
+    if (req.session.usuario !== 2) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+
+    try {
+        const respuesta = await fetch("http://127.0.0.1:8000/materias", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await respuesta.json();
+        const materias = data.items || [];
+
+        res.render('solicitarAsesoria', { materias: materias });
+    } catch (error) {
+        console.error("Error al obtener materias:", error);
+        res.render('solicitarAsesoria', { materias: [] });
+    }
 });
 
 router.get('/panelAsesorado', (req, res) => {
