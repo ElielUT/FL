@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+const url_api = process.env.URL_API;
 
 const router = Router();
 
@@ -420,7 +421,7 @@ router.get('/panelAsesor', async (req, res) => {
 
         const pendientes = tomas.filter(t => !t.fecha).length;
         const completadas = tomas.filter(t => t.calificacion && t.calificacion > 0).length;
-        
+
         let calificacionPromedio = 0;
         if (respuestaCalificaciones.ok) {
             const dataCalif = await respuestaCalificaciones.json();
