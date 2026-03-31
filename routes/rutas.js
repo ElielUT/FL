@@ -45,11 +45,15 @@ router.post("/", async (req, res) => {
         // El backend responde {"Inicio": 1} para asesor, 2 asesorado, 3 admin
         if (data.Inicio === 1) {
             req.session.usuario = data.Inicio;
+            req.session.id_usuario = data.id;
+            req.session.correo = correo;
             req.session.save(() => {
                 res.redirect("/panelAsesor");
             });
         } else if (data.Inicio === 2) {
             req.session.usuario = data.Inicio;
+            req.session.id_usuario = data.id;
+            req.session.correo = correo;
             req.session.save(() => {
                 res.redirect("/panelAsesorado");
             });
@@ -161,22 +165,224 @@ router.post("/gestionUsuarios", async (req, res) => {
     res.render("gestionUsuarios", { usuarios: usuarios });
 });
 
-router.get('/perfil-asesor', (req, res) => {
-    res.render('perfilasesor');
+router.get('/perfil-asesor', async (req, res) => {
+    if (req.session.usuario !== 1) {
+        return res.render("index", { error: "Inicia sesión como asesor" });
+    }
+
+    try {
+        const correo = req.session.correo;
+        console.log("Cargando perfil para asesor:", correo);
+
+        // 1. Buscar el asesor por el correo del usuario
+        const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(correo)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        if (!resAsesor.ok) throw new Error(`Error API Asesor: ${resAsesor.status}`);
+        const dataAsesor = await resAsesor.json();
+        const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
+
+        if (!asesorInfo) throw new Error("No se encontró información del asesor en la base de datos");
+
+        // 2. Obtener datos del usuario
+        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${asesorInfo.id_usuario2}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataUser = await resUser.json();
+        const userInfo = dataUser.item;
+
+        if (!userInfo) throw new Error("No se encontró información del usuario");
+
+        // 3. Obtener disponibilidad
+        const resDisp = await fetch(`http://localhost:8000/disponibilidad/${asesorInfo.id_asesor}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataDisp = await resDisp.json();
+        const disponibilidad = dataDisp.items || [];
+
+        // 4. Preparar objeto para la vista
+        const datosVista = {
+            asesor: {
+                nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
+                correo: userInfo.correo,
+                carrera: asesorInfo.carrera,
+                cuatrimestre: userInfo.cuatrimestre + "º cuatrimestre",
+                disponibilidad: disponibilidad.map(d => `${d.dia} ${d.hora_inicio}-${d.hora_fin}`),
+                materias: [], // Eliminado el hardcode de "Bases de datos" y "POO"
+                calificacion: 0
+            }
+        };
+
+        res.render('perfilasesor', datosVista);
+    } catch (error) {
+        console.error("Error detallado al cargar perfil asesor:", error.message);
+        res.render('perfilasesor', { error: "Error al cargar datos reales. Se muestran datos locales." });
+    }
 });
 
-router.get('/perfil-asesorado', (req, res) => {
-    res.render('perfilasesorado');
+router.get('/perfil-asesorado', async (req, res) => {
+    if (req.session.usuario !== 2) {
+        return res.render("index", { error: "Inicia sesión como asesorado" });
+    }
+
+    try {
+        const id_usuario = req.session.id_usuario;
+        console.log("Cargando perfil para asesorado, id_usuario:", id_usuario);
+
+        if (!id_usuario) throw new Error("Sesión expirada o ID de usuario no encontrado. Por favor cierra sesión y vuelve a entrar.");
+
+        // 1. Obtener datos del usuario
+        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${id_usuario}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataUser = await resUser.json();
+        const userInfo = dataUser.item;
+
+        if (!userInfo) throw new Error("No se encontró información del usuario");
+
+        // 2. Buscar datos del alumno (carrera)
+        const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataAlumnos = await resAlumnos.json();
+        const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
+
+        const datosVista = {
+            asesor: {
+                nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
+                correo: userInfo.correo,
+                carrera: alumnoInfo ? alumnoInfo.carrera : "No especificada",
+                cuatrimestre: userInfo.cuatrimestre + "º cuatrimestre"
+            }
+        };
+
+        res.render('perfilasesorado', datosVista);
+    } catch (error) {
+        console.error("Error detallado al cargar perfil asesorado:", error.message);
+        res.render('perfilasesorado', { error: error.message });
+    }
 });
 
-router.get('/editar-perfil', (req, res) => {
-    res.render('editarperfilasesorado');
+router.get('/editar-perfil', async (req, res) => {
+    if (!req.session.usuario) {
+        return res.render("index", { error: "Inicia sesión para editar tu perfil" });
+    }
+
+    try {
+        const id_usuario = req.session.id_usuario;
+        
+        // 1. Obtener datos del usuario
+        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${id_usuario}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataUser = await resUser.json();
+        const userInfo = dataUser.item;
+
+        // 2. Buscar datos específicos (Alumno o Asesor)
+        let carrera = "No especificada";
+        if (req.session.usuario === 1) { // Asesor
+            const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAsesor = await resAsesor.json();
+            if (dataAsesor.items && dataAsesor.items[0]) {
+                carrera = dataAsesor.items[0].carrera;
+            }
+        } else if (req.session.usuario === 2) { // Asesorado
+            const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAlumnos = await resAlumnos.json();
+            const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
+            if (alumnoInfo) carrera = alumnoInfo.carrera;
+        }
+
+        const datosVista = {
+            asesor: {
+                nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
+                correo: userInfo.correo,
+                carrera: carrera,
+                cuatrimestre: userInfo.cuatrimestre
+            }
+        };
+
+        res.render('editarperfilasesorado', datosVista);
+    } catch (error) {
+        console.error("Error al cargar pantalla editar:", error);
+        res.redirect("/perfil-asesorado");
+    }
 });
 
-router.post('/guardar-perfil', (req, res) => {
+router.post('/guardar-perfil', async (req, res) => {
+    if (!req.session.usuario) return res.redirect("/");
+
     const { nombre, carrera, cuatrimestre } = req.body;
-    console.log(`Actualizando a: ${nombre}, ${carrera}, ${cuatrimestre}`);
-    res.redirect('/perfil-asesorado');
+    const id_usuario = req.session.id_usuario;
+
+    try {
+        // 1. Dividir nombre (asumimos espacio para apellidos)
+        const partes = nombre.trim().split(" ");
+        const nombres = partes[0];
+        const apellidos = partes.length > 1 ? partes.slice(1).join(" ") : "";
+
+        // 2. Actualizar Usuario (Nombre y Cuatrimestre)
+        const updateUsuario = await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombres,
+                apellidos,
+                cuatrimestre: parseInt(cuatrimestre)
+            })
+        });
+
+        // 3. Actualizar Tabla específica (Alumno o Asesor)
+        if (req.session.usuario === 2) { // Asesorado
+            const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAlumnos = await resAlumnos.json();
+            const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
+
+            if (alumnoInfo) {
+                await fetch(`http://localhost:8000/alumnos/${alumnoInfo.id_alumno}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ carrera })
+                });
+            }
+        } else if (req.session.usuario === 1) { // Asesor
+            const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAsesor = await resAsesor.json();
+            const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
+
+            if (asesorInfo) {
+                await fetch(`http://localhost:8000/asesores/actualizarAsesor/${asesorInfo.id_asesor}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ carrera })
+                });
+            }
+        }
+
+        res.redirect(req.session.usuario === 1 ? '/perfil-asesor' : '/perfil-asesorado');
+    } catch (error) {
+        console.error("Error al guardar perfil:", error);
+        res.redirect("/editar-perfil");
+    }
 });
 
 router.get('/panelAdmin', async (req, res) => {

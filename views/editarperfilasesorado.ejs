@@ -267,7 +267,7 @@
                                 <%= typeof asesor !=='undefined' && asesor.nombre ? asesor.nombre : 'Mariana Rodriguez' %>
                             </h2>
                             <p>
-                                <%= typeof asesor !=='undefined' && asesor.correo ? asesor.correo : 'marianarp@utsjr.edu.mx' %>
+                                <%= typeof asesor !=='undefined' && asesor.correo ? asesor.correo : 'Sin correo' %>
                             </p>
                         </div>
                     </div>
@@ -275,20 +275,22 @@
                     <!-- Campos del formulario -->
                     <div class="form-group">
                         <label>Nombre completo:</label>
-                        <input type="text" name="nombre" class="form-control" placeholder="Ingrese su nombre">
+                        <input type="text" name="nombre" class="form-control" placeholder="Ingrese su nombre" value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>">
                     </div>
 
                     <div class="form-group">
                         <label>Carrera:</label>
-                        <input type="text" name="carrera" class="form-control" placeholder="Ingrese su carrera">
+                        <input type="text" name="carrera" class="form-control" placeholder="Ingrese su carrera" value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>">
                     </div>
 
                     <div class="form-group">
                         <label>Cuatrimestre:</label>
                         <select name="cuatrimestre" class="form-control">
-                            <option value="3">3º cuatrimestre</option>
-                            <option value="4">4º cuatrimestre</option>
-                            <option value="5">5º cuatrimestre</option>
+                            <% for(let i=1; i<=11; i++) { %>
+                                <option value="<%= i %>" <%= (typeof asesor !== 'undefined' && (asesor.cuatrimestre == i || asesor.cuatrimestre == i + 'º cuatrimestre')) ? 'selected' : '' %> >
+                                    <%= i %>º cuatrimestre
+                                </option>
+                            <% } %>
                         </select>
                     </div>
 

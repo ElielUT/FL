@@ -226,12 +226,10 @@
                         <div class="info-usuario">
                             <!-- Valores inyectados por Node/EJS dinámicamente -->
                             <h2>
-                                <%= typeof asesor !=='undefined' && asesor.nombre ? asesor.nombre : 'Mariana Rodriguez'
-                                    %>
+                                <%= (typeof asesor !=='undefined' && asesor.nombre) ? asesor.nombre : 'Usuario' %>
                             </h2>
                             <p>
-                                <%= typeof asesor !=='undefined' && asesor.correo ? asesor.correo
-                                    : 'marianarp@utsjr.edu.mx' %>
+                                <%= (typeof asesor !=='undefined' && asesor.correo) ? asesor.correo : 'Sin correo' %>
                             </p>
                         </div>
                     </div>
@@ -239,14 +237,12 @@
                     <!-- Datos Generales -->
                     <div class="etiqueta">Carrera:</div>
                     <div class="valor">
-                        <%= typeof asesor !=='undefined' && asesor.carrera ? asesor.carrera
-                            : 'Tecnologías de la información' %>
+                        <%= (typeof asesor !=='undefined' && asesor.carrera) ? asesor.carrera : 'No especificada' %>
                     </div>
 
                     <div class="etiqueta">Cuatrimestre</div>
                     <div class="valor">
-                        <%= typeof asesor !=='undefined' && asesor.cuatrimestre ? asesor.cuatrimestre
-                            : '3º cuatrimestre' %>
+                        <%= (typeof asesor !=='undefined' && asesor.cuatrimestre) ? asesor.cuatrimestre : 'No especificado' %>
                     </div>
 
                     <button class="btn-editar" onclick="window.location.href='/editar-perfil'">Editar perfil</button>
