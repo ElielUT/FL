@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
             }
         }
 
-        const response = await fetch("http://localhost:8000/usuarios/inicio", {
+        const response = await fetch(url_api + "/usuarios/inicio", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -82,7 +82,7 @@ router.get("/gestionUsuarios", async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const respuesta = await fetch("http://127.0.0.1:8000/usuarios/mostraUsuarios", {
+    const respuesta = await fetch(url_api + "/usuarios/mostraUsuarios", {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -104,7 +104,7 @@ router.post("/gestionUsuarios", async (req, res) => {
 
     const { nombre, apellidos, correo, rol, carrera, cuatrimestre, contraseña } = req.body;
 
-    const respuesta = await fetch("http://127.0.0.1:8000/usuarios/crearUsuario", {
+    const respuesta = await fetch(url_api + "/usuarios/crearUsuario", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -124,7 +124,7 @@ router.post("/gestionUsuarios", async (req, res) => {
         console.error("Error al crear usuario:", await respuesta.text());
         return res.render("gestionUsuarios", { usuarios: [], error: "Error al crear usuario. Verifica los datos." });
     }
-    const res2 = await fetch("http://127.0.0.1:8000/usuarios/buscarUsuarios/" + correo, {
+    const res2 = await fetch(url_api + "/usuarios/buscarUsuarios/" + correo, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -139,7 +139,7 @@ router.post("/gestionUsuarios", async (req, res) => {
     const data = await respuesta.json();
     var user;
     if (rol === "asesorado") {
-        const subirAsesorado = await fetch("http://127.0.0.1:8000/alumnos", {
+        const subirAsesorado = await fetch(url_api + "/alumnos", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -150,7 +150,7 @@ router.post("/gestionUsuarios", async (req, res) => {
     }
     else if (rol === "asesor") {
         var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
-        const subirAsesor = await fetch("http://127.0.0.1:8000/asesores/crearAsesor", {
+        const subirAsesor = await fetch(url_api + "/asesores/crearAsesor", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -159,7 +159,7 @@ router.post("/gestionUsuarios", async (req, res) => {
         })
         user = await subirAsesor.json();
     }
-    const respuesta3 = await fetch("http://127.0.0.1:8000/usuarios/mostraUsuarios", {
+    const respuesta3 = await fetch(url_api + "/usuarios/mostraUsuarios", {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -180,7 +180,7 @@ router.get('/perfil-asesor', async (req, res) => {
         console.log("Cargando perfil para asesor:", correo);
 
         // 1. Buscar el asesor por el correo del usuario
-        const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(correo)}`, {
+        const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(correo)}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -192,7 +192,7 @@ router.get('/perfil-asesor', async (req, res) => {
         if (!asesorInfo) throw new Error("No se encontró información del asesor en la base de datos");
 
         // 2. Obtener datos del usuario
-        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${asesorInfo.id_usuario2}`, {
+        const resUser = await fetch(url_api + `/usuarios/buscarUsuarioID/${asesorInfo.id_usuario2}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -202,7 +202,7 @@ router.get('/perfil-asesor', async (req, res) => {
         if (!userInfo) throw new Error("No se encontró información del usuario");
 
         // 3. Obtener disponibilidad
-        const resDisp = await fetch(`http://localhost:8000/disponibilidad/${asesorInfo.id_asesor}`, {
+        const resDisp = await fetch(url_api + `/disponibilidad/${asesorInfo.id_asesor}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -241,7 +241,7 @@ router.get('/perfil-asesorado', async (req, res) => {
         if (!id_usuario) throw new Error("Sesión expirada o ID de usuario no encontrado. Por favor cierra sesión y vuelve a entrar.");
 
         // 1. Obtener datos del usuario
-        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${id_usuario}`, {
+        const resUser = await fetch(url_api + `/usuarios/buscarUsuarioID/${id_usuario}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -251,7 +251,7 @@ router.get('/perfil-asesorado', async (req, res) => {
         if (!userInfo) throw new Error("No se encontró información del usuario");
 
         // 2. Buscar datos del alumno (carrera)
-        const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+        const resAlumnos = await fetch(url_api + `/alumnos`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -283,7 +283,7 @@ router.get('/editar-perfil', async (req, res) => {
         const id_usuario = req.session.id_usuario;
 
         // 1. Obtener datos del usuario
-        const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${id_usuario}`, {
+        const resUser = await fetch(url_api + `/usuarios/buscarUsuarioID/${id_usuario}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         });
@@ -293,7 +293,7 @@ router.get('/editar-perfil', async (req, res) => {
         // 2. Buscar datos específicos (Alumno o Asesor)
         let carrera = "No especificada";
         if (req.session.usuario === 1) { // Asesor
-            const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
+            const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -302,7 +302,7 @@ router.get('/editar-perfil', async (req, res) => {
                 carrera = dataAsesor.items[0].carrera;
             }
         } else if (req.session.usuario === 2) { // Asesorado
-            const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+            const resAlumnos = await fetch(url_api + `/alumnos`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -340,7 +340,7 @@ router.post('/guardar-perfil', async (req, res) => {
         const apellidos = partes.length > 1 ? partes.slice(1).join(" ") : "";
 
         // 2. Actualizar Usuario (Nombre y Cuatrimestre)
-        const updateUsuario = await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
+        const updateUsuario = await fetch(url_api + `/usuarios/actualizarUsuario/${id_usuario}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -352,7 +352,7 @@ router.post('/guardar-perfil', async (req, res) => {
 
         // 3. Actualizar Tabla específica (Alumno o Asesor)
         if (req.session.usuario === 2) { // Asesorado
-            const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
+            const resAlumnos = await fetch(url_api + `/alumnos`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -360,14 +360,14 @@ router.post('/guardar-perfil', async (req, res) => {
             const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
 
             if (alumnoInfo) {
-                await fetch(`http://localhost:8000/alumnos/${alumnoInfo.id_alumno}`, {
+                await fetch(url_api + `/alumnos/${alumnoInfo.id_alumno}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ carrera })
                 });
             }
         } else if (req.session.usuario === 1) { // Asesor
-            const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
+            const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -375,7 +375,7 @@ router.post('/guardar-perfil', async (req, res) => {
             const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
 
             if (asesorInfo) {
-                await fetch(`http://localhost:8000/asesores/actualizarAsesor/${asesorInfo.id_asesor}`, {
+                await fetch(url_api + `/asesores/actualizarAsesor/${asesorInfo.id_asesor}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ carrera })
@@ -397,11 +397,11 @@ router.get('/panelAdmin', async (req, res) => {
 
     try {
         const [respuestaUsuarios, respuestaEstadisticas] = await Promise.all([
-            fetch("http://127.0.0.1:8000/usuarios/cantidadUsuarios", {
+            fetch(url_api + "/usuarios/cantidadUsuarios", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch("http://127.0.0.1:8000/toma/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -419,7 +419,8 @@ router.get('/panelAdmin', async (req, res) => {
             totalAsesorias: dataEstadisticas.totales,
             pendientes: dataEstadisticas.pendientes,
             aceptadas: dataEstadisticas.aceptadas,
-            completadas: dataEstadisticas.completadas
+            completadas: dataEstadisticas.completadas,
+            url_api: url_api
         });
     } catch (error) {
         console.error("Error fetching admin data:", error);
@@ -434,11 +435,11 @@ router.get('/supervisarAsesorias', async (req, res) => {
 
     try {
         const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
-            fetch("http://127.0.0.1:8000/toma/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch("http://127.0.0.1:8000/toma/mostrarToma/", {
+            fetch(url_api + "/toma/mostrarToma/", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -469,7 +470,7 @@ router.get('/solicitarAsesoria', async (req, res) => {
     }
 
     try {
-        const respuesta = await fetch("http://127.0.0.1:8000/materias", {
+        const respuesta = await fetch(url_api + "/materias", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -499,7 +500,7 @@ router.get('/agendar-asesoria', async (req, res) => {
     }
 
     try {
-        const respuesta = await fetch(`http://127.0.0.1:8000/asesores/buscarAsesorMateria/${encodeURIComponent(materiaNombre)}`, {
+        const respuesta = await fetch(url_api + `/asesores/buscarAsesorMateria/${encodeURIComponent(materiaNombre)}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -545,7 +546,7 @@ router.post('/crear-solicitud', async (req, res) => {
 
     try {
         // 1. Crear la asesoría
-        const crearAsesoriaResp = await fetch("http://127.0.0.1:8000/asesoria/crearAsesoria", {
+        const crearAsesoriaResp = await fetch(url_api + "/asesoria/crearAsesoria", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -565,7 +566,7 @@ router.post('/crear-solicitud', async (req, res) => {
         const id_asesoria = asesoriaData.id_asesoria;
 
         // 2. Crear la toma (solicitud)
-        const crearTomaResp = await fetch("http://127.0.0.1:8000/toma/crearToma/", {
+        const crearTomaResp = await fetch(url_api + "/toma/crearToma/", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -612,11 +613,11 @@ router.get('/panelAsesor', async (req, res) => {
 
     try {
         const [respuestaTomasAsesor, respuestaCalificaciones] = await Promise.all([
-            fetch(`http://127.0.0.1:8000/toma/buscarTomaAsesor/${idAsesor}`, {
+            fetch(url_api + `/toma/buscarTomaAsesor/${idAsesor}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch(`http://127.0.0.1:8000/toma/calificacionesAsesor/${idAsesor}`, {
+            fetch(url_api + `/toma/calificacionesAsesor/${idAsesor}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })

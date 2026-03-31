@@ -231,6 +231,8 @@
             btnGuardarEditar = document.querySelector("#guardarEditar"),
             editUsuario = document.querySelector("#editarUsuario");
 
+        const url_api = "<%= url_api %>";
+
         const form = document.querySelector("#formEditarUsuario");
         const inputBusqueda = document.querySelector(".busqueda");
         const selectFiltro = document.querySelector(".filtro");
@@ -290,7 +292,7 @@
             });
         });
         const eliminarUsuario = async (idUsuario) => {
-            const respuesta = await fetch("http://localhost:8000/usuarios/eliminarUsuario/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/eliminarUsuario/" + idUsuario, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -304,7 +306,7 @@
 
         const editarUsuario = async (idUsuario) => {
             const cuatrimestre = parseInt(form.querySelector('select[name="cuatrimestre"]').value);
-            const respuesta = await fetch("http://localhost:8000/usuarios/actualizarUsuario/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/actualizarUsuario/" + idUsuario, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -317,14 +319,14 @@
             const carrera = form.querySelector('select[name="carrera"]').value
             if (catSel != catACT) {
                 if (catSel == "admin") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
                         }
                     })
                     const elAlum = await eliminarAlumno.json();
-                    const eliminarAsesor = await fetch("http://localhost:8000/asesores/eliminarAsesorForaneo/" + idUsuario, {
+                    const eliminarAsesor = await fetch(url_api + "/asesores/eliminarAsesorForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
@@ -332,7 +334,7 @@
                     })
                     const elAse = await eliminarAsesor.json();
                 } else if (catSel == "asesor") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
@@ -340,7 +342,7 @@
                     })
                     const elAlum = await eliminarAlumno.json();
                     var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
-                    const subirAsesor = await fetch("http://127.0.0.1:8000/asesores/crearAsesor", {
+                    const subirAsesor = await fetch(url_api + "/asesores/crearAsesor", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -349,14 +351,14 @@
                     })
                     user = await subirAsesor.json();
                 } else if (catSel == "asesorado") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
                         }
                     })
                     const elAlum = await eliminarAlumno.json();
-                    const subirAsesorado = await fetch("http://localhost:8000/alumnos", {
+                    const subirAsesorado = await fetch(url_api + "/alumnos", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -369,7 +371,7 @@
         }
 
         const recuperarUsuario = async (idUsuario) => {
-            const respuesta = await fetch("http://localhost:8000/usuarios/buscarUsuarioID/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/buscarUsuarioID/" + idUsuario, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
