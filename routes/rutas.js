@@ -93,7 +93,7 @@ router.get("/gestionUsuarios", async (req, res) => {
     if (usuarios == null) {
         res.render("index", { error: "Error de conexión" })
     } else {
-        res.render("gestionUsuarios", { usuarios: usuarios });
+        res.render("gestionUsuarios", { usuarios: usuarios, url_api: url_api });
     }
 });
 
@@ -122,7 +122,7 @@ router.post("/gestionUsuarios", async (req, res) => {
 
     if (!respuesta.ok) {
         console.error("Error al crear usuario:", await respuesta.text());
-        return res.render("gestionUsuarios", { usuarios: [], error: "Error al crear usuario. Verifica los datos." });
+        return res.render("gestionUsuarios", { usuarios: [], error: "Error al crear usuario. Verifica los datos.", url_api: url_api });
     }
     const res2 = await fetch(url_api + "/usuarios/buscarUsuarios/" + correo, {
         method: "GET",
@@ -132,7 +132,7 @@ router.post("/gestionUsuarios", async (req, res) => {
     })
     if (!res2.ok) {
         console.error("Error al buscar usuario:", await res2.text());
-        return res.render("gestionUsuarios", { usuarios: [], error: "Error al buscar usuario creado." });
+        return res.render("gestionUsuarios", { usuarios: [], error: "Error al buscar usuario creado.", url_api: url_api });
     }
     const data2 = await res2.json();
     const id_user = data2.item.id_usuario;
@@ -167,7 +167,7 @@ router.post("/gestionUsuarios", async (req, res) => {
     })
     const data3 = await respuesta3.json();
     const usuarios = data3.items;
-    res.render("gestionUsuarios", { usuarios: usuarios });
+    res.render("gestionUsuarios", { usuarios: usuarios, url_api: url_api });
 });
 
 router.get('/perfil-asesor', async (req, res) => {
