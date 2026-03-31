@@ -9,22 +9,27 @@
     <div class="agendar-card">
         <div class="materia-info">
             <h2><%= materiaNombre %></h2>
-            <p>ID de materia: <%= materiaId %></p>
+            <!-- <p>ID de materia: <%= materiaId %></p> -->
         </div>
 
         <form action="/crear-solicitud" method="POST" class="agendar-form">
-            <input type="hidden" name="materiaId" value="<%= materiaId %>">
+            <!-- <input type="hidden" name="materiaId" value="<%= materiaId %>"> -->
             <input type="hidden" name="materiaNombre" value="<%= materiaNombre %>">
 
             <div class="form-group">
                 <label for="asesor">Selecciona un asesor:</label>
                 <select name="id_asesor" id="asesor" required>
                     <option value="">-- Selecciona un asesor --</option>
-                    <% if (asesores && asesores.length > 0) { %>
+                    <% if (asesores && asesores.length > 0) { %>c
                         <% asesores.forEach(asesor => { %>
                             <option value="<%= asesor.id_asesor %>">
-                                <%= asesor.usuario ? asesor.usuario.nombres + ' ' + asesor.usuario.apellidos : 'Asesor ID: ' + asesor.id_asesor %>
-                                - <%= asesor.carrera %>
+                                <% if (asesor.usuario && asesor.usuario.nombres) { %>
+                                    <%= asesor.usuario.nombres %> <%= asesor.usuario.apellidos %> - <%= asesor.carrera %>
+                                <% } else if (asesor.nombres) { %>
+                                    <%= asesor.nombres %> <%= asesor.apellidos %> - <%= asesor.carrera %>
+                                <% } else { %>
+                                    Asesor ID: <%= asesor.id_asesor %> - <%= asesor.carrera %>
+                                <% } %>
                             </option>
                         <% }) %>
                     <% } else { %>

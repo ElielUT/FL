@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+const url_api = process.env.URL_API;
 
 const router = Router();
 
@@ -42,9 +43,10 @@ router.post("/", async (req, res) => {
 
         const data = await response.json();
 
-        // El backend responde {"Inicio": 1} para asesor, 2 asesorado, 3 admin
         if (data.Inicio === 1) {
             req.session.usuario = data.Inicio;
+            req.session.id_usuario = data.id_usuario;
+            req.session.id_asesor = data.id_asesor;
             req.session.id_usuario = data.id;
             req.session.correo = correo;
             req.session.save(() => {
@@ -52,6 +54,8 @@ router.post("/", async (req, res) => {
             });
         } else if (data.Inicio === 2) {
             req.session.usuario = data.Inicio;
+            req.session.id_usuario = data.id_usuario;
+            req.session.id_alumno = data.id_alumno;
             req.session.id_usuario = data.id;
             req.session.correo = correo;
             req.session.save(() => {
@@ -59,6 +63,7 @@ router.post("/", async (req, res) => {
             });
         } else if (data.Inicio === 3) {
             req.session.usuario = data.Inicio;
+            req.session.id_usuario = data.id_usuario;
             req.session.save(() => {
                 res.redirect("/panelAdmin");
             });
@@ -276,7 +281,7 @@ router.get('/editar-perfil', async (req, res) => {
 
     try {
         const id_usuario = req.session.id_usuario;
-        
+
         // 1. Obtener datos del usuario
         const resUser = await fetch(`http://localhost:8000/usuarios/buscarUsuarioID/${id_usuario}`, {
             method: "GET",
@@ -529,7 +534,17 @@ router.post('/crear-solicitud', async (req, res) => {
 
     const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin } = req.body;
 
+    if (!req.session.id_alumno) {
+        return res.send(`
+            <script>
+                alert("Error: No se encontró tu información de alumno. Contacta al administrador.");
+                window.location.href = "/solicitarAsesoria";
+            </script>
+        `);
+    }
+
     try {
+        // 1. Crear la asesoría
         const crearAsesoriaResp = await fetch("http://127.0.0.1:8000/asesoria/crearAsesoria", {
             method: "POST",
             headers: {
@@ -549,12 +564,30 @@ router.post('/crear-solicitud', async (req, res) => {
         const asesoriaData = await crearAsesoriaResp.json();
         const id_asesoria = asesoriaData.id_asesoria;
 
-        // TODO: Obtener id_alumno del asesorado logueado y crear la toma
-        // Por ahora solo mostramos éxito parcial
+        // 2. Crear la toma (solicitud)
+        const crearTomaResp = await fetch("http://127.0.0.1:8000/toma/crearToma/", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id_asesor3: parseInt(id_asesor),
+                id_asesoria1: id_asesoria,
+                id_alumno1: req.session.id_alumno,
+                fecha: fecha,
+                hora_in: hora_in,
+                hora_fin: hora_fin,
+                evaluacion_ase: 0
+            })
+        });
+
+        if (!crearTomaResp.ok) {
+            throw new Error("Error al crear la solicitud");
+        }
 
         res.send(`
             <script>
-                alert("Solicitud creada exitosamente. La asesoría ha sido registrada.");
+                alert("✅ Solicitud creada exitosamente. El asesor recibirá tu petición.");
                 window.location.href = "/solicitarAsesoria";
             </script>
         `);
@@ -563,7 +596,7 @@ router.post('/crear-solicitud', async (req, res) => {
         console.error("Error al crear solicitud:", error);
         res.send(`
             <script>
-                alert("Error al crear la solicitud. Intenta de nuevo.");
+                alert("❌ Error al crear la solicitud. Intenta de nuevo.");
                 window.location.href = "/solicitarAsesoria";
             </script>
         `);
@@ -575,25 +608,92 @@ router.get('/panelAsesor', async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    // Datos de ejemplo (luego conectar con backend real)
-    const datosPanel = {
-        pendientes: 3,
-        completadas: 1,
-        calificacionPromedio: 5.0,
-        proximasAsesorias: [
-            { id_toma: 1, materia: "Programación Orientada a Objetos", estudiante: "Mariana Rodríguez", fecha: "09/03/26", hora: "14:00" },
-            { id_toma: 2, materia: "Bases de datos", estudiante: "Eliel Priske Alanis", fecha: "09/03/26", hora: "13:00" }
-        ],
-        evaluacionesRecientes: [
-            { materia: "Proyecto integrador", estudiante: "Yael Izaid Meza", comentario: "Excelente explicación, muy clara y con buenos ejemplos", calificacion: 5 },
-            { materia: "Bases de datos", estudiante: "Raquel Pastor", comentario: "Excelente explicación, muy clara y con buenos ejemplos", calificacion: 5 }
-        ],
-        solicitudesPendientes: [
-            { id_toma: 3, materia: "Proyecto integrador", estudiante: "Yael Izaid Meza", fecha: "09/03/26", hora: "15:00" }
-        ]
-    };
+    const idAsesor = req.session.id_asesor || 1;
 
-    res.render('panelAsesor', datosPanel);
+    try {
+        const [respuestaTomasAsesor, respuestaCalificaciones] = await Promise.all([
+            fetch(`http://127.0.0.1:8000/toma/buscarTomaAsesor/${idAsesor}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            }),
+            fetch(`http://127.0.0.1:8000/toma/calificacionesAsesor/${idAsesor}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+        ]);
+
+        const dataTomas = await respuestaTomasAsesor.json();
+        const tomas = dataTomas.items || [];
+
+        const pendientes = tomas.filter(t => !t.fecha).length;
+        const completadas = tomas.filter(t => t.calificacion && t.calificacion > 0).length;
+
+        let calificacionPromedio = 0;
+        if (respuestaCalificaciones.ok) {
+            const dataCalif = await respuestaCalificaciones.json();
+            if (dataCalif.items && dataCalif.items.length > 0) {
+                const suma = dataCalif.items.reduce((acc, curr) => acc + (curr.calificacion || 0), 0);
+                calificacionPromedio = Number((suma / dataCalif.items.length).toFixed(1));
+            }
+        }
+
+        const proximasAsesorias = tomas
+            .filter(t => t.fecha && (!t.calificacion || t.calificacion === 0))
+            .map(t => ({
+                id_toma: t.id_toma || t.id_asesoria1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                estudiante: t.alumno?.usuario ? `${t.alumno.usuario.nombres} ${t.alumno.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Fecha por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
+            }));
+
+        const evaluacionesRecientes = tomas
+            .filter(t => t.calificacion && t.calificacion > 0)
+            .slice(0, 5)
+            .map(t => ({
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                estudiante: t.alumno?.usuario ? `${t.alumno.usuario.nombres} ${t.alumno.usuario.apellidos}` : "Desconocido",
+                comentario: t.comentario || "Sin comentario",
+                calificacion: t.calificacion
+            }));
+
+        const solicitudesPendientes = tomas
+            .filter(t => !t.fecha)
+            .map(t => ({
+                id_toma: t.id_toma || t.id_asesoria1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                estudiante: t.alumno?.usuario ? `${t.alumno.usuario.nombres} ${t.alumno.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha_solicitud || "Pendiente",
+                hora: t.hora_solicitud || "--:--"
+            }));
+
+        let nombreAsesor = "Asesor";
+        if (req.session.nombre_asesor) {
+            nombreAsesor = req.session.nombre_asesor;
+        }
+
+        res.render('panelAsesor', {
+            pendientes: pendientes,
+            completadas: completadas,
+            calificacionPromedio: calificacionPromedio,
+            proximasAsesorias: proximasAsesorias,
+            evaluacionesRecientes: evaluacionesRecientes,
+            solicitudesPendientes: solicitudesPendientes,
+            nombreAsesor: nombreAsesor
+        });
+
+    } catch (error) {
+        console.error("Error al cargar panel de asesor:", error);
+        res.render('panelAsesor', {
+            pendientes: 0,
+            completadas: 0,
+            calificacionPromedio: 0,
+            proximasAsesorias: [],
+            evaluacionesRecientes: [],
+            solicitudesPendientes: [],
+            nombreAsesor: "Asesor"
+        });
+    }
 });
 
 router.get('/panelAsesorado', (req, res) => {

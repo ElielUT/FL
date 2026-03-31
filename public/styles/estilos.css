@@ -991,3 +991,9 @@ SOLICITAR ASESORÍA
     font-size: 1.1rem;
     font-weight: 500;
 }
+.sin-calificaciones {
+    display: block;
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 5px;
+}

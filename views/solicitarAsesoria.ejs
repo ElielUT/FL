@@ -18,8 +18,8 @@
         <% if (materias && materias.length > 0) { %>
             <% materias.forEach(materia => { %>
                 <div class="materia-card" 
-                     data-id="<%= materia.id_materia %>" 
-                     data-nombre="<%= materia.nombre %>">
+                    data-id="<%= materia.id_materia %>" 
+                    data-nombre="<%= materia.nombre %>">
                     <h3><%= materia.nombre %></h3>
                     <p><%= materia.carrera %> - <%= materia.cuatrimestre %>° Cuatrimestre</p>
                 </div>
