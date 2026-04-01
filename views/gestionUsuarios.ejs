@@ -224,14 +224,20 @@
         </div>
     </div>
     <script>
-
+        "sensitive";
         const btnsEliminar = document.querySelectorAll(".btnEliminar"),
             btnsEditar = document.querySelectorAll(".btnEditar"),
             btnCancelarEditar = document.querySelector("#cancelarEditar"),
             btnGuardarEditar = document.querySelector("#guardarEditar"),
             editUsuario = document.querySelector("#editarUsuario");
 
-        const url_api = "<%= url_api %>";
+        const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
+        
+        Object.defineProperty(window, 'url_api', {
+            get: function() {
+                return atob(url_api_cifrada);
+            }
+        });
 
         const form = document.querySelector("#formEditarUsuario");
         const inputBusqueda = document.querySelector(".busqueda");
