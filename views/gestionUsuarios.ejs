@@ -394,6 +394,8 @@
         const guardar = document.getElementById("guardar");
         const formCrearUsuario = document.getElementById("formCrearUsuario");
 
+        let regexCorreo = /^[a-zA-Z0-9._%-]+@utsjr\.edu\.mx$/;
+
         nuevoUsuario.addEventListener("click", () => {
             crearUsuario.classList.remove("ocultar");
             nuevoUsuario.classList.add("ocultar");
@@ -406,10 +408,14 @@
         });
 
         guardar.addEventListener("click", () => {
-            crearUsuario.classList.add("ocultar");
-            const data = new FormData(formCrearUsuario);
-            console.log(data.get("nombre"));
-            formCrearUsuario.submit();
+            if (regexCorreo.test(formCrearUsuario.querySelector('input[name="correo"]').value)) {
+                crearUsuario.classList.add("ocultar");
+                const data = new FormData(formCrearUsuario);
+                console.log(data.get("nombre"));
+                formCrearUsuario.submit();
+            } else {
+                alert("Correo no valido");
+            }
         });
     </script>
     <%- include('templates/footer.ejs') %>
