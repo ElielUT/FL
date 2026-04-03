@@ -1,0 +1,74 @@
+.register-card {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    padding: 30px 40px;
+    border-radius: 30px;
+    display: flex;
+    gap: 40px;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.05);
+
+}
+
+.register-left {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-right {
+    flex: 0.7;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.register-right .logo-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.btn-register {
+    width: 160px;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(to right, #43c6ac, #78ffd6);
+    color: #1c1c1c;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-register:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .register-card {
+        flex-direction: column;
+    }
+}
+
+.input-group select {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    background-color: #eeeeee;
+    color: #666;
+    font-size: 1rem;
+    cursor: pointer;
+}

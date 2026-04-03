@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/Logo.png">
+    <link rel="stylesheet" href="styles/registro.css">
+    <link rel="stylesheet" href="styles/inicio.css">
+    <title>LobiFind</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            var script = document.createElement('script');
+            script.src = "https://www.google.com/recaptcha/api.js?render=<%= RECAPTCHA_SITE_KEY %>";
+            document.head.appendChild(script);
+        }
+    </script>
+</head>
+
+<body>
+    <main class="login-container">
+        <form class="register-card" id="formRegistro" action="/registro" method="POST">
+            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+            <div class="register-left">
+                <div class="input-group">
+                    <label>Nombres:</label>
+                    <input type="text" name="nombre" placeholder="Ingrese su nombre" required>
+                </div>
+                <div class="input-group">
+                    <label>Apellidos:</label>
+                    <input type="text" name="apellidos" placeholder="Ingrese sus apellidos" required>
+                </div>
+                <div class="input-group">
+                    <label>Correo:</label>
+                    <input type="email" name="correo" id="correo" placeholder="Ingrese su correo" required>
+                </div>
+                <div class="input-group">
+                    <label for="carrera">Carrera:</label>
+                    <select name="carrera">
+                        <option value="QF">Ing. Química Farmacéutica</option>
+                        <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                        </option>
+                        <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                        <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                        <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                        <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                            Desarrollo de Software Multiplataforma)</option>
+                        <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                            Entornos
+                            Virtuales y Negocios Digitales)</option>
+                        <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                            Inteligencia
+                            Artificial)</option>
+                        <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                            Datos)
+                        </option>
+                        <option value="MI">ING. Mantenimiento Industrial</option>
+                        <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                        <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                        <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                        <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="cuatrimestre">Cuatrimestre:</label>
+                    <select name="cuatrimestre">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña:</label>
+                    <input type="password" name="contraseña" id="password" placeholder="Ingrese su contraseña" required>
+                </div>
+                <div class="input-group">
+                    <label>Verificar contraseña:</label>
+                    <input type="password" name="verificar_contraseña" id="confirm_password"
+                        placeholder="Ingrese su contraseña" required>
+                </div>
+            </div>
+
+            <div class="register-right">
+                <div class="logo-wrapper">
+                    <div class="logo-circle">
+                        <img src="images/logo_lobo_transparente.png" alt="Logo Lobo" class="wolf-img">
+                    </div>
+                </div>
+
+                <% if (typeof error !=='undefined' ) { %>
+                    <div class="error-message" style="color: red; text-align: center; margin-bottom: 10px;">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <input type="submit" class="btn-register" value="Registrarse">
+
+                        <div class="footer-links" style="margin-top: 5px;">
+                            <p style="text-align: center; font-size: 14px; color: #00a185;">
+                                ¿Ya tienes una cuenta? <br>
+                                <a href="/"
+                                    style="color: #00a185; text-decoration: underline; font-weight: 600;">Iniciar
+                                    sesión</a>
+                            </p>
+                        </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // Validacion de contraseñas
+        var password = document.getElementById("password"), confirm_password = document.getElementById("confirm_password");
+
+        function validatePassword() {
+            if (password.value != confirm_password.value) {
+                confirm_password.setCustomValidity("Las contraseñas no coinciden");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+
+        let regexCorreo = /^[a-zA-Z0-9._%-]+@utsjr\.edu\.mx$/;
+
+        const correo = document.getElementById("correo");
+        const form = document.getElementById("formRegistro");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            if (!regexCorreo.test(correo.value)) {
+                correo.setCustomValidity("Usar correo institucional (@utsjr.edu.mx)");
+                form.reportValidity();
+            } else {
+                correo.setCustomValidity('');
+                
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || typeof grecaptcha === 'undefined') {
+                    return form.submit();
+                }
+
+                grecaptcha.ready(function () {
+                    grecaptcha.execute('<%= RECAPTCHA_SITE_KEY %>', { action: 'register' }).then(function (token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        form.submit();
+                    }).catch(function(err) {
+                        console.error("reCAPTCHA Error: ", err);
+                        form.submit();
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

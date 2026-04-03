@@ -10,6 +10,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            var script = document.createElement('script');
+            script.src = "https://www.google.com/recaptcha/api.js?render=<%= RECAPTCHA_SITE_KEY %>";
+            document.head.appendChild(script);
+        }
+    </script>
 </head>
 
 <body>
@@ -26,23 +33,57 @@
                     <%= error %>
                 </div>
                 <% } %>
-
-                    <form action="/" method="POST">
-                        <div class="input-group">
-                            <label>Correo:</label>
-                            <input type="text" name="correo" placeholder="Ingrese su usuario" required>
+                    <% if (typeof success !=='undefined' ) { %>
+                        <div class="success-message" style="color: green; text-align: center; margin-bottom: 10px;">
+                            <%= success %>
                         </div>
+                        <% } %>
 
-                        <div class="input-group">
-                            <label>Contraseña:</label>
-                            <input type="password" name="contraseña" placeholder="Ingrese su contraseña" required>
-                        </div>
+                            <form action="/" method="POST" id="loginForm">
+                                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                                <div class="input-group">
+                                    <label>Correo:</label>
+                                    <input type="text" name="correo" placeholder="Ingrese su usuario" required>
+                                </div>
 
-                        <button type="submit" class="btn-login">Iniciar sesión</button>
-                    </form>
+                                <div class="input-group">
+                                    <label>Contraseña:</label>
+                                    <input type="password" name="contraseña" placeholder="Ingrese su contraseña"
+                                        required>
+                                </div>
+
+                                <button type="submit" class="btn-login">Iniciar sesión</button>
+                            </form>
+                            <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #00a185;">
+                                ¿Aun no tienes cuenta? <br> <a href="/registro" style="color: #00a185;">Registrate</a>
+                            </p>
         </div>
     </main>
 
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Bypass on localhost
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return document.getElementById('loginForm').submit();
+            }
+
+            if (typeof grecaptcha === 'undefined') {
+                return document.getElementById('loginForm').submit();
+            }
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute('<%= RECAPTCHA_SITE_KEY %>', { action: 'login' }).then(function (token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('loginForm').submit();
+                }).catch(function(err) {
+                    console.error("reCAPTCHA Error: ", err);
+                    document.getElementById('loginForm').submit(); // Opcional: Permitir fallar abierto
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

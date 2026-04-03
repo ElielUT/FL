@@ -51,7 +51,7 @@
                         <option value="CQ">ING. Civil (TSU. Construcción)</option>
                         <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
                         <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
-                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
                             Desarrollo de Software Multiplataforma)</option>
                         <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En Entornos
                             Virtuales y Negocios Digitales)</option>
@@ -97,47 +97,44 @@
         </select>
     </div>
     <div class="usuarios">
-        <% contador=0; usuarios.forEach(usuario=> { %>
-            <div class=<% if((contador % 2)==0){%> "usuarioIzquierda" <%}else{%> "usuarioDerecha" <%}%>>
-                        <div class="imagen-categoria">
-                            <div <% if(usuario.categoria=="asesor" ) {%> class=" contIMG asesor" <%}else
-                                    if(usuario.categoria=="asesorado" ) {%> class="contIMG asesorado" <%}else{%>
-                                        class="contIMG administrador" <%}%>>
-                                            <img src="../images/usuario.png" alt="">
-                            </div>
-                            <div <% if(usuario.categoria=="asesor" ) {%> class="categoria Casesor" <%}else
-                                    if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
-                                        class="categoria Cadministrador" <%}%>>
-                                            <p>
-                                                <% if(usuario.categoria=="admin" ){%> Administrador <%}else{%>
-                                                        <%= usuario.categoria.charAt(0).toUpperCase() +
-                                                            usuario.categoria.slice(1) %>
-                                                            <%}%>
-                                            </p>
-                            </div>
-                        </div>
-                        <div class="usuarioInfo">
-                            <h2>
-                                <%= usuario.nombres + " " + usuario.apellidos %>
-                            </h2>
-                            <p>
-                                <%= usuario.correo %>
-                            </p>
-                            <% if(usuario.categoria !="admin" ){%>
-                                <p class="info">
-                                    <%= usuario.cuatrimestre + "° Cuatrimestre -  Plantel: " + usuario.plantel %>
-                                </p>
-                                <%}%>
-                        </div>
-                        <div class="acciones" id="<%= usuario.id_usuario %>">
-                            <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+        <% usuarios.forEach(usuario=> { %>
+            <div class="usuarioItem">
+                <div class="imagen-categoria">
+                    <div <% if(usuario.categoria=="asesor" ) {%> class=" contIMG asesor" <%}else
+                            if(usuario.categoria=="asesorado" ) {%> class="contIMG asesorado" <%}else{%>
+                                class="contIMG administrador" <%}%>>
+                                    <img src="../images/usuario.png" alt="">
+                    </div>
+                    <div <% if(usuario.categoria=="asesor" ) {%> class="categoria Casesor" <%}else
+                            if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
+                                class="categoria Cadministrador" <%}%>>
+                                    <p>
+                                        <% if(usuario.categoria=="admin" ){%> Administrador <%}else{%>
+                                                <%= usuario.categoria.charAt(0).toUpperCase() +
+                                                    usuario.categoria.slice(1) %>
+                                                    <%}%>
+                                    </p>
+                    </div>
+                </div>
+                <div class="usuarioInfo">
+                    <h2>
+                        <%= usuario.nombres + " " + usuario.apellidos %>
+                    </h2>
+                    <p>
+                        <%= usuario.correo %>
+                    </p>
+                    <% if(usuario.categoria !="admin" ){%>
+                        <p class="info">
+                            <%= usuario.cuatrimestre + "° Cuatrimestre -  Plantel: " + usuario.plantel %>
+                        </p>
+                        <%}%>
+                </div>
+                <div class="acciones" id="<%= usuario.id_usuario %>">
+                    <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
             </div>
-            <% contador++;if((contador%2)==0){%>
-    </div>
-    <div class="usuarios">
-        <% } }) %>
+            <% }) %>
     </div>
     <div class="editarUsuario ocultar" id="editarUsuario">
         <div class="interno">
@@ -185,7 +182,7 @@
                             <option value="CQ">ING. Civil (TSU. Construcción)</option>
                             <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
                             <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
-                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
                                 Desarrollo de Software Multiplataforma)</option>
                             <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
                                 Entornos
@@ -224,17 +221,25 @@
         </div>
     </div>
     <script>
-
+        "sensitive";
         const btnsEliminar = document.querySelectorAll(".btnEliminar"),
             btnsEditar = document.querySelectorAll(".btnEditar"),
             btnCancelarEditar = document.querySelector("#cancelarEditar"),
             btnGuardarEditar = document.querySelector("#guardarEditar"),
             editUsuario = document.querySelector("#editarUsuario");
 
+        const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
+
+        Object.defineProperty(window, 'url_api', {
+            get: function () {
+                return atob(url_api_cifrada);
+            }
+        });
+
         const form = document.querySelector("#formEditarUsuario");
         const inputBusqueda = document.querySelector(".busqueda");
         const selectFiltro = document.querySelector(".filtro");
-        const usuariosItems = document.querySelectorAll(".usuarioIzquierda, .usuarioDerecha");
+        const usuariosItems = document.querySelectorAll(".usuarioItem");
 
         var catACT = "";
 
@@ -290,7 +295,7 @@
             });
         });
         const eliminarUsuario = async (idUsuario) => {
-            const respuesta = await fetch("http://localhost:8000/usuarios/eliminarUsuario/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/eliminarUsuario/" + idUsuario, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -304,7 +309,7 @@
 
         const editarUsuario = async (idUsuario) => {
             const cuatrimestre = parseInt(form.querySelector('select[name="cuatrimestre"]').value);
-            const respuesta = await fetch("http://localhost:8000/usuarios/actualizarUsuario/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/actualizarUsuario/" + idUsuario, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -317,14 +322,14 @@
             const carrera = form.querySelector('select[name="carrera"]').value
             if (catSel != catACT) {
                 if (catSel == "admin") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
                         }
                     })
                     const elAlum = await eliminarAlumno.json();
-                    const eliminarAsesor = await fetch("http://localhost:8000/asesores/eliminarAsesorForaneo/" + idUsuario, {
+                    const eliminarAsesor = await fetch(url_api + "/asesores/eliminarAsesorForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
@@ -332,7 +337,7 @@
                     })
                     const elAse = await eliminarAsesor.json();
                 } else if (catSel == "asesor") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
@@ -340,7 +345,7 @@
                     })
                     const elAlum = await eliminarAlumno.json();
                     var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
-                    const subirAsesor = await fetch("http://127.0.0.1:8000/asesores/crearAsesor", {
+                    const subirAsesor = await fetch(url_api + "/asesores/crearAsesor", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -349,14 +354,14 @@
                     })
                     user = await subirAsesor.json();
                 } else if (catSel == "asesorado") {
-                    const eliminarAlumno = await fetch("http://localhost:8000/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
+                    const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
                         method: "DELETE",
                         headers: {
                             "Content-Type": "application/json"
                         }
                     })
                     const elAlum = await eliminarAlumno.json();
-                    const subirAsesorado = await fetch("http://localhost:8000/alumnos", {
+                    const subirAsesorado = await fetch(url_api + "/alumnos", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -365,11 +370,29 @@
                     })
                     const user = await subirAsesorado.json();
                 }
+            } else {
+                if (catSel == "asesor") {
+                    await fetch(url_api + "/asesores/actualizarAsesorForaneo/" + idUsuario, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ carrera: carrera })
+                    });
+                } else if (catSel == "asesorado") {
+                    await fetch(url_api + "/alumnos/actualizarAlumnoForaneo/" + idUsuario, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ carrera: carrera })
+                    });
+                }
             }
         }
 
         const recuperarUsuario = async (idUsuario) => {
-            const respuesta = await fetch("http://localhost:8000/usuarios/buscarUsuarioID/" + idUsuario, {
+            const respuesta = await fetch(url_api + "/usuarios/buscarUsuarioID/" + idUsuario, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -377,12 +400,22 @@
             });
             const data = await respuesta.json();
             const usuario = data.item;
+            const carrera = data.carrera;
             form.querySelector('input[name="id_usuario"]').value = idUsuario;
             form.querySelector('input[name="nombre"]').value = usuario.nombres;
             form.querySelector('input[name="apellidos"]').value = usuario.apellidos;
             form.querySelector('input[name="correo"]').value = usuario.correo;
             form.querySelector('select[name="rol"]').value = usuario.categoria;
             form.querySelector('select[name="cuatrimestre"]').value = usuario.cuatrimestre;
+            if (usuario.categoria != "admin" && carrera && carrera.carrera) {
+                const targetValue = String(carrera.carrera).trim().toUpperCase();
+                const selectCarrera = form.querySelector('select[name="carrera"]');
+                Array.from(selectCarrera.options).forEach(opt => {
+                    if (opt.value.trim().toUpperCase() === targetValue) {
+                        selectCarrera.value = opt.value;
+                    }
+                });
+            }
             catACT = usuario.categoria;
         }
 
@@ -391,6 +424,8 @@
         const cancelar = document.getElementById("cancelar");
         const guardar = document.getElementById("guardar");
         const formCrearUsuario = document.getElementById("formCrearUsuario");
+
+        let regexCorreo = /^[a-zA-Z0-9._%-]+@utsjr\.edu\.mx$/;
 
         nuevoUsuario.addEventListener("click", () => {
             crearUsuario.classList.remove("ocultar");
@@ -404,10 +439,14 @@
         });
 
         guardar.addEventListener("click", () => {
-            crearUsuario.classList.add("ocultar");
-            const data = new FormData(formCrearUsuario);
-            console.log(data.get("nombre"));
-            formCrearUsuario.submit();
+            if (regexCorreo.test(formCrearUsuario.querySelector('input[name="correo"]').value)) {
+                crearUsuario.classList.add("ocultar");
+                const data = new FormData(formCrearUsuario);
+                console.log(data.get("nombre"));
+                formCrearUsuario.submit();
+            } else {
+                alert("Correo no valido");
+            }
         });
     </script>
     <%- include('templates/footer.ejs') %>
