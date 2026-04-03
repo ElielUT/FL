@@ -71,7 +71,6 @@ router.post("/", async (req, res) => {
             req.session.usuario = data.Inicio;
             req.session.id_usuario = data.id_usuario;
             req.session.id_asesor = data.id_asesor;
-            req.session.id_usuario = data.id;
             req.session.correo = correo;
             req.session.save(() => {
                 res.redirect("/panelAsesor");
@@ -80,7 +79,6 @@ router.post("/", async (req, res) => {
             req.session.usuario = data.Inicio;
             req.session.id_usuario = data.id_usuario;
             req.session.id_alumno = data.id_alumno;
-            req.session.id_usuario = data.id;
             req.session.correo = correo;
             req.session.save(() => {
                 res.redirect("/panelAsesorado");
@@ -376,7 +374,7 @@ router.get('/editar-perfil', async (req, res) => {
             if (!asesorInfo) throw new Error("No se encontró información de asesor");
 
             // 3. Obtener disponibilidad
-            const resDisp = await fetch(`http://localhost:8000/disponibilidad/${asesorInfo.id_asesor}`, {
+            const resDisp = await fetch(url_api + `/disponibilidad/${asesorInfo.id_asesor}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
@@ -455,51 +453,52 @@ router.post('/guardar-perfil', async (req, res) => {
         }
 
         const updateUsuario = await fetch(url_api + `/usuarios/actualizarUsuario/${id_usuario}`, {
-            // 2. Actualizar Usuario
-            await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userUpdateBody)
-            });
-
-            // 3. Actualizar Tabla específica
-            if(req.session.usuario === 2) { // Asesorado
-                const resAlumnos = await fetch(url_api + `/alumnos`, {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" }
-                });
-        const dataAlumnos = await resAlumnos.json();
-        const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
-
-        if (alumnoInfo) {
-            await fetch(url_api + `/alumnos/${alumnoInfo.id_alumno}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ carrera })
-            });
-        }
-    } else if (req.session.usuario === 1) { // Asesor
-        const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userUpdateBody)
         });
-        const dataAsesor = await resAsesor.json();
-        const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
 
-        if (asesorInfo) {
-            await fetch(url_api + `/asesores/actualizarAsesor/${asesorInfo.id_asesor}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ carrera })
+
+        if (!updateUsuario.ok) throw new Error("Error al actualizar usuario");
+
+        // 3. Actualizar Tabla específica
+        if (req.session.usuario === 2) { // Asesorado
+            const resAlumnos = await fetch(url_api + `/alumnos`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
             });
-        }
-    }
+            const dataAlumnos = await resAlumnos.json();
+            const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
 
-    res.redirect(req.session.usuario === 1 ? '/perfil-asesor' : '/perfil-asesorado');
-} catch (error) {
-    console.error("Error al guardar perfil:", error);
-    res.redirect("/editar-perfil");
-}
+            if (alumnoInfo) {
+                await fetch(url_api + `/alumnos/${alumnoInfo.id_alumno}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ carrera })
+                });
+            }
+        } else if (req.session.usuario === 1) { // Asesor
+            const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAsesor = await resAsesor.json();
+            const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
+
+            if (asesorInfo) {
+                await fetch(url_api + `/asesores/actualizarAsesor/${asesorInfo.id_asesor}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ carrera })
+                });
+            }
+        }
+
+        res.redirect(req.session.usuario === 1 ? '/perfil-asesor' : '/perfil-asesorado');
+    } catch (error) {
+        console.error("Error al guardar perfil:", error);
+        res.redirect("/editar-perfil");
+    }
 });
 
 // Ruta para agregar disponibilidad
@@ -526,7 +525,7 @@ router.post('/agregar-disponibilidad', async (req, res) => {
             hora_fin: hora_fin.includes(":") ? (hora_fin.length === 5 ? `${hora_fin}:00` : hora_fin) : "09:00:00"
         };
 
-        const response = await fetch("http://localhost:8000/disponibilidad", {
+        const response = await fetch(url_api + "/disponibilidad", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -552,7 +551,7 @@ router.post('/eliminar-disponibilidad', async (req, res) => {
     const { id_disponibilidad } = req.body;
 
     try {
-        const response = await fetch(`http://localhost:8000/disponibilidad/eliminarDisponibilidad/${id_disponibilidad}`, {
+        const response = await fetch(url_api + `/disponibilidad/eliminarDisponibilidad/${id_disponibilidad}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });
@@ -745,7 +744,7 @@ router.post('/crear-solicitud', async (req, res) => {
 
         // 2. Crear la toma (solicitud)
         const crearTomaResp = await fetch(url_api + "/toma/crearToma/", {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
