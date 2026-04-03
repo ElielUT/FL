@@ -63,7 +63,13 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
+            // Limpiar espacios en blanco antes de enviar
+            var correoInput = document.querySelector('input[name="correo"]');
+            var passInput = document.querySelector('input[name="contraseña"]');
+            if (correoInput) correoInput.value = correoInput.value.trim();
+            if (passInput) passInput.value = passInput.value.trim();
+
             // Bypass on localhost
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 return document.getElementById('loginForm').submit();
