@@ -455,30 +455,28 @@ router.post('/guardar-perfil', async (req, res) => {
         }
 
         const updateUsuario = await fetch(url_api + `/usuarios/actualizarUsuario/${id_usuario}`, {
-            // 2. Actualizar Usuario
-            await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userUpdateBody)
-            });
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userUpdateBody)
+        });
 
-            // 3. Actualizar Tabla específica
-            if(req.session.usuario === 2) { // Asesorado
-                const resAlumnos = await fetch(url_api + `/alumnos`, {
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" }
+        // 3. Actualizar Tabla específica
+        if(req.session.usuario === 2) { // Asesorado
+            const resAlumnos = await fetch(url_api + `/alumnos`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataAlumnos = await resAlumnos.json();
+            const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
+
+            if (alumnoInfo) {
+                await fetch(url_api + `/alumnos/${alumnoInfo.id_alumno}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ carrera })
                 });
-        const dataAlumnos = await resAlumnos.json();
-        const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
-
-        if (alumnoInfo) {
-            await fetch(url_api + `/alumnos/${alumnoInfo.id_alumno}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ carrera })
-            });
-        }
-    } else if (req.session.usuario === 1) { // Asesor
+            }
+        } else if (req.session.usuario === 1) { // Asesor
         const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
