@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil</title>
+    <title>LobiFind</title>
+    <link rel="icon" href="images/Logo.png">
     <!-- Incluimos una fuente de Google parecida a la del diseño (Montserrat o Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome para los íconos de la barra superior y avatar -->
@@ -202,7 +203,7 @@
             <i class="fa-solid fa-reply"></i> Volver
         </button>
         <!-- Icono de cerrar que dirige a una parte segura de forma preventiva, como localhost:port/ o /dashboard -->
-        <button class="btn-nav close" onclick="window.location.href='/'">
+        <button class="btn-nav close" onclick="window.location.href='/borrarSesion'">
             <i class="fa-regular fa-circle-xmark"></i>
         </button>
     </div>
@@ -242,7 +243,8 @@
 
                     <div class="etiqueta">Cuatrimestre</div>
                     <div class="valor">
-                        <%= (typeof asesor !=='undefined' && asesor.cuatrimestre) ? asesor.cuatrimestre : 'No especificado' %>
+                        <%= (typeof asesor !=='undefined' && asesor.cuatrimestre) ? asesor.cuatrimestre
+                            : 'No especificado' %>
                     </div>
 
                     <button class="btn-editar" onclick="window.location.href='/editar-perfil'">Editar perfil</button>

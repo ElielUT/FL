@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil</title>
+    <title>LobiFind</title>
+    <link rel="icon" href="images/Logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -95,7 +96,8 @@
             flex-direction: column;
             align-items: stretch;
             width: 100%;
-            max-width: 450px; /* Ancho ajustable para los inputs alineados como en la imagen */
+            max-width: 450px;
+            /* Ancho ajustable para los inputs alineados como en la imagen */
         }
 
         /* ----- Tarjeta Verde Central (Avatar y Nombre) ----- */
@@ -254,9 +256,9 @@
             <h1 class="titulo">Mi perfil</h1>
 
             <div class="contenido-perfil">
-                
+
                 <form action="/guardar-perfil" method="POST" class="bloque-info">
-                    
+
                     <!-- Tarjeta con Nombre y Email -->
                     <div class="tarjeta-verde">
                         <div class="avatar">
@@ -264,7 +266,8 @@
                         </div>
                         <div class="info-usuario">
                             <h2>
-                                <%= typeof asesor !=='undefined' && asesor.nombre ? asesor.nombre : 'Mariana Rodriguez' %>
+                                <%= typeof asesor !=='undefined' && asesor.nombre ? asesor.nombre : 'Mariana Rodriguez'
+                                    %>
                             </h2>
                             <p>
                                 <%= typeof asesor !=='undefined' && asesor.correo ? asesor.correo : 'Sin correo' %>
@@ -275,23 +278,32 @@
                     <!-- Campos del formulario -->
                     <div class="form-group">
                         <label>Nombre completo:</label>
-                        <input type="text" name="nombre" class="form-control" placeholder="Ingrese su nombre" value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>">
+                        <input type="text" name="nombre" class="form-control" placeholder="Ingrese su nombre"
+                            value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>">
                     </div>
 
                     <div class="form-group">
                         <label>Carrera:</label>
-                        <input type="text" name="carrera" class="form-control" placeholder="Ingrese su carrera" value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>">
+                        <input type="text" name="carrera" class="form-control" placeholder="Ingrese su carrera"
+                            value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>">
                     </div>
 
                     <div class="form-group">
                         <label>Cuatrimestre:</label>
                         <select name="cuatrimestre" class="form-control">
                             <% for(let i=1; i<=11; i++) { %>
-                                <option value="<%= i %>" <%= (typeof asesor !== 'undefined' && (asesor.cuatrimestre == i || asesor.cuatrimestre == i + 'º cuatrimestre')) ? 'selected' : '' %> >
+                                <option value="<%= i %>" <%=(typeof asesor !=='undefined' && (asesor.cuatrimestre==i ||
+                                    asesor.cuatrimestre==i + 'º cuatrimestre' )) ? 'selected' : '' %> >
                                     <%= i %>º cuatrimestre
                                 </option>
-                            <% } %>
+                                <% } %>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contraseña:</label>
+                        <input type="password" name="contraseña" class="form-control"
+                            placeholder="Ingrese su contraseña">
                     </div>
 
                     <!-- Botones -->

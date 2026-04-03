@@ -14,6 +14,10 @@ router.get("/", (req, res) => {
     res.render("index");
 });
 
+router.get("/registro", (req, res) => {
+    res.render("registrarse");
+});
+
 router.post("/", async (req, res) => {
     const { correo, contraseña } = req.body;
 
@@ -75,6 +79,27 @@ router.post("/", async (req, res) => {
         console.error("Error conectando con el backend API:", error);
         res.render("index", { error: "Error de conexión con el servidor" });
     }
+});
+
+router.post("/registro", async (req, res) => {
+    const { nombre, correo, contraseña, carrera, cuatrimestre } = req.body;
+    const rol = "asesorado";
+    const respuesta = await fetch(url_api + "/usuarios/crearUsuario", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            correo,
+            nombres: nombre,
+            apellidos,
+            contraseña,
+            categoria: rol,
+            cuatrimestre: parseInt(cuatrimestre),
+            plantel: "SJR"
+        })
+    });
+    res.render("index", { success: "Usuario registrado correctamente, confirma tu correo para iniciar sesión." });
 });
 
 router.get("/gestionUsuarios", async (req, res) => {
@@ -330,7 +355,7 @@ router.get('/editar-perfil', async (req, res) => {
 router.post('/guardar-perfil', async (req, res) => {
     if (!req.session.usuario) return res.redirect("/");
 
-    const { nombre, carrera, cuatrimestre } = req.body;
+    const { nombre, carrera, cuatrimestre, contraseña } = req.body;
     const id_usuario = req.session.id_usuario;
 
     try {
@@ -340,14 +365,20 @@ router.post('/guardar-perfil', async (req, res) => {
         const apellidos = partes.length > 1 ? partes.slice(1).join(" ") : "";
 
         // 2. Actualizar Usuario (Nombre y Cuatrimestre)
+        const userUpdateBody = {
+            nombres,
+            apellidos,
+            cuatrimestre: parseInt(cuatrimestre)
+        };
+
+        if (contraseña && contraseña.trim() !== '') {
+            userUpdateBody.contraseña = contraseña.trim();
+        }
+
         const updateUsuario = await fetch(url_api + `/usuarios/actualizarUsuario/${id_usuario}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                nombres,
-                apellidos,
-                cuatrimestre: parseInt(cuatrimestre)
-            })
+            body: JSON.stringify(userUpdateBody)
         });
 
         // 3. Actualizar Tabla específica (Alumno o Asesor)

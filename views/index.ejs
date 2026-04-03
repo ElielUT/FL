@@ -26,20 +26,29 @@
                     <%= error %>
                 </div>
                 <% } %>
-
-                    <form action="/" method="POST">
-                        <div class="input-group">
-                            <label>Correo:</label>
-                            <input type="text" name="correo" placeholder="Ingrese su usuario" required>
+                    <% if (typeof success !=='undefined' ) { %>
+                        <div class="success-message" style="color: green; text-align: center; margin-bottom: 10px;">
+                            <%= success %>
                         </div>
+                        <% } %>
 
-                        <div class="input-group">
-                            <label>Contraseña:</label>
-                            <input type="password" name="contraseña" placeholder="Ingrese su contraseña" required>
-                        </div>
+                            <form action="/" method="POST">
+                                <div class="input-group">
+                                    <label>Correo:</label>
+                                    <input type="text" name="correo" placeholder="Ingrese su usuario" required>
+                                </div>
 
-                        <button type="submit" class="btn-login">Iniciar sesión</button>
-                    </form>
+                                <div class="input-group">
+                                    <label>Contraseña:</label>
+                                    <input type="password" name="contraseña" placeholder="Ingrese su contraseña"
+                                        required>
+                                </div>
+
+                                <button type="submit" class="btn-login">Iniciar sesión</button>
+                            </form>
+                            <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #00a185;">
+                                ¿Aun no tienes cuenta? <br> <a href="/registro" style="color: #00a185;">Registrate</a>
+                            </p>
         </div>
     </main>
 
