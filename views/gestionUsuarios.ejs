@@ -51,7 +51,7 @@
                         <option value="CQ">ING. Civil (TSU. Construcción)</option>
                         <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
                         <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
-                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
                             Desarrollo de Software Multiplataforma)</option>
                         <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En Entornos
                             Virtuales y Negocios Digitales)</option>
@@ -97,47 +97,44 @@
         </select>
     </div>
     <div class="usuarios">
-        <% contador=0; usuarios.forEach(usuario=> { %>
-            <div class=<% if((contador % 2)==0){%> "usuarioIzquierda" <%}else{%> "usuarioDerecha" <%}%>>
-                        <div class="imagen-categoria">
-                            <div <% if(usuario.categoria=="asesor" ) {%> class=" contIMG asesor" <%}else
-                                    if(usuario.categoria=="asesorado" ) {%> class="contIMG asesorado" <%}else{%>
-                                        class="contIMG administrador" <%}%>>
-                                            <img src="../images/usuario.png" alt="">
-                            </div>
-                            <div <% if(usuario.categoria=="asesor" ) {%> class="categoria Casesor" <%}else
-                                    if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
-                                        class="categoria Cadministrador" <%}%>>
-                                            <p>
-                                                <% if(usuario.categoria=="admin" ){%> Administrador <%}else{%>
-                                                        <%= usuario.categoria.charAt(0).toUpperCase() +
-                                                            usuario.categoria.slice(1) %>
-                                                            <%}%>
-                                            </p>
-                            </div>
-                        </div>
-                        <div class="usuarioInfo">
-                            <h2>
-                                <%= usuario.nombres + " " + usuario.apellidos %>
-                            </h2>
-                            <p>
-                                <%= usuario.correo %>
-                            </p>
-                            <% if(usuario.categoria !="admin" ){%>
-                                <p class="info">
-                                    <%= usuario.cuatrimestre + "° Cuatrimestre -  Plantel: " + usuario.plantel %>
-                                </p>
-                                <%}%>
-                        </div>
-                        <div class="acciones" id="<%= usuario.id_usuario %>">
-                            <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+        <% usuarios.forEach(usuario=> { %>
+            <div class="usuarioItem">
+                <div class="imagen-categoria">
+                    <div <% if(usuario.categoria=="asesor" ) {%> class=" contIMG asesor" <%}else
+                            if(usuario.categoria=="asesorado" ) {%> class="contIMG asesorado" <%}else{%>
+                                class="contIMG administrador" <%}%>>
+                                    <img src="../images/usuario.png" alt="">
+                    </div>
+                    <div <% if(usuario.categoria=="asesor" ) {%> class="categoria Casesor" <%}else
+                            if(usuario.categoria=="asesorado" ) {%> class="categoria Casesorado" <%}else{%>
+                                class="categoria Cadministrador" <%}%>>
+                                    <p>
+                                        <% if(usuario.categoria=="admin" ){%> Administrador <%}else{%>
+                                                <%= usuario.categoria.charAt(0).toUpperCase() +
+                                                    usuario.categoria.slice(1) %>
+                                                    <%}%>
+                                    </p>
+                    </div>
+                </div>
+                <div class="usuarioInfo">
+                    <h2>
+                        <%= usuario.nombres + " " + usuario.apellidos %>
+                    </h2>
+                    <p>
+                        <%= usuario.correo %>
+                    </p>
+                    <% if(usuario.categoria !="admin" ){%>
+                        <p class="info">
+                            <%= usuario.cuatrimestre + "° Cuatrimestre -  Plantel: " + usuario.plantel %>
+                        </p>
+                        <%}%>
+                </div>
+                <div class="acciones" id="<%= usuario.id_usuario %>">
+                    <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
             </div>
-            <% contador++;if((contador%2)==0){%>
-    </div>
-    <div class="usuarios">
-        <% } }) %>
+            <% }) %>
     </div>
     <div class="editarUsuario ocultar" id="editarUsuario">
         <div class="interno">
@@ -185,7 +182,7 @@
                             <option value="CQ">ING. Civil (TSU. Construcción)</option>
                             <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
                             <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
-                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. ETn
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
                                 Desarrollo de Software Multiplataforma)</option>
                             <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
                                 Entornos
@@ -232,9 +229,9 @@
             editUsuario = document.querySelector("#editarUsuario");
 
         const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
-        
+
         Object.defineProperty(window, 'url_api', {
-            get: function() {
+            get: function () {
                 return atob(url_api_cifrada);
             }
         });
@@ -242,7 +239,7 @@
         const form = document.querySelector("#formEditarUsuario");
         const inputBusqueda = document.querySelector(".busqueda");
         const selectFiltro = document.querySelector(".filtro");
-        const usuariosItems = document.querySelectorAll(".usuarioIzquierda, .usuarioDerecha");
+        const usuariosItems = document.querySelectorAll(".usuarioItem");
 
         var catACT = "";
 
@@ -373,6 +370,24 @@
                     })
                     const user = await subirAsesorado.json();
                 }
+            } else {
+                if (catSel == "asesor") {
+                    await fetch(url_api + "/asesores/actualizarAsesorForaneo/" + idUsuario, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ carrera: carrera })
+                    });
+                } else if (catSel == "asesorado") {
+                    await fetch(url_api + "/alumnos/actualizarAlumnoForaneo/" + idUsuario, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ carrera: carrera })
+                    });
+                }
             }
         }
 
@@ -385,12 +400,22 @@
             });
             const data = await respuesta.json();
             const usuario = data.item;
+            const carrera = data.carrera;
             form.querySelector('input[name="id_usuario"]').value = idUsuario;
             form.querySelector('input[name="nombre"]').value = usuario.nombres;
             form.querySelector('input[name="apellidos"]').value = usuario.apellidos;
             form.querySelector('input[name="correo"]').value = usuario.correo;
             form.querySelector('select[name="rol"]').value = usuario.categoria;
             form.querySelector('select[name="cuatrimestre"]').value = usuario.cuatrimestre;
+            if (usuario.categoria != "admin" && carrera && carrera.carrera) {
+                const targetValue = String(carrera.carrera).trim().toUpperCase();
+                const selectCarrera = form.querySelector('select[name="carrera"]');
+                Array.from(selectCarrera.options).forEach(opt => {
+                    if (opt.value.trim().toUpperCase() === targetValue) {
+                        selectCarrera.value = opt.value;
+                    }
+                });
+            }
             catACT = usuario.categoria;
         }
 

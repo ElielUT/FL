@@ -236,18 +236,19 @@ BARRA DE BUSQUEDA Y FILTROS
 .usuarios {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     padding: 0% 4% 2% 4%;
 }
 
-.usuarioIzquierda,
-.usuarioDerecha {
+.usuarioItem {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    width: 45%;
+    width: 48%;
+    margin-bottom: 2%;
     background-color: white;
     border: none;
     border-radius: 25px;
