@@ -87,11 +87,11 @@ router.get("/gestionUsuarios", async (req, res) => {
         headers: {
             "Content-Type": "application/json"
         }
-    })
+    });
     const data = await respuesta.json();
     const usuarios = data.items;
     if (usuarios == null) {
-        res.render("index", { error: "Error de conexión" })
+        res.render("index", { error: "Error de conexión" });
     } else {
         res.render("gestionUsuarios", { usuarios: usuarios });
     }
@@ -207,7 +207,24 @@ router.get('/perfil-asesor', async (req, res) => {
             headers: { "Content-Type": "application/json" }
         });
         const dataDisp = await resDisp.json();
-        const disponibilidad = dataDisp.items || [];
+        const disponibilidadRaw = dataDisp.items || [];
+
+        // Mapeo de fechas a días para mostrar en la vista
+        const dayMap = {
+            "2024-01-01": "Lunes",
+            "2024-01-02": "Martes",
+            "2024-01-03": "Miércoles",
+            "2024-01-04": "Jueves",
+            "2024-01-05": "Viernes",
+            "2024-01-06": "Sábado"
+        };
+
+        const disponibilidad = disponibilidadRaw.map(d => {
+            const diaNombre = dayMap[d.dia] || d.dia;
+            const hIn = d.hora_in ? d.hora_in.substring(0, 5) : "";
+            const hFin = d.hora_fin ? d.hora_fin.substring(0, 5) : "";
+            return `${diaNombre} ${hIn}-${hFin}`;
+        });
 
         // 4. Preparar objeto para la vista
         const datosVista = {
@@ -216,8 +233,8 @@ router.get('/perfil-asesor', async (req, res) => {
                 correo: userInfo.correo,
                 carrera: asesorInfo.carrera,
                 cuatrimestre: userInfo.cuatrimestre + "º cuatrimestre",
-                disponibilidad: disponibilidad.map(d => `${d.dia} ${d.hora_inicio}-${d.hora_fin}`),
-                materias: [], // Eliminado el hardcode de "Bases de datos" y "POO"
+                disponibilidad: disponibilidad,
+                materias: [],
                 calificacion: 0
             }
         };
@@ -225,7 +242,7 @@ router.get('/perfil-asesor', async (req, res) => {
         res.render('perfilasesor', datosVista);
     } catch (error) {
         console.error("Error detallado al cargar perfil asesor:", error.message);
-        res.render('perfilasesor', { error: "Error al cargar datos reales. Se muestran datos locales." });
+        res.render('perfilasesor', { error: "Error al cargar datos reales." });
     }
 });
 
@@ -290,17 +307,51 @@ router.get('/editar-perfil', async (req, res) => {
         const dataUser = await resUser.json();
         const userInfo = dataUser.item;
 
+        if (!userInfo) throw new Error("No se encontró información del usuario");
+
         // 2. Buscar datos específicos (Alumno o Asesor)
-        let carrera = "No especificada";
         if (req.session.usuario === 1) { // Asesor
             const resAsesor = await fetch(`http://localhost:8000/asesores/buscarAsesorUsuario/${encodeURIComponent(req.session.correo)}`, {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             });
             const dataAsesor = await resAsesor.json();
-            if (dataAsesor.items && dataAsesor.items[0]) {
-                carrera = dataAsesor.items[0].carrera;
-            }
+            const asesorInfo = dataAsesor.items ? dataAsesor.items[0] : null;
+
+            if (!asesorInfo) throw new Error("No se encontró información de asesor");
+
+            // 3. Obtener disponibilidad
+            const resDisp = await fetch(`http://localhost:8000/disponibilidad/${asesorInfo.id_asesor}`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            const dataDisp = await resDisp.json();
+            const disponibilidadRaw = dataDisp.items || [];
+
+            const dayMap = {
+                "2024-01-01": "Lunes",
+                "2024-01-02": "Martes",
+                "2024-01-03": "Miércoles",
+                "2024-01-04": "Jueves",
+                "2024-01-05": "Viernes",
+                "2024-01-06": "Sábado"
+            };
+
+            const datosVista = {
+                asesor: {
+                    id_asesor: asesorInfo.id_asesor,
+                    nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
+                    correo: userInfo.correo,
+                    carrera: asesorInfo.carrera,
+                    cuatrimestre: userInfo.cuatrimestre,
+                    disponibilidad: disponibilidadRaw.map(d => ({
+                        id_disponibilidad: d.id_horario, // Usamos el ID de la base de datos para borrar
+                        texto: `${dayMap[d.dia] || d.dia} ${d.hora_in.substring(0, 5)}-${d.hora_fin.substring(0, 5)}`
+                    }))
+                }
+            };
+            res.render('editarPerfilAsesor', datosVista);
+
         } else if (req.session.usuario === 2) { // Asesorado
             const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
                 method: "GET",
@@ -308,19 +359,17 @@ router.get('/editar-perfil', async (req, res) => {
             });
             const dataAlumnos = await resAlumnos.json();
             const alumnoInfo = dataAlumnos.items ? dataAlumnos.items.find(a => a.id_usuario1 == id_usuario) : null;
-            if (alumnoInfo) carrera = alumnoInfo.carrera;
+            
+            const datosVista = {
+                asesor: {
+                    nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
+                    correo: userInfo.correo,
+                    carrera: alumnoInfo ? alumnoInfo.carrera : "No especificada",
+                    cuatrimestre: userInfo.cuatrimestre
+                }
+            };
+            res.render('editarperfilasesorado', datosVista);
         }
-
-        const datosVista = {
-            asesor: {
-                nombre: `${userInfo.nombres} ${userInfo.apellidos}`,
-                correo: userInfo.correo,
-                carrera: carrera,
-                cuatrimestre: userInfo.cuatrimestre
-            }
-        };
-
-        res.render('editarperfilasesorado', datosVista);
     } catch (error) {
         console.error("Error al cargar pantalla editar:", error);
         res.redirect("/perfil-asesorado");
@@ -334,13 +383,13 @@ router.post('/guardar-perfil', async (req, res) => {
     const id_usuario = req.session.id_usuario;
 
     try {
-        // 1. Dividir nombre (asumimos espacio para apellidos)
+        // 1. Dividir nombre
         const partes = nombre.trim().split(" ");
         const nombres = partes[0];
         const apellidos = partes.length > 1 ? partes.slice(1).join(" ") : "";
 
-        // 2. Actualizar Usuario (Nombre y Cuatrimestre)
-        const updateUsuario = await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
+        // 2. Actualizar Usuario
+        await fetch(`http://localhost:8000/usuarios/actualizarUsuario/${id_usuario}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -350,7 +399,7 @@ router.post('/guardar-perfil', async (req, res) => {
             })
         });
 
-        // 3. Actualizar Tabla específica (Alumno o Asesor)
+        // 3. Actualizar Tabla específica
         if (req.session.usuario === 2) { // Asesorado
             const resAlumnos = await fetch(`http://localhost:8000/alumnos`, {
                 method: "GET",
@@ -387,6 +436,72 @@ router.post('/guardar-perfil', async (req, res) => {
     } catch (error) {
         console.error("Error al guardar perfil:", error);
         res.redirect("/editar-perfil");
+    }
+});
+
+// Ruta para agregar disponibilidad
+router.post('/agregar-disponibilidad', async (req, res) => {
+    if (req.session.usuario !== 1) return res.status(403).send("No autorizado");
+    
+    const { id_asesor, dia, hora_inicio, hora_fin } = req.body;
+    
+    const dayToDate = {
+        "Lunes": "2024-01-01",
+        "Martes": "2024-01-02",
+        "Miércoles": "2024-01-03",
+        "Jueves": "2024-01-04",
+        "Viernes": "2024-01-05",
+        "Sábado": "2024-01-06"
+    };
+
+    try {
+        const payload = {
+            id_horario: Math.floor(Math.random() * 9000) + 1, // El API requiere este ID
+            id_asesor1: parseInt(id_asesor),
+            dia: dayToDate[dia] || "2024-01-01",
+            hora_in: hora_inicio.includes(":") ? (hora_inicio.length === 5 ? `${hora_inicio}:00` : hora_inicio) : "08:00:00",
+            hora_fin: hora_fin.includes(":") ? (hora_fin.length === 5 ? `${hora_fin}:00` : hora_fin) : "09:00:00"
+        };
+
+        const response = await fetch("http://localhost:8000/disponibilidad", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+            res.json({ success: true });
+        } else {
+            const errData = await response.json();
+            console.error("Error Backend Availability:", errData);
+            res.status(500).json({ success: false, message: "Error al crear disponibilidad en el servidor" });
+        }
+    } catch (error) {
+        console.error("Error API disponibilidad:", error);
+        res.status(500).json({ success: false });
+    }
+});
+
+// Ruta para eliminar disponibilidad
+router.post('/eliminar-disponibilidad', async (req, res) => {
+    if (req.session.usuario !== 1) return res.status(403).send("No autorizado");
+    
+    const { id_disponibilidad } = req.body;
+    
+    try {
+        const response = await fetch(`http://localhost:8000/disponibilidad/eliminarDisponibilidad/${id_disponibilidad}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        });
+        
+        if (response.ok) {
+            res.json({ success: true });
+        } else {
+            res.status(500).json({ success: false });
+        }
+    } catch (error) {
+        console.error("Error API eliminar disponibilidad:", error);
+        res.status(500).json({ success: false });
     }
 });
 

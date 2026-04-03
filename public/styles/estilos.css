@@ -57,6 +57,53 @@ BARRA DE BUSQUEDA Y FILTROS
     font-size: 20px;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Increased separation */
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    gap: 2px;
+    transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+.action-btn i {
+    font-size: 32px; /* A bit larger */
+}
+
+.action-btn span {
+    font-size: 14px; /* A bit larger */
+    font-weight: 600;
+}
+
+.volverIcon {
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: 200;
+}
+
+.volverIcon p {
+    font-size: 20px;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -991,6 +1038,7 @@ SOLICITAR ASESORÍA
     font-size: 1.1rem;
     font-weight: 500;
 }
+
 .sin-calificaciones {
     display: block;
     font-size: 0.7rem;
