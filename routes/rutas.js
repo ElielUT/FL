@@ -458,9 +458,6 @@ router.post('/guardar-perfil', async (req, res) => {
             body: JSON.stringify(userUpdateBody)
         });
 
-
-        if (!updateUsuario.ok) throw new Error("Error al actualizar usuario");
-
         // 3. Actualizar Tabla específica
         if (req.session.usuario === 2) { // Asesorado
             const resAlumnos = await fetch(url_api + `/alumnos`, {
