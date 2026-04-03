@@ -6,7 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
-const url_api = process.env.URL_API;
+const url_api = process.env.URL_API ? process.env.URL_API.replace(/\/$/, '') : '';
 
 async function verificarRecaptcha(token, req) {
     if (req && (req.hostname === 'localhost' || req.hostname === '127.0.0.1')) return true;
