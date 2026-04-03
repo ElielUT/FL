@@ -11,11 +11,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            var script = document.createElement('script');
+            script.src = "https://www.google.com/recaptcha/api.js?render=<%= RECAPTCHA_SITE_KEY %>";
+            document.head.appendChild(script);
+        }
+    </script>
 </head>
 
 <body>
     <main class="login-container">
         <form class="register-card" id="formRegistro" action="/registro" method="POST">
+            <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
             <div class="register-left">
                 <div class="input-group">
                     <label>Nombres:</label>
@@ -129,11 +137,26 @@
         const correo = document.getElementById("correo");
         const form = document.getElementById("formRegistro");
         form.addEventListener("submit", function (e) {
+            e.preventDefault();
             if (!regexCorreo.test(correo.value)) {
                 correo.setCustomValidity("Usar correo institucional (@utsjr.edu.mx)");
-                e.preventDefault();
+                form.reportValidity();
             } else {
                 correo.setCustomValidity('');
+                
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || typeof grecaptcha === 'undefined') {
+                    return form.submit();
+                }
+
+                grecaptcha.ready(function () {
+                    grecaptcha.execute('<%= RECAPTCHA_SITE_KEY %>', { action: 'register' }).then(function (token) {
+                        document.getElementById('g-recaptcha-response').value = token;
+                        form.submit();
+                    }).catch(function(err) {
+                        console.error("reCAPTCHA Error: ", err);
+                        form.submit();
+                    });
+                });
             }
         });
     </script>

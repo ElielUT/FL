@@ -26,6 +26,8 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use("/", rutas);
 
+app.locals.RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY;
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`);

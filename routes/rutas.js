@@ -8,6 +8,22 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 const url_api = process.env.URL_API;
 
+async function verificarRecaptcha(token, req) {
+    if (req && (req.hostname === 'localhost' || req.hostname === '127.0.0.1')) return true;
+    if (!token) return false;
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    try {
+        const resp = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`, {
+            method: 'POST'
+        });
+        const data = await resp.json();
+        return data.success && data.score >= 0.5;
+    } catch (e) {
+        console.error("Error verificando reCAPTCHA", e);
+        return false;
+    }
+}
+
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -19,9 +35,13 @@ router.get("/registro", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    const { correo, contraseña } = req.body;
+    const { correo, contraseña, "g-recaptcha-response": recaptchaToken } = req.body;
 
     try {
+        const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
+        if (!isValidRecaptcha) {
+            return res.render("index", { error: "Actividad sospechosa detectada por reCAPTCHA" });
+        }
         if (correo !== "admin") {
             const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({
                 email: correo,
@@ -82,8 +102,14 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/registro", async (req, res) => {
-    const { nombre, correo, contraseña, carrera, cuatrimestre } = req.body;
+    const { nombre, correo, contraseña, carrera, cuatrimestre, "g-recaptcha-response": recaptchaToken, apellidos } = req.body;
     const rol = "asesorado";
+    
+    try {
+        const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
+        if (!isValidRecaptcha) {
+            return res.render("registrarse", { error: "Actividad sospechosa detectada por reCAPTCHA" });
+        }
     const respuesta = await fetch(url_api + "/usuarios/crearUsuario", {
         method: "POST",
         headers: {
@@ -100,6 +126,10 @@ router.post("/registro", async (req, res) => {
         })
     });
     res.render("index", { success: "Usuario registrado correctamente, confirma tu correo para iniciar sesión." });
+    } catch (error) {
+        console.error("Error en registro:", error);
+        res.render("registrarse", { error: "Error interno del servidor, intenta de nuevo más tarde." });
+    }
 });
 
 router.get("/gestionUsuarios", async (req, res) => {
