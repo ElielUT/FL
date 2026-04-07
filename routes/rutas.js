@@ -886,4 +886,89 @@ router.get("/solicitudesDisponibles", (req, res) => {
     res.render("solicitudesDisponibles");
 });
 
+router.get("/administrarMaterias", async (req, res) => {
+    if (req.session.usuario !== 3) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+    try {
+        const respuesta = await fetch(url_api + "/materias", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        const materias = data.items || [];
+        res.render("administrarMaterias", { materias, url_api });
+    } catch (error) {
+        console.error("Error al cargar materias:", error);
+        res.render("administrarMaterias", { materias: [], url_api });
+    }
+});
+
+router.post("/administrarMaterias", async (req, res) => {
+    if (req.session.usuario !== 3) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+    try {
+        const [nombre, carrera, cuatrimestre] = req.body;
+        const [subir, respuesta] = await Promise.all([
+            await fetch(url_api + "/materias", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    nombre,
+                    carrera,
+                    parseInt(cuatrimestre)
+                )
+            }),
+            fetch(url_api + "/materias", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+        ]);
+        const data = await respuesta.json();
+        const materias = data.items || [];
+        res.render("administrarMaterias", { materias, url_api });
+    } catch (error) {
+        console.error("Error al cargar materias:", error);
+        res.render("administrarMaterias", { materias: [], url_api });
+    }
+});
+
+router.post("/asignarMaterias", async (req, res) => {
+    if (req.session.usuario !== 3) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+    try {
+        const { nombre_materia, id_materia } = req.body;
+        const [materia, asesores, todosAsesores] = await Promise.all([
+            fetch(url_api + "/materias/" + id_materia, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            }),
+            fetch(url_api + "/asesores/buscarAsesorMateria/" + encodeURIComponent(nombre_materia), {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            }),
+            fetch(url_api + "/asesores/listarAsesores", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            })
+        ]);
+
+        const dataMateria = await materia.json() || {};
+        const dataAsesores = await asesores.json() || {};
+        const dataTodosAsesores = await todosAsesores.json() || {};
+
+        res.render("asignarMaterias", { 
+            materia: dataMateria.items, 
+            asesores: dataAsesores.items || [], 
+            todosAsesores: dataTodosAsesores.items || [],
+            url_api 
+        });
+    } catch (error) {
+        console.error("Error al cargar materias:", error);
+        res.render("asignarMaterias", { materia: [], asesores: [], todosAsesores: [], url_api: "" });
+    }
+});
+
 export default router;

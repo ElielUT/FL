@@ -4,6 +4,7 @@
             <div class="botonesAdmin">
                 <button id="gestionarUsuarios">Gestionar usuarios</button>
                 <button id="supervisarAsesorias">Supervisar asesorías</button>
+                <button id="administrarMaterias">Administrar materias</button>
             </div>
             <div class="estadisticas">
                 <h3>Estadísticas generales</h3>
@@ -101,6 +102,9 @@
         });
         document.getElementById("supervisarAsesorias").addEventListener("click", function () {
             window.location.href = "/supervisarAsesorias";
+        });
+        document.getElementById("administrarMaterias").addEventListener("click", function () {
+            window.location.href = "/administrarMaterias";
         });
     </script>
     <%- include('templates/footer.ejs') %>

@@ -1,0 +1,378 @@
+<%- include('templates/header.ejs') %>
+    <div class="titulo">
+        <div class="tituloIzquierda">
+            <h1>Administrar materias</h1>
+            <h2>Administrar las materias de los usuarios</h2>
+        </div>
+        <div class="tituloDerecha">
+            <button id="nuevaMateria">+ Nueva materia</button>
+        </div>
+    </div>
+    <div class="nuevaMateria ocultar" id="crearMateria">
+        <div class="titulo" id="tituloCrearMateria">
+            <div class="tituloIzquierda">
+                <h2 id="tituloCrearMateria">Agregar nueva materia</h2>
+            </div>
+            <div class="tituloDerecha">
+                <button id="cancelar">Cancelar</button>
+                <button id="guardar">Guardar</button>
+            </div>
+        </div>
+        <form action="" method="post" id="formCrearMateria">
+            <div class="materias">
+                <div class="nombreMateria">
+                    <label for="nombreMateria">Nombre de la materia:</label>
+                    <input type="text" id="nombreMateria" name="nombreMateria" placeholder="Nombre de la materia"
+                        required>
+                </div>
+                <div class="carrera">
+                    <label for="carrera">Carrera:</label>
+                    <select name="carrera" id="carrera">
+                        <option value="Comun">Tronco Común</option>
+                        <option value="QF">Ing. Química Farmacéutica</option>
+                        <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                        </option>
+                        <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                        <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                        <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                        <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                        <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                            Desarrollo de Software Multiplataforma)</option>
+                        <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                            Entornos
+                            Virtuales y Negocios Digitales)</option>
+                        <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                            Inteligencia
+                            Artificial)</option>
+                        <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                            Datos)
+                        </option>
+                        <option value="MI">ING. Mantenimiento Industrial</option>
+                        <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                        <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                        <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                        <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                    </select>
+                </div>
+                <div class="cuatrimestre">
+                    <label for="cuatrimestre">Cuatrimestre:</label>
+                    <select name="cuatrimestre" id="cuatrimestre">
+                        <option value="1">1° Cuatrimestre</option>
+                        <option value="2">2° Cuatrimestre</option>
+                        <option value="3">3° Cuatrimestre</option>
+                        <option value="4">4° Cuatrimestre</option>
+                        <option value="5">5° Cuatrimestre</option>
+                        <option value="6">6° Cuatrimestre</option>
+                        <option value="7">7° Cuatrimestre</option>
+                        <option value="8">8° Cuatrimestre</option>
+                        <option value="9">9° Cuatrimestre</option>
+                        <option value="10">10° Cuatrimestre</option>
+                        <option value="11">11° Cuatrimestre</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="busqueda_filtro materiasFiltros">
+        <input type="search" placeholder="Buscar" class="busqueda">
+        <select name="" id="" class="filtro">
+            <option value="todos">Todos</option>
+            <option value="Comun">Tronco Común</option>
+            <option value="QF">Ing. Química Farmacéutica</option>
+            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)</option>
+            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                Desarrollo de Software Multiplataforma)</option>
+            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En Entornos
+                Virtuales y Negocios Digitales)</option>
+            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU. Inteligencia
+                Artificial)</option>
+            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                Datos)
+            </option>
+            <option value="MI">ING. Mantenimiento Industrial</option>
+            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+        </select>
+        <select name="" id="" class="filtroCuatrimestre">
+            <option value="todos">Todos</option>
+            <option value="1">1° Cuatrimestre</option>
+            <option value="2">2° Cuatrimestre</option>
+            <option value="3">3° Cuatrimestre</option>
+            <option value="4">4° Cuatrimestre</option>
+            <option value="5">5° Cuatrimestre</option>
+            <option value="6">6° Cuatrimestre</option>
+            <option value="7">7° Cuatrimestre</option>
+            <option value="8">8° Cuatrimestre</option>
+            <option value="9">9° Cuatrimestre</option>
+            <option value="10">10° Cuatrimestre</option>
+            <option value="11">11° Cuatrimestre</option>
+        </select>
+    </div>
+    <div class="materias">
+        <% materias.forEach(materia=> { %>
+            <div class="materiaItem">
+                <div class="imagenMateria">
+                    <div class="imgMat">
+                        <i class="bi bi-journal"></i>
+                    </div>
+                </div>
+                <div class="infoMateria">
+                    <form action="/asignarMaterias" method="post" class="formAsignarMaterias">
+                        <input type="hidden" name="nombre_materia" value="<%= materia.nombre %>">
+                        <input type="hidden" name="id_materia" value="<%= materia.id_materia %>">
+                    </form>
+                    <div class="nombreMateria">
+                        <p>
+                            <%= materia.nombre %>
+                        </p>
+                    </div>
+                    <div class="carrera">
+                        <p>
+                            <%= materia.carrera %>
+                        </p>
+                    </div>
+                    <div class="cuatrimestre">
+                        <p>
+                            <%= materia.cuatrimestre %>° Cuatrimestre
+                        </p>
+                    </div>
+                </div>
+                <div class="acciones" id="<%= materia.id_materia %>">
+                    <button class="btnEditar"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button class="btnEliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <% }) %>
+    </div>
+    <div class="editarMateria ocultar" id="editarMateria">
+        <div class="interno">
+            <div class="titulo" id="tituloEditarMateria">
+                <div class="tituloIzquierda">
+                    <h2 id="tituloCrearMateria">Editar materia</h2>
+                </div>
+                <div class="tituloDerecha">
+                    <button id="cancelarEditar">Cancelar</button>
+                    <button id="guardarEditar">Guardar</button>
+                </div>
+            </div>
+            <form action="" method="post" id="formEditarMateria">
+                <input type="hidden" name="id" id="id">
+                <div class="materias">
+                    <div class="nombreMateria">
+                        <label for="nombreMateria">Nombre de la materia:</label>
+                        <input type="text" id="nombreMateria" name="nombreMateria" placeholder="Nombre de la materia"
+                            required>
+                    </div>
+                    <div class="carrera">
+                        <label for="carrera">Carrera:</label>
+                        <select name="carrera" id="carrera">
+                            <option value="Comun">Tronco Común</option>
+                            <option value="QF">Ing. Química Farmacéutica</option>
+                            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                            </option>
+                            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Desarrollo de Software Multiplataforma)</option>
+                            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Entornos
+                                Virtuales y Negocios Digitales)</option>
+                            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                                Inteligencia
+                                Artificial)</option>
+                            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                                Datos)
+                            </option>
+                            <option value="MI">ING. Mantenimiento Industrial</option>
+                            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                        </select>
+                    </div>
+                    <div class="cuatrimestre">
+                        <label for="cuatrimestre">Cuatrimestre:</label>
+                        <select name="cuatrimestre" id="cuatrimestre">
+                            <option value="1">1° Cuatrimestre</option>
+                            <option value="2">2° Cuatrimestre</option>
+                            <option value="3">3° Cuatrimestre</option>
+                            <option value="4">4° Cuatrimestre</option>
+                            <option value="5">5° Cuatrimestre</option>
+                            <option value="6">6° Cuatrimestre</option>
+                            <option value="7">7° Cuatrimestre</option>
+                            <option value="8">8° Cuatrimestre</option>
+                            <option value="9">9° Cuatrimestre</option>
+                            <option value="10">10° Cuatrimestre</option>
+                            <option value="11">11° Cuatrimestre</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
+
+        Object.defineProperty(window, 'url_api', {
+            get: function () {
+                return atob(url_api_cifrada);
+            }
+        });
+
+        //Botones
+        const btnEditar = document.querySelectorAll('.btnEditar'),
+            btnEliminar = document.querySelectorAll('.btnEliminar'),
+            btnNuevaMateria = document.getElementById('nuevaMateria'),
+            btnCancelar = document.getElementById('cancelar'),
+            btnGuardar = document.getElementById('guardar'),
+            btnCancelarEditar = document.getElementById('cancelarEditar'),
+            btnGuardarEditar = document.getElementById('guardarEditar'),
+            selectMateria = document.querySelectorAll('.infoMateria');
+
+        //Contenedores
+        const contNuevaMateria = document.getElementById('crearMateria'),
+            contEditarMateria = document.getElementById('editarMateria');
+
+        //Formularios
+        const formCrearMateria = document.getElementById('formCrearMateria'),
+            formEditarMateria = document.getElementById('formEditarMateria'),
+            formAsignarMaterias = document.getElementById('formAsignarMaterias');
+
+        btnNuevaMateria.addEventListener('click', () => {
+            contNuevaMateria.classList.remove('ocultar');
+            btnNuevaMateria.classList.add("ocultar")
+        });
+
+        btnCancelar.addEventListener('click', () => {
+            contNuevaMateria.classList.add('ocultar');
+            btnNuevaMateria.classList.remove("ocultar")
+            formCrearMateria.reset();
+        });
+        btnGuardar.addEventListener('click', async () => {
+            const datos = new FormData(formCrearMateria);
+            console.log(datos);
+            try {
+                const respuesta = await fetch(url_api + "/materias/crear", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nombre: datos.get("nombreMateria"),
+                        carrera: datos.get("carrera"),
+                        cuatrimestre: parseInt(datos.get("cuatrimestre"))
+                    })
+                });
+
+                if (!respuesta.ok) {
+                    const errInfo = await respuesta.json();
+                    alert("Error al crear materia: " + (errInfo.detail || "Error desconocido"));
+                    return; // Stop here, don't close modal or reload
+                }
+
+                contNuevaMateria.classList.add('ocultar');
+                window.location.reload();
+            } catch (error) {
+                console.error("Fetch error: ", error);
+                alert("Error de conexión al servidor.");
+            }
+        });
+
+        btnEditar.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const id = btn.closest('.acciones').id;
+                try {
+                    const datosMat = await recuperarDatos(id);
+                    formEditarMateria.querySelector('#nombreMateria').value = datosMat.nombre;
+                    formEditarMateria.querySelector('#carrera').value = datosMat.carrera;
+                    formEditarMateria.querySelector('#cuatrimestre').value = datosMat.cuatrimestre;
+                    formEditarMateria.querySelector('#id').value = id;
+                    contEditarMateria.classList.remove('ocultar');
+                } catch (err) {
+                    console.error("Error al recuperar datos:", err);
+                }
+            });
+        });
+
+        const recuperarDatos = async (id) => {
+            const respuesta = await fetch(url_api + "/materias/" + id, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+            })
+            if (!respuesta.ok) {
+                const errInfo = await respuesta.json();
+                alert("Error al obtener materia: " + (errInfo.detail || "Error de red/servidor"));
+                throw new Error("HTTP " + respuesta.status);
+            }
+            const datos = await respuesta.json();
+            return datos.items;
+        }
+        btnCancelarEditar.addEventListener('click', () => {
+            contEditarMateria.classList.add('ocultar');
+            formEditarMateria.reset();
+        });
+
+        btnGuardarEditar.addEventListener('click', async () => {
+            const datos = new FormData(formEditarMateria);
+            const id = formEditarMateria.querySelector('#id').value;
+            try {
+                const respuesta = await fetch(url_api + "/materias/" + id, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nombre: datos.get("nombreMateria"),
+                        carrera: datos.get("carrera"),
+                        cuatrimestre: parseInt(datos.get("cuatrimestre"))
+                    })
+                });
+
+                if (!respuesta.ok) {
+                    const errInfo = await respuesta.json();
+                    alert("Error al crear materia: " + (errInfo.detail || "Error desconocido"));
+                    return;
+                }
+
+                contEditarMateria.classList.add('ocultar');
+                window.location.reload();
+            } catch (error) {
+                console.error("Fetch error: ", error);
+                alert("Error de conexión al servidor.");
+            }
+        });
+
+        btnEliminar.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const id = btn.closest('.acciones').id;
+                try {
+                    const respuesta = await fetch(url_api + "/materias/" + id, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    })
+                    if (!respuesta.ok) {
+                        const errInfo = await respuesta.json();
+                        alert("Error al eliminar materia: " + (errInfo.detail || "Error de red/servidor"));
+                        throw new Error("HTTP " + respuesta.status);
+                    }
+                    window.location.reload();
+                } catch (err) {
+                    console.error("Error al eliminar materia:", err);
+                }
+            });
+        });
+
+        selectMateria.forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const form = btn.querySelector('.formAsignarMaterias');
+                if (form) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+    <%- include('templates/footer.ejs') %>
