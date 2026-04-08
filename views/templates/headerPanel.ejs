@@ -19,19 +19,18 @@
             <p>Volver</p>
         </div>
         <div class="titulo-panel">
-            <h4>Panel de <%= typeof rol !== 'undefined' ? rol : 'Usuario' %></h4>
+            <h4>Panel de <%= typeof rol !=='undefined' ? rol : 'Usuario' %>
+            </h4>
         </div>
         <div class="header-actions">
-            <!-- Botón Perfil -->
-            <a href="/perfil-<%= (typeof rol !== 'undefined' && rol.toLowerCase() === 'asesor') ? 'asesor' : 'asesorado' %>" class="action-btn">
-                <i class="bi bi-person"></i>
-                <span>Perfil</span>
-            </a>
-            <!-- Botón Salir -->
-            <a href="/borrarSesion" class="action-btn">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Salir</span>
-            </a>
-            <div class="close-icon" id="cerrar" onclick="window.location.href='/'">&times;</div>
+            <% if (typeof rol !=='undefined' && rol.toLowerCase()==='asesorado' ) { %>
+                <!-- Botón Perfil -->
+                <a href="/perfil-<%= (typeof rol !== 'undefined' && rol.toLowerCase() === 'asesor') ? 'asesor' : 'asesorado' %>"
+                    class="action-btn">
+                    <i class="bi bi-person"></i>
+                    <span>Perfil</span>
+                </a>
+                <% } %>
+                    <div class="close-icon" id="cerrar" onclick="window.location.href='/'">&times;</div>
         </div>
     </header>

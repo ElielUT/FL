@@ -60,7 +60,8 @@ BARRA DE BUSQUEDA Y FILTROS
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 30px; /* Increased separation */
+    gap: 30px;
+    /* Increased separation */
 }
 
 .action-btn {
@@ -81,11 +82,13 @@ BARRA DE BUSQUEDA Y FILTROS
 }
 
 .action-btn i {
-    font-size: 32px; /* A bit larger */
+    font-size: 32px;
+    /* A bit larger */
 }
 
 .action-btn span {
-    font-size: 14px; /* A bit larger */
+    font-size: 14px;
+    /* A bit larger */
     font-weight: 600;
 }
 
@@ -144,7 +147,8 @@ body {
     cursor: pointer;
 }
 
-.crearUsuario {
+.crearUsuario,
+.nuevaMateria {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -156,12 +160,16 @@ body {
 }
 
 .crearUsuario .titulo,
-.editarUsuario .titulo {
+.editarUsuario .titulo,
+.nuevaMateria .titulo,
+.editarMateria .titulo {
     padding: 2%;
 }
 
 #formCrearUsuario,
-#formEditarUsuario {
+#formEditarUsuario,
+#formCrearMateria,
+#formEditarMateria {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -182,7 +190,9 @@ body {
 }
 
 #tituloCrearUsuario,
-#tituloEditarUsuario {
+#tituloEditarUsuario,
+#tituloCrearMateria,
+#tituloEditarUsuarios {
     color: black;
 }
 
@@ -257,6 +267,48 @@ body {
     cursor: pointer;
 }
 
+.materias {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2%;
+}
+
+.materias .nombreMateria,
+.materias .carrera,
+.materias .cuatrimestre {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 30%;
+}
+
+.materias .nombreMateria input {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #eeeeee;
+    color: var(--input-text-color);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.materias .carrera select,
+.materias .cuatrimestre select {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #eeeeee;
+    color: var(--input-text-color);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
 
 /*
 BARRA DE BUSQUEDA Y FILTROS
@@ -280,7 +332,20 @@ BARRA DE BUSQUEDA Y FILTROS
     text-align: center;
 }
 
-.usuarios {
+.materiasFiltros .busqueda,
+.materiasFiltros .filtro,
+.materiasFiltros .filtroCuatrimestre {
+    width: 30%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    color: #666;
+    text-align: center;
+}
+
+.usuarios,
+.materias {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -290,7 +355,8 @@ BARRA DE BUSQUEDA Y FILTROS
     padding: 0% 4% 2% 4%;
 }
 
-.usuarioItem {
+.usuarioItem,
+.materiaItem {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -303,7 +369,16 @@ BARRA DE BUSQUEDA Y FILTROS
     color: #666;
 }
 
+
 .imagen-categoria {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+}
+
+.imagenMateria {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -321,6 +396,19 @@ BARRA DE BUSQUEDA Y FILTROS
     width: 50px;
     height: 50px;
     border-radius: 50%;
+}
+
+.imgMat {
+    border-radius: 100px;
+    width: 75%;
+    height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--clr-admin);
 }
 
 .asesor::after {
@@ -378,7 +466,6 @@ BARRA DE BUSQUEDA Y FILTROS
 }
 
 .categoria {
-    background-color: blue;
     border-radius: 25px;
     text-align: center;
     padding: 0px 10px;
@@ -397,7 +484,8 @@ BARRA DE BUSQUEDA Y FILTROS
     background-color: rgb(145, 233, 218);
 }
 
-.usuarioInfo {
+.usuarioInfo,
+.infoMateria {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -406,11 +494,28 @@ BARRA DE BUSQUEDA Y FILTROS
     width: 60%;
 }
 
+
 .info {
     padding: 10px 0px 0px 0px;
     font-size: 0.8rem;
     font-weight: 600;
     color: rgb(184, 184, 184);
+}
+
+.infoMateria .nombreMateria {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--clr-text);
+}
+
+.infoMateria .carrera,
+.infoMateria .nombreMateria {
+    width: 100%;
+}
+
+.infoMateria .cuatrimestre {
+    font-size: 0.8rem;
+    width: 100%;
 }
 
 .acciones {
@@ -447,7 +552,8 @@ BARRA DE BUSQUEDA Y FILTROS
 }
 
 
-.editarUsuario {
+.editarUsuario,
+.editarMateria {
     display: flex;
     position: fixed;
     top: 0;
@@ -460,7 +566,8 @@ BARRA DE BUSQUEDA Y FILTROS
     align-items: center;
 }
 
-.editarUsuario .interno {
+.editarUsuario .interno,
+.editarMateria .interno {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -548,12 +655,8 @@ PANEL DE ADMINISTRADOR
     cursor: pointer;
 }
 
-.botonesAdmin button:nth-child(1) {
+.botonesAdmin button {
     background-color: var(--clr-admin);
-}
-
-.botonesAdmin button:nth-child(2) {
-    background-color: var(--input-color);
 }
 
 .componentesIzquierdos {

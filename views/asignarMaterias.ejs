@@ -1,0 +1,202 @@
+<%- include('templates/header.ejs') %>
+    <div class="titulo">
+        <div class="tituloIzquierda">
+            <h1>
+                <%= materia.nombre %>
+            </h1>
+            <h2>
+                <%= materia.carrera %>
+            </h2>
+            <h2>
+                <%= materia.cuatrimestre %>° Cuatrimestre
+            </h2>
+        </div>
+    </div>
+
+    <div class="contenido-asignacion"
+        style="padding: 40px; padding-top: 0px; display: flex; flex-direction: row; gap: 40px; align-items: flex-start; width: 100%;">
+
+        <!-- Asesores actuales -->
+        <div class="seccion-asesores" style="flex: 1;">
+            <h3 style="margin-bottom: 15px; color: #2B2E4A;">Asesores asignados</h3>
+
+            <% if (asesores.length> 0) { %>
+                <div class="materias" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <% asesores.forEach(asesor=> { %>
+                        <div class="materiaItem" style="width: 300px; padding: 20px; position: relative;">
+                            <div class="acciones" id="<%= asesor.id_asesor %>"
+                                style="position: absolute; top: 10px; right: 10px;">
+                                <button type="button" class="btnDesvincular" title="Desvincular asesor"
+                                    style="background: none; border: none; cursor: pointer; color: #E84545; font-size: 1.2rem;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="infoMateria">
+                                <div class="nombreMateria">
+                                    <p style="font-weight: bold;">
+                                        <%= asesor.nombres %>
+                                            <%= asesor.apellidos %>
+                                    </p>
+                                </div>
+                                <div class="carrera">
+                                    <p>
+                                        <%= asesor.correo_usuario %>
+                                    </p>
+                                </div>
+                                <div class="cuatrimestre">
+                                    <p>Carrera: <%= asesor.carrera %>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+                <% } else { %>
+                    <p>No hay asesores asignados a esta materia aún.</p>
+                    <% } %>
+        </div>
+
+        <!-- Asignar nuevo asesor -->
+        <div class="seccion-asignar"
+            style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 350px; min-width: 250px; position: sticky; top: 30px;">
+            <h3 style="margin-bottom: 15px; color: #2B2E4A;">Asignar a otro asesor</h3>
+            <form id="formAsignarNuevo" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" id="id_materia" value="<%= materia.id_materia %>">
+
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label for="id_asesor" style="font-weight: bold;">Seleccionar Asesor:</label>
+                    <select name="id_asesor" id="id_asesor"
+                        style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit;">
+                        <option value="">-- Seleccione un asesor --</option>
+                        <% todosAsesores.forEach(ta=> {
+                            const yaAsignado = asesores.some(a => a.id_asesor === ta.id_asesor);
+                            if (!yaAsignado) {
+                            %>
+                            <option value="<%= ta.id_asesor %>">
+                                <%= ta.usuario ? ta.usuario.nombres + ' ' + ta.usuario.apellidos : "Asesor Sin Nombre"
+                                    %> ( <%= ta.carrera %> )
+                            </option>
+                            <% } }) %>
+                    </select>
+                </div>
+
+                <button type="button" id="btnAsignar"
+                    style="padding: 12px; background: #00a185; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: fit-content;">Vincular
+                    Asesor</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
+        Object.defineProperty(window, 'url_api', {
+            get: function () {
+                return atob(url_api_cifrada);
+            }
+        });
+
+        document.getElementById('btnAsignar').addEventListener('click', async () => {
+            const id_materia = document.getElementById('id_materia').value;
+            const id_asesor = document.getElementById('id_asesor').value;
+
+            if (!id_asesor) {
+                alert("Por favor selecciona un asesor");
+                return;
+            }
+
+            try {
+                const res = await fetch(url_api + "/impartir", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id_materia2: parseInt(id_materia),
+                        id_asesor2: parseInt(id_asesor)
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.detail || "Error al asignar asesor");
+                    return;
+                }
+
+                alert("Asesor asignado correctamente");
+
+                // Recargar el contexto de la página (ya que el usuario entra mediante un POST)
+                const resetForm = document.createElement('form');
+                resetForm.method = 'POST';
+                resetForm.action = '/asignarMaterias';
+
+                const inpMat = document.createElement('input');
+                inpMat.type = 'hidden';
+                inpMat.name = 'id_materia';
+                inpMat.value = id_materia;
+
+                const inpNom = document.createElement('input');
+                inpNom.type = 'hidden';
+                inpNom.name = 'nombre_materia';
+                inpNom.value = "<%= materia.nombre %>";
+
+                resetForm.appendChild(inpMat);
+                resetForm.appendChild(inpNom);
+                document.body.appendChild(resetForm);
+                resetForm.submit();
+
+            } catch (e) {
+                console.error(e);
+                alert("Error de conexión al servidor");
+            }
+        });
+
+        // Botones para desvincular asesores asignados
+        const btnsDesvincular = document.querySelectorAll('.btnDesvincular');
+        btnsDesvincular.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id_asesor = btn.closest('.acciones').id;
+                const id_materia = document.getElementById('id_materia').value;
+
+                if (!confirm("¿Está seguro que desea remover a este asesor de la materia?")) {
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${url_api}/impartir/asignacion/${id_materia}/${id_asesor}`, {
+                        method: "DELETE"
+                    });
+
+                    if (!res.ok) {
+                        const err = await res.json();
+                        alert(err.detail || "Error al desvincular");
+                        return;
+                    }
+
+                    // Recargar silenciosamente y actualizar
+                    const resetForm = document.createElement('form');
+                    resetForm.method = 'POST';
+                    resetForm.action = '/asignarMaterias';
+
+                    const inpMat = document.createElement('input');
+                    inpMat.type = 'hidden';
+                    inpMat.name = 'id_materia';
+                    inpMat.value = id_materia;
+
+                    const inpNom = document.createElement('input');
+                    inpNom.type = 'hidden';
+                    inpNom.name = 'nombre_materia';
+                    inpNom.value = "<%= materia.nombre %>";
+
+                    resetForm.appendChild(inpMat);
+                    resetForm.appendChild(inpNom);
+                    document.body.appendChild(resetForm);
+                    resetForm.submit();
+
+                } catch (error) {
+                    console.error("Desvinculación:", error);
+                    alert("Error de conexión al servidor");
+                }
+            });
+        });
+    </script>
+
+    <%- include('templates/footer.ejs') %>
