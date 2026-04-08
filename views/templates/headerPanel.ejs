@@ -23,7 +23,7 @@
             </h4>
         </div>
         <div class="header-actions">
-            <% if (typeof rol !=='undefined' && rol.toLowerCase()==='asesorado' ) { %>
+            <% if (typeof rol !=='undefined' && rol.toLowerCase()==='asesorado' || rol.toLowerCase()==='asesor' ) { %>
                 <!-- Botón Perfil -->
                 <a href="/perfil-<%= (typeof rol !== 'undefined' && rol.toLowerCase() === 'asesor') ? 'asesor' : 'asesorado' %>"
                     class="action-btn">
