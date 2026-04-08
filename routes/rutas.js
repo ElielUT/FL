@@ -884,8 +884,47 @@ router.get('/panelAsesorado', (req, res) => {
     res.render('panelAsesorado');
 });
 
-router.get("/historialAsesorias", (req, res) => {
-    res.render("historialAsesorias");
+router.get("/historialAsesorias", async (req, res) => {
+    if (req.session.usuario !== 1) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+
+    const idAsesor = req.session.id_asesor || 1;
+    try {
+        const respuesta = await fetch(url_api + `/toma/buscarTomaAsesor/${idAsesor}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        const dataTomas = await respuesta.json();
+        const tomas = dataTomas.items || [];
+        
+        const completadas = tomas.filter(t => t.calificacion && t.calificacion > 0);
+        
+        let minutosTotales = 0;
+        completadas.forEach(t => {
+            if (t.hora_in && t.hora_fin) {
+                const [hIn, mIn] = t.hora_in.split(':').map(Number);
+                const [hFin, mFin] = t.hora_fin.split(':').map(Number);
+                const diff = (hFin * 60 + mFin) - (hIn * 60 + mIn);
+                minutosTotales += diff > 0 ? diff : 90;
+            } else {
+                minutosTotales += 90;
+            }
+        });
+        const horasTotales = Math.floor(minutosTotales / 60);
+        const minsExtra = minutosTotales % 60;
+        const tiempoStr = horasTotales > 0 ? `${horasTotales} h ${minsExtra} min` : `${minsExtra} min`;
+
+        res.render("historialAsesorias", { 
+            asesorias: tomas,
+            total: tomas.length,
+            tiempoTotal: tiempoStr,
+            rol: "Asesor"
+        });
+    } catch (error) {
+        console.error("Error al cargar historial:", error);
+        res.render("historialAsesorias", { asesorias: [], total: 0, tiempoTotal: "0 min", rol: "Asesor" });
+    }
 });
 
 router.get("/solicitudesDisponibles", (req, res) => {
