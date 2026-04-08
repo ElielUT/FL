@@ -320,15 +320,14 @@
         }
 
         .badge-pendiente {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
+            display: inline-block;
             background-color: #fce789;
             color: #bfa000;
             font-size: 10px;
             font-weight: 800;
             padding: 4px 12px;
             border-radius: 20px;
+            margin-top: 8px;
         }
 
         @media (max-width: 950px) {
@@ -447,7 +446,9 @@
                     <% if (typeof asesoriasProgramadas !== 'undefined' && asesoriasProgramadas.length > 0) { %>
                         <% asesoriasProgramadas.forEach(function(asesoria) { %>
                             <div class="asesoria-card">
-                                <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                                <button class="btn-cancelar" onclick="cancelarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
                                 <div class="card-title"><%= asesoria.materia %></div>
                                 <div class="card-subtitle">Asesor: <%= asesoria.asesor %></div>
                                 <div class="card-footer">
@@ -466,38 +467,7 @@
                             </div>
                         <% }); %>
                     <% } else { %>
-                        <!-- Dummy Cards based on design -->
-                        <div class="asesoria-card">
-                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
-                            <div class="card-title">Programación Orientada a Objetos</div>
-                            <div class="card-subtitle">Asesor: Eimi Camila Cervantes</div>
-                            <div class="card-footer">
-                                <div class="info-item">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    09/03/26
-                                </div>
-                                <div class="info-item">
-                                    <i class="fa-solid fa-clock"></i>
-                                    14:00 hrs
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="asesoria-card">
-                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
-                            <div class="card-title">Bases de datos</div>
-                            <div class="card-subtitle">Asesor: Eliel Priske Alanis</div>
-                            <div class="card-footer">
-                                <div class="info-item">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    09/03/26
-                                </div>
-                                <div class="info-item">
-                                    <i class="fa-solid fa-clock"></i>
-                                    13:00 hrs
-                                </div>
-                            </div>
-                        </div>
+                        <p style="color:#aaa; font-size:0.9rem; text-align:center; padding:20px;">No hay asesorías programadas</p>
                     <% } %>
                     
                 </div>
@@ -512,7 +482,9 @@
                     <% if (typeof solicitudesPendientes !== 'undefined' && solicitudesPendientes.length > 0) { %>
                         <% solicitudesPendientes.forEach(function(asesoria) { %>
                             <div class="asesoria-card">
-                                <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
+                                <button class="btn-cancelar" onclick="cancelarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
                                 <div class="card-title"><%= asesoria.materia %></div>
                                 <div class="card-subtitle">Asesor: <%= asesoria.asesor %></div>
                                 <div class="card-footer">
@@ -526,29 +498,13 @@
                                     </div>
                                 </div>
                                 <div class="badge-pendiente">Pendiente</div>
-                                <a href="/detallesAsesoria/<%= asesoria.id_toma %>" class="btn-ver-detalles">
+                                <a href="/detallesAsesoria/<%= asesoria.id_asesoria %>" class="btn-ver-detalles">
                                     <i class="fa-solid fa-eye"></i> Ver detalles
                                 </a>
                             </div>
                         <% }); %>
                     <% } else { %>
-                        <!-- Dummy Card based on design -->
-                        <div class="asesoria-card">
-                            <button class="btn-cancelar"><i class="fa-solid fa-xmark"></i></button>
-                            <div class="card-title">Proyecto integrador</div>
-                            <div class="card-subtitle">Asesor: Yael Izaid Meza</div>
-                            <div class="card-footer">
-                                <div class="info-item">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    09/03/26
-                                </div>
-                                <div class="info-item">
-                                    <i class="fa-solid fa-clock"></i>
-                                    15:00 hrs
-                                </div>
-                            </div>
-                            <div class="badge-pendiente">Pendiente</div>
-                        </div>
+                        <p style="color:#aaa; font-size:0.9rem; text-align:center; padding:20px;">No hay solicitudes pendientes</p>
                     <% } %>
 
                 </div>
@@ -558,6 +514,24 @@
 
     </main>
 
-</body>
+<script>
+    async function cancelarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de cancelar esta asesoría? Esta acción no se puede deshacer.')) return;
+        try {
+            const resp = await fetch(`/cancelarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'DELETE'
+            });
+            if (resp.ok) {
+                alert('Asesoría cancelada.');
+                window.location.reload();
+            } else {
+                alert('Error al cancelar la asesoría.');
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
+    }
+</script>
 
+</body>
 </html>

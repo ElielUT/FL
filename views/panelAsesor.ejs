@@ -82,6 +82,9 @@
                                 <a href="/detallesAsesoria/<%= asesoria.id_asesoria %>" class="btn-registrar" style="text-align:center; text-decoration:none;">
                                     Ver detalles
                                 </a>
+                                <button class="btn-rechazar" onclick="cancelarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
                             </div>
                         </div>
                     <% }) %>    
@@ -145,10 +148,10 @@
                                         <td><%= solicitud.fecha %></td>
                                         <td><%= solicitud.hora %></td>
                                         <td class="acciones">
-                                            <button class="btn-aceptar" onclick="aceptarSolicitud('<%= solicitud.id_toma %>')">
+                                            <button class="btn-aceptar" onclick="aceptarSolicitud('<%= solicitud.id_asesor3 %>', '<%= solicitud.id_asesoria %>', '<%= solicitud.id_alumno1 %>')">
                                                 <i class="fas fa-check"></i> Aceptar
                                             </button>
-                                            <button class="btn-rechazar" onclick="rechazarSolicitud('<%= solicitud.id_toma %>')">
+                                            <button class="btn-rechazar" onclick="rechazarSolicitud('<%= solicitud.id_asesor3 %>', '<%= solicitud.id_asesoria %>', '<%= solicitud.id_alumno1 %>')">
                                                 <i class="fas fa-times"></i> Rechazar
                                             </button>
                                             <a href="/detallesAsesoria/<%= solicitud.id_asesoria %>" class="btn-aceptar" style="text-decoration:none;">
@@ -438,27 +441,67 @@ td {
 </style>
 
 <script>
-    // Función para registrar asesoría (completar)
+    async function aceptarSolicitud(id_asesor3, id_asesoria, id_alumno1) {
+        try {
+            const resp = await fetch(`/actualizarEstado/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: 'aceptada' })
+            });
+            if (resp.ok) {
+                alert('✅ Solicitud aceptada');
+                window.location.reload();
+            } else {
+                alert('Error al aceptar la solicitud');
+            }
+        } catch(e) {
+            alert('Error de conexión');
+        }
+    }
+
+    async function rechazarSolicitud(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de rechazar esta solicitud?')) return;
+        try {
+            const resp = await fetch(`/actualizarEstado/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: 'rechazada' })
+            });
+            if (resp.ok) {
+                alert('❌ Solicitud rechazada');
+                window.location.reload();
+            } else {
+                alert('Error al rechazar la solicitud');
+            }
+        } catch(e) {
+            alert('Error de conexión');
+        }
+    }
+
     function registrarAsesoria(idToma) {
         console.log("Registrar asesoría:", idToma);
         alert("Función en desarrollo: Registrar asesoría " + idToma);
     }
 
-    // Función para aceptar solicitud
-    function aceptarSolicitud(idToma) {
-        console.log("Aceptar solicitud:", idToma);
-        alert("Función en desarrollo: Aceptar solicitud " + idToma);
+    async function cancelarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de cancelar esta asesoría? Esta acción no se puede deshacer.')) return;
+        try {
+            const resp = await fetch(`/cancelarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'DELETE'
+            });
+            if (resp.ok) {
+                alert('Asesoría cancelada.');
+                window.location.reload();
+            } else {
+                alert('Error al cancelar la asesoría.');
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
     }
 
-    // Función para rechazar solicitud
-    function rechazarSolicitud(idToma) {
-        console.log("Rechazar solicitud:", idToma);
-        alert("Función en desarrollo: Rechazar solicitud " + idToma);
-    }
-
-    // Cargar nombre del usuario (desde sesión o backend)
-    // TODO: Obtener nombre real del asesor logueado
     document.getElementById('nombreUsuario').innerText = "Asesor";
+    
 </script>
 
 <%- include('templates/footer.ejs') %>
