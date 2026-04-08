@@ -707,8 +707,8 @@ router.post('/crear-solicitud', async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin } = req.body;
-
+    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad } = req.body;
+    
     if (!req.session.id_alumno) {
         return res.send(`
             <script>
@@ -726,19 +726,23 @@ router.post('/crear-solicitud', async (req, res) => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                id_asesor3: parseInt(id_asesor),
                 id_materia1: materiaId,
-                tema: tema
+                tema: tema,
+                modalidad: modalidad || 'virtual'
             })
         });
 
         if (!crearAsesoriaResp.ok) {
+            const errDetail = await crearAsesoriaResp.text();
+            console.log("Error BL:", errDetail);
             throw new Error("Error al crear la asesoría");
         }
 
         const asesoriaData = await crearAsesoriaResp.json();
-        const id_asesoria = asesoriaData.id_asesoria;
+        console.log("asesoriaData:", JSON.stringify(asesoriaData));
+        const id_asesoria = asesoriaData.items?.id_asesoria || asesoriaData.id_asesoria;
 
+        console.log("materiaId:", materiaId, "tipo:", typeof materiaId);
         // 2. Crear la toma (solicitud)
         const crearTomaResp = await fetch(url_api + "/toma/crearToma/", {
             method: "POST",
@@ -752,11 +756,13 @@ router.post('/crear-solicitud', async (req, res) => {
                 fecha: fecha,
                 hora_in: hora_in,
                 hora_fin: hora_fin,
-                evaluacion_ase: 0
+                calificacion: 0
             })
         });
 
         if (!crearTomaResp.ok) {
+            const errToma = await crearTomaResp.text();
+            console.log("Error Toma BL:", errToma);
             throw new Error("Error al crear la solicitud");
         }
 

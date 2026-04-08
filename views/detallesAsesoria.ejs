@@ -88,40 +88,55 @@
 
         </div>
 
-        <!-- Columna derecha: Meet -->
+        <!-- Columna derecha Jitsi Meet -->
         <div class="detalles-meet">
-            <h3>Código de Acceso</h3>
-            <div class="meet-card">
-                <div class="meet-icon-wrap">
-                    <img src="https://play-lh.googleusercontent.com/1ckxjos_oOGSNOFyUE-cp7xSCoKLVgMOEAGVCgb6WDhObTlDDnyLohgtI8o1TI2c7A"
-                        alt="Jitsi Meet" class="meet-logo ...">
+            <% if (sesion.modalidad === 'virtual') { %>
+                <h3>Código de Acceso</h3>
+                <div class="meet-card">
+                    <div class="meet-icon-wrap">
+                        <img src="https://jitsi.org/wp-content/uploads/2018/11/jitsi-logo-blue-grey-text.png"
+                            alt="Jitsi Meet" class="meet-logo <%= sesion.meet_link ? '' : 'meet-logo-gray' %>">
+                    </div>
+                    <div class="meet-info">
+                        <p class="meet-title">Jitsi Meet</p>
+                        <% if (sesion.meet_link) { %>
+                            <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                            <p class="meet-domain">🔗 meet.jit.si</p>
+                            <a href="<%= sesion.meet_link %>" target="_blank" class="btn-meet-unirse">Unirse a la reunión</a>
+                        <% } else if (rol === 'Asesor') { %>
+                            <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                            <p class="meet-domain">🔗 meet.jit.si</p>
+                            <button class="btn-guardar" id="btnGenerarMeet" onclick="generarMeet()">
+                                <i class="fas fa-video"></i> Generar enlace
+                            </button>
+                        <% } else { %>
+                            <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                            <p class="meet-domain">🔗 meet.jit.si</p>
+                            <p style="color:#f28b82; font-weight:600; font-size:0.85rem;">El asesor aún no ha generado el enlace.</p>
+                        <% } %>
+                    </div>
                 </div>
-                <div class="meet-info">
-                    <p class="meet-title">Jitsi Meet</p>
-                    <% if (sesion.meet_link) { %>
-                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
-                        <p class="meet-domain">🔗 meet.jit.si</p>
-                        <a href="<%= sesion.meet_link %>" target="_blank" class="btn-meet-unirse">
-                            Unirse a la reunión
-                        </a>
-                    <% } else if (rol === 'Asesor') { %>
-                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
-                        <p class="meet-domain">🔗 meet.jit.si</p>
-                        <button class="btn-guardar" id="btnGenerarMeet" onclick="generarMeet()">
-                            <i class="fas fa-video"></i> Generar enlace
-                        </button>
-                    <% } else { %>
-                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
-                        <p class="meet-domain">🔗 meet.jit.si</p>
-                        <p class="meet-desc" style="color:#f28b82; font-weight:600;">El asesor aún no ha generado el enlace.</p>
-                    <% } %>
+                <div id="meetLinkResultado" class="meet-link-resultado ocultar">
+                    <i class="fas fa-check-circle" style="color:#4db6ac;"></i>
+                    Enlace: <a id="meetLinkAnchor" href="#" target="_blank"></a>
                 </div>
-            </div>
 
-            <div id="meetLinkResultado" class="meet-link-resultado ocultar">
-                <i class="fas fa-check-circle" style="color:#4db6ac;"></i>
-                Enlace: <a id="meetLinkAnchor" href="#" target="_blank"></a>
-            </div>
+            <% } else { %>
+                <h3>Información de contacto</h3>
+                <div class="meet-card">
+                    <div class="meet-icon-wrap">
+                        <div class="contacto-icono">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                    </div>
+                    <div class="meet-info">
+                        <p class="meet-title">Presencial</p>
+                        <p class="meet-desc">Esta asesoría se realizará de forma presencial.</p>
+                        <p class="meet-domain">📞 Contacto:</p>
+                        <p class="contacto-numero"><%= sesion.contacto || 'Sin contacto registrado' %></p>
+                    </div>
+                </div>
+            <% } %>
         </div>
 
     </div>
@@ -330,6 +345,27 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.contacto-icono {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(to right, #4db6ac, #80cbc4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.contacto-numero {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #222;
+    margin: 4px 0 0;
+}
+
 </style>
 
 <script>
