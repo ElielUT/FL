@@ -345,6 +345,21 @@
                 grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             }
         }
+        .btn-ver-detalles {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            background: linear-gradient(to right, #4db6ac, #80cbc4);
+            color: #fff;
+            padding: 7px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .btn-ver-detalles:hover {
+            opacity: 0.88;
+        }
     </style>
 </head>
 
@@ -449,6 +464,9 @@
                                         <%= asesoria.hora %> hrs
                                     </div>
                                 </div>
+                                <a href="/detallesAsesoria/<%= asesoria.id_asesoria %>" class="btn-ver-detalles">
+                                    <i class="fa-solid fa-eye"></i> Ver detalles
+                                </a>
                             </div>
                         <% }); %>
                     <% } else { %>
@@ -512,6 +530,9 @@
                                     </div>
                                 </div>
                                 <div class="badge-pendiente">Pendiente</div>
+                                <a href="/detallesAsesoria/<%= asesoria.id_toma %>" class="btn-ver-detalles">
+                                    <i class="fa-solid fa-eye"></i> Ver detalles
+                                </a>
                             </div>
                         <% }); %>
                     <% } else { %>

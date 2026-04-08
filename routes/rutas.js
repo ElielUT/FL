@@ -886,4 +886,41 @@ router.get("/solicitudesDisponibles", (req, res) => {
     res.render("solicitudesDisponibles");
 });
 
+// ── Detalles de sesión ────────────────────────────────────────────────────────
+router.get("/detallesAsesoria/:id_asesoria", async (req, res) => {
+    if (!req.session.usuario || ![1, 2].includes(req.session.usuario)) {
+        return res.render("index", { error: "No tienes permiso" });
+    }
+    try {
+        const respuesta = await fetch(`${url_api}/toma/detalles/${req.params.id_asesoria}`, {
+            headers: { "Content-Type": "application/json" }
+        });
+        if (!respuesta.ok) throw new Error("Sesión no encontrada");
+        const sesion = await respuesta.json();
+        const rol = req.session.usuario === 1 ? "Asesor" : "Asesorado";
+        res.render("detallesAsesoria", { sesion, rol });
+    } catch (error) {
+        console.error(error);
+        res.send(`<script>alert("Error al cargar los detalles."); window.history.back();</script>`);
+    }
+});
+
+// ── Generar Meet (solo asesor) ────────────────────────────────────────────────
+router.post("/generarMeet/:id_asesor3/:id_asesoria1/:id_alumno1", async (req, res) => {
+    if (req.session.usuario !== 1)
+        return res.status(403).json({ error: "Solo el asesor puede generar el enlace" });
+    try {
+        const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+        const respuesta = await fetch(`${url_api}/toma/generarMeet/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) return res.status(502).json({ error: data.detail || "Error al generar Meet" });
+        res.json({ meet_link: data.meet_link });
+    } catch (error) {
+        res.status(500).json({ error: "Error interno" });
+    }
+});
+
 export default router;

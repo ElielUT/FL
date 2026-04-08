@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LobiFind - Detalles de sesión</title>
+    <link rel="icon" href="images/Logo.png">
+    <link rel="stylesheet" href="/styles/estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Header verde igual al de los paneles -->
+<header class="top-bar">
+    <div class="volverIcon" onclick="window.history.back()" style="cursor:pointer;">
+        <i class="bi bi-caret-left-square-fill"></i>
+        <p>Volver</p>
+    </div>
+    <div class="titulo-panel">
+        <h4>Panel de <%= rol %></h4>
+    </div>
+    <div class="header-actions">
+        <a href="/perfil-<%= rol.toLowerCase() === 'asesor' ? 'asesor' : 'asesorado' %>" class="action-btn">
+            <i class="bi bi-person"></i>
+            <span>Perfil</span>
+        </a>
+        <a href="/borrarSesion" class="action-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Salir</span>
+        </a>
+        <div class="close-icon" onclick="window.location.href='/'">&#x2715;</div>
+    </div>
+</header>
+
+<div class="detalles-container">
+
+    <div class="detalles-header">
+        <h1>Información de la sesión</h1>
+        <p class="detalles-subtitle">
+            <% if (rol === 'Asesor') { %>Aquí editar<% } else { %>Detalles de tu asesoría<% } %>
+        </p>
+    </div>
+
+    <div class="detalles-card">
+
+        <!-- Columna izquierda -->
+        <div class="detalles-info">
+
+            <div class="detalles-materia-header">
+                <h2><%= sesion.materia %></h2>
+                <%
+                    let badgeClass = 'badge-cyan', badgeLabel = 'Pendiente';
+                    if (sesion.estado === 'aceptada')   { badgeClass = 'badge-green'; badgeLabel = 'Aceptada'; }
+                    if (sesion.estado === 'completada') { badgeClass = 'badge-green'; badgeLabel = 'Completada'; }
+                %>
+                <span class="status-badge <%= badgeClass %>"><%= badgeLabel %></span>
+            </div>
+
+            <div class="detalles-personas">
+                <div class="detalles-persona-item">
+                    <span class="persona-label">Asesorado:</span>
+                    <span><%= sesion.nombre_asesorado %></span>
+                </div>
+                <div class="detalles-persona-item">
+                    <span class="persona-label">Asesor:</span>
+                    <span><%= sesion.nombre_asesor %></span>
+                </div>
+                <div class="detalles-persona-item">
+                    <span class="persona-label">Lugar:</span>
+                    <span><%= sesion.lugar %></span>
+                </div>
+            </div>
+
+            <div class="detalles-pill">
+                <p>Tema: <%= sesion.tema %></p>
+                <p>Duración: <% if (sesion.duracion_min) { %><%= sesion.duracion_min %> min<% } else { %>Por definir<% } %></p>
+            </div>
+
+            <div class="detalles-footer-info">
+                <span><i class="far fa-calendar-alt"></i> Fecha: <%= sesion.fecha || 'Por definir' %></span>
+                <span><i class="far fa-clock"></i> Hora: <%= sesion.hora_in || '--:--' %></span>
+                <% if (sesion.fecha_solicitud) { %>
+                    <span>Solicitada el <%= sesion.fecha_solicitud %></span>
+                <% } %>
+            </div>
+
+        </div>
+
+        <!-- Columna derecha: Meet -->
+        <div class="detalles-meet">
+            <h3>Código de Acceso</h3>
+            <div class="meet-card">
+                <div class="meet-icon-wrap">
+                    <img src="https://play-lh.googleusercontent.com/1ckxjos_oOGSNOFyUE-cp7xSCoKLVgMOEAGVCgb6WDhObTlDDnyLohgtI8o1TI2c7A"
+                        alt="Jitsi Meet" class="meet-logo ...">
+                </div>
+                <div class="meet-info">
+                    <p class="meet-title">Jitsi Meet</p>
+                    <% if (sesion.meet_link) { %>
+                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                        <p class="meet-domain">🔗 meet.jit.si</p>
+                        <a href="<%= sesion.meet_link %>" target="_blank" class="btn-meet-unirse">
+                            Unirse a la reunión
+                        </a>
+                    <% } else if (rol === 'Asesor') { %>
+                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                        <p class="meet-domain">🔗 meet.jit.si</p>
+                        <button class="btn-guardar" id="btnGenerarMeet" onclick="generarMeet()">
+                            <i class="fas fa-video"></i> Generar enlace
+                        </button>
+                    <% } else { %>
+                        <p class="meet-desc">Videoconferencias gratuitas y seguras. Sin necesidad de cuenta, directo desde tu navegador.</p>
+                        <p class="meet-domain">🔗 meet.jit.si</p>
+                        <p class="meet-desc" style="color:#f28b82; font-weight:600;">El asesor aún no ha generado el enlace.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div id="meetLinkResultado" class="meet-link-resultado ocultar">
+                <i class="fas fa-check-circle" style="color:#4db6ac;"></i>
+                Enlace: <a id="meetLinkAnchor" href="#" target="_blank"></a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.detalles-container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto 40px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.detalles-header {
+    margin-bottom: 24px;
+}
+
+.detalles-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.detalles-subtitle {
+    color: #888;
+    margin: 4px 0 0;
+    font-size: 0.95rem;
+}
+
+.detalles-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 60px;
+    padding: 36px 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Columna izquierda */
+.detalles-info {
+    flex: 1;
+    min-width: 280px;
+}
+
+.detalles-materia-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.detalles-materia-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.detalles-personas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.detalles-persona-item {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.persona-label {
+    font-weight: 600;
+    color: #444;
+}
+
+/* Pill central */
+.detalles-pill {
+    background: #80cbc4;
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: inline-block;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: 28px;
+    min-width: 200px;
+}
+
+.detalles-pill p {
+    margin: 4px 0;
+    font-weight: 500;
+}
+
+/* Pie de tarjeta */
+.detalles-footer-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-size: 0.88rem;
+    color: #666;
+    align-items: center;
+}
+
+.detalles-footer-info span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Columna derecha: Meet */
+.detalles-meet {
+    min-width: 260px;
+    max-width: 360px;
+    flex: 0 0 auto;
+}
+
+.detalles-meet h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 14px;
+}
+
+.meet-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.meet-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.meet-logo-gray {
+    filter: grayscale(40%) opacity(0.85);
+}
+
+.meet-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meet-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0;
+    color: #222;
+}
+
+.meet-desc {
+    font-size: 0.78rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.meet-domain {
+    font-size: 0.75rem;
+    color: #4db6ac;
+    margin: 2px 0 6px;
+}
+
+.btn-meet-unirse {
+    background: linear-gradient(to right, #4db6ac, #80cbc4);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+}
+
+.btn-meet-unirse:hover { opacity: 0.88; }
+
+.meet-link-resultado {
+    margin-top: 12px;
+    font-size: 0.88rem;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.meet-link-resultado a {
+    color: #00897b;
+    word-break: break-all;
+}
+
+#btnGenerarMeet:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+async function generarMeet() {
+    const btn = document.getElementById('btnGenerarMeet');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    try {
+        const resp = await fetch('/generarMeet/<%= sesion.id_asesor3 %>/<%= sesion.id_asesoria %>/<%= sesion.id_alumno1 %>', { method: 'POST' });
+        const data = await resp.json();
+        if (!resp.ok) {
+            alert('Error: ' + (data.error || 'No se pudo generar el enlace'));
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-video"></i> Generar enlace';
+            return;
+        }
+        const resultado = document.getElementById('meetLinkResultado');
+        const anchor    = document.getElementById('meetLinkAnchor');
+        anchor.href = anchor.textContent = data.meet_link;
+        resultado.classList.remove('ocultar');
+        btn.innerHTML = '<i class="fas fa-check"></i> ¡Listo!';
+        btn.style.background = '#4db6ac';
+    } catch(err) {
+        alert('Error de conexión. Intenta de nuevo.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-video"></i> Generar enlace';
+    }
+}
+</script>
+
+<%- include('templates/footer.ejs') %>
+</body>
+</html>
