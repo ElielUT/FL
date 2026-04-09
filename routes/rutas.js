@@ -708,7 +708,7 @@ router.post('/crear-solicitud', async (req, res) => {
     }
 
     const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad } = req.body;
-    
+
     if (!req.session.id_alumno) {
         return res.send(`
             <script>
@@ -897,9 +897,9 @@ router.get("/historialAsesorias", async (req, res) => {
         });
         const dataTomas = await respuesta.json();
         const tomas = dataTomas.items || [];
-        
+
         const completadas = tomas.filter(t => t.calificacion && t.calificacion > 0);
-        
+
         let minutosTotales = 0;
         completadas.forEach(t => {
             if (t.hora_in && t.hora_fin) {
@@ -915,7 +915,7 @@ router.get("/historialAsesorias", async (req, res) => {
         const minsExtra = minutosTotales % 60;
         const tiempoStr = horasTotales > 0 ? `${horasTotales} h ${minsExtra} min` : `${minsExtra} min`;
 
-        res.render("historialAsesorias", { 
+        res.render("historialAsesorias", {
             asesorias: tomas,
             total: tomas.length,
             tiempoTotal: tiempoStr,
@@ -927,9 +927,7 @@ router.get("/historialAsesorias", async (req, res) => {
     }
 });
 
-router.get("/solicitudesDisponibles", (req, res) => {
-    res.render("solicitudesDisponibles");
-});
+
 
 // ── Detalles de sesión ────────────────────────────────────────────────────────
 router.get("/detallesAsesoria/:id_asesoria", async (req, res) => {
@@ -1041,11 +1039,11 @@ router.post("/asignarMaterias", async (req, res) => {
         const dataAsesores = await asesores.json() || {};
         const dataTodosAsesores = await todosAsesores.json() || {};
 
-        res.render("asignarMaterias", { 
-            materia: dataMateria.items, 
-            asesores: dataAsesores.items || [], 
+        res.render("asignarMaterias", {
+            materia: dataMateria.items,
+            asesores: dataAsesores.items || [],
             todosAsesores: dataTodosAsesores.items || [],
-            url_api 
+            url_api
         });
     } catch (error) {
         console.error("Error al cargar materias:", error);
