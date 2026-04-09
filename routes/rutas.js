@@ -575,7 +575,7 @@ router.get('/panelAdmin', async (req, res) => {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch(url_api + "/toma/estadisticas", {
+            fetch(url_api + "/asesoria/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -609,11 +609,11 @@ router.get('/supervisarAsesorias', async (req, res) => {
 
     try {
         const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
-            fetch(url_api + "/toma/estadisticas", {
+            fetch(url_api + "/asesoria/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch(url_api + "/toma/mostrarToma/", {
+            fetch(url_api + "/asesoria/mostrarAsesoria", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -708,7 +708,7 @@ router.post('/crear-solicitud', async (req, res) => {
     }
 
     const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad } = req.body;
-    
+
     if (!req.session.id_alumno) {
         return res.send(`
             <script>
@@ -904,28 +904,28 @@ router.get('/panelAsesorado', async (req, res) => {
         const tomas = dataTomas.items || [];
 
         const asesoriasProgramadas = tomas
-        .filter(t => t.estado === 'aceptada')
-        .map(t => ({
-            id_asesoria: t.id_asesoria1,
-            id_asesor3: t.id_asesor3,
-            id_alumno1: t.id_alumno1,
-            materia: t.asesoria?.materia?.nombre || "Sin materia",
-            asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
-            fecha: t.fecha || "Por definir",
-            hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
-        }));
+            .filter(t => t.estado === 'aceptada')
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
+            }));
 
         const solicitudesPendientes = tomas
-        .filter(t => t.estado === 'pendiente' || !t.estado)
-        .map(t => ({
-            id_asesoria: t.id_asesoria1,
-            id_asesor3: t.id_asesor3,
-            id_alumno1: t.id_alumno1,
-            materia: t.asesoria?.materia?.nombre || "Sin materia",
-            asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
-            fecha: t.fecha || "Por definir",
-            hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
-        }));
+            .filter(t => t.estado === 'pendiente' || !t.estado)
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
+            }));
 
         const estadisticas = {
             pendientes: solicitudesPendientes.length,
@@ -1134,11 +1134,11 @@ router.post("/asignarMaterias", async (req, res) => {
         const dataAsesores = await asesores.json() || {};
         const dataTodosAsesores = await todosAsesores.json() || {};
 
-        res.render("asignarMaterias", { 
-            materia: dataMateria.items, 
-            asesores: dataAsesores.items || [], 
+        res.render("asignarMaterias", {
+            materia: dataMateria.items,
+            asesores: dataAsesores.items || [],
             todosAsesores: dataTodosAsesores.items || [],
-            url_api 
+            url_api
         });
     } catch (error) {
         console.error("Error al cargar materias:", error);
@@ -1184,6 +1184,18 @@ router.delete("/cancelarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (
 
 router.get('/sesion-info', (req, res) => {
     res.json({ rol: req.session.usuario || null });
+});
+
+router.get('/cambiar-contrasena', (req, res) => {
+    if (req.session.id_usuario) {
+        res.render('cambiarContraseña', { 
+            url_api: url_api, 
+            correo: req.session.correo, 
+            id_usuario: req.session.id_usuario 
+        });
+    } else {
+        res.redirect('/login');
+    }
 });
 
 export default router;

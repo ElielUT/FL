@@ -1,398 +1,557 @@
 <%- include('templates/headerPanel.ejs', { rol: "Asesor" }) %>
 
-<style>
-.main-container {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-}
+    <style>
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
 
-.ventana {
-    background-color: white;
-    width: 100%;
-    max-width: 950px;
-    border-radius: 12px;
-    padding: 40px 60px;
-    position: relative;
-    box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.04);
-    border: 1px solid #eaeaea;
-}
+        .ventana {
+            background-color: white;
+            width: 100%;
+            max-width: 950px;
+            border-radius: 12px;
+            padding: 40px 60px;
+            position: relative;
+            box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eaeaea;
+        }
 
-.layout-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-}
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
 
-.titulo {
-    font-size: 32px;
-    font-weight: 800;
-    color: #111;
-    margin-bottom: 30px;
-}
+        .titulo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 30px;
+        }
 
-.tarjeta-verde {
-    background-color: #0fb88f;
-    padding: 30px 40px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    color: white;
-    margin-bottom: 35px;
-    box-shadow: 0 8px 20px rgba(15, 184, 143, 0.2);
-}
+        .tarjeta-verde {
+            background-color: #0fb88f;
+            padding: 30px 40px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            color: white;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 20px rgba(15, 184, 143, 0.2);
+        }
 
-.avatar {
-    width: 100px;
-    height: 100px;
-    background-color: #d1d5db;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 4px solid rgba(255, 255, 255, 0.6);
-    overflow: hidden;
-    flex-shrink: 0;
-}
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background-color: #d1d5db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
 
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-.avatar i { font-size: 55px; color: white; margin-top: 15px; }
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-.info-usuario h2 { font-size: 18px; font-weight: 700; margin-bottom: 5px; line-height: 1.2; }
-.info-usuario p { font-size: 13px; opacity: 0.95; font-weight: 500; margin-bottom: 15px; }
+        .avatar i {
+            font-size: 55px;
+            color: white;
+            margin-top: 15px;
+        }
 
-.badge-asesor {
-    background-color: #51cdae;
-    padding: 8px 25px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    display: inline-block;
-    text-align: center;
-    min-width: 100px;
-}
+        .info-usuario h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
 
-.form-grupo { margin-bottom: 25px; }
+        .info-usuario p {
+            font-size: 13px;
+            opacity: 0.95;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
 
-.etiqueta {
-    font-size: 14px;
-    font-weight: 750;
-    color: #111;
-    margin-bottom: 10px;
-    display: block;
-}
+        .badge-asesor {
+            background-color: #51cdae;
+            padding: 8px 25px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+            text-align: center;
+            min-width: 100px;
+        }
 
-.input-estilo {
-    width: 100%;
-    background-color: #f2f2f2;
-    border: none;
-    padding: 14px 22px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    outline: none;
-    transition: all 0.2s;
-}
+        .form-grupo {
+            margin-bottom: 25px;
+        }
 
-.input-estilo::placeholder { color: #999; font-weight: 500; }
-.input-estilo:focus { background-color: #ebedef; box-shadow: 0 0 0 2px #0fb88f; }
+        .etiqueta {
+            font-size: 14px;
+            font-weight: 750;
+            color: #111;
+            margin-bottom: 10px;
+            display: block;
+        }
 
-select.input-estilo {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    background-size: 20px;
-}
+        .input-estilo {
+            width: 100%;
+            background-color: #f2f2f2;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            outline: none;
+            transition: all 0.2s;
+        }
 
-.seccion-titulo { font-size: 16px; font-weight: 750; color: #111; margin-bottom: 18px; }
+        .input-estilo::placeholder {
+            color: #999;
+            font-weight: 500;
+        }
 
-.add-disp-container {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 30px;
-    align-items: center;
-}
+        .input-estilo:focus {
+            background-color: #ebedef;
+            box-shadow: 0 0 0 2px #0fb88f;
+        }
 
-.add-disp-container .input-estilo {
-    border-radius: 10px;
-    background-color: white;
-    border: 1px solid #ddd;
-    padding: 12px 18px;
-}
+        select.input-estilo {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 20px;
+        }
 
-.btn-add {
-    background-color: #a7ebd8;
-    color: #16644f;
-    border: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 28px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
+        .seccion-titulo {
+            font-size: 16px;
+            font-weight: 750;
+            color: #111;
+            margin-bottom: 18px;
+        }
 
-.btn-add:hover { transform: scale(1.1); background-color: #8edec6; }
+        .add-disp-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
 
-.disponibilidad-lista { display: flex; flex-direction: column; gap: 15px; }
+        .add-disp-container .input-estilo {
+            border-radius: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 12px 18px;
+        }
 
-.disponibilidad-item {
-    background-color: #f2f2f2;
-    padding: 14px 25px;
-    border-radius: 10px;
-    color: #666;
-    font-weight: 600;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: transform 0.2s;
-}
+        .btn-add {
+            background-color: #a7ebd8;
+            color: #16644f;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
 
-.disponibilidad-item:hover { transform: translateX(5px); }
+        .btn-add:hover {
+            transform: scale(1.1);
+            background-color: #8edec6;
+        }
 
-.btn-delete {
-    background: none;
-    border: none;
-    color: #ff6b6b;
-    cursor: pointer;
-    font-size: 16px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
+        .disponibilidad-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-.btn-delete:hover { opacity: 1; }
+        .disponibilidad-item {
+            background-color: #f2f2f2;
+            padding: 14px 25px;
+            border-radius: 10px;
+            color: #666;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
 
-.botones-finales {
-    grid-column: 1 / span 2;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin-top: 40px;
-}
+        .disponibilidad-item:hover {
+            transform: translateX(5px);
+        }
 
-.btn-accion {
-    padding: 14px 50px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 800;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-}
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
 
-.btn-accion:active { transform: scale(0.95); }
+        .btn-delete:hover {
+            opacity: 1;
+        }
 
-.btn-accion.btn-cancelar {
-    background-color: #c9c9c9;
-    color: #444;
-}
+        .botones-finales {
+            grid-column: 1 / span 2;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+        }
 
-.btn-accion.btn-cancelar:hover { background-color: #bebebe; }
+        .btn-accion {
+            padding: 14px 50px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
 
-.btn-accion.btn-guardar {
-    background: linear-gradient(135deg, #a7ebd8 0%, #68d1b7 100%);
-    color: #16644f;
-    box-shadow: 0 4px 12px rgba(104, 209, 183, 0.3);
-}
+        .btn-accion:active {
+            transform: scale(0.95);
+        }
 
-.btn-accion.btn-guardar:hover {
-    box-shadow: 0 6px 15px rgba(104, 209, 183, 0.4);
-    filter: brightness(1.05);
-}
+        .btn-accion.btn-cancelar {
+            background-color: #c9c9c9;
+            color: #444;
+        }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(4px);
-}
+        .btn-accion.btn-cancelar:hover {
+            background-color: #bebebe;
+        }
 
-.modal-content {
-    background: white;
-    padding: 35px;
-    border-radius: 15px;
-    width: 400px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-}
+        .btn-accion.btn-guardar {
+            background: linear-gradient(135deg, #a7ebd8 0%, #68d1b7 100%);
+            color: #16644f;
+            box-shadow: 0 4px 12px rgba(104, 209, 183, 0.3);
+        }
 
-.modal-content h3 { margin-bottom: 25px; font-weight: 800; font-size: 22px; }
+        .btn-accion.btn-guardar:hover {
+            box-shadow: 0 6px 15px rgba(104, 209, 183, 0.4);
+            filter: brightness(1.05);
+        }
 
-@media (max-width: 850px) {
-    .layout-grid { grid-template-columns: 1fr; gap: 30px; }
-    .botones-finales { grid-column: 1; flex-direction: column-reverse; gap: 15px; }
-    .ventana { padding: 30px 25px; }
-}
-</style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
 
-<div class="main-container">
-    <div class="ventana">
-        <h1 class="titulo">Mi perfil</h1>
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
 
-        <form id="formPerfil" action="/guardar-perfil" method="POST" class="layout-grid">
+        .modal-content h3 {
+            margin-bottom: 25px;
+            font-weight: 800;
+            font-size: 22px;
+        }
 
-            <!-- Columna Izquierda -->
-            <div class="col-izq">
-                <div class="tarjeta-verde">
-                    <div class="avatar">
-                        <% if (typeof asesor !== 'undefined' && asesor.fotoUrl) { %>
-                            <img src="<%= asesor.fotoUrl %>" alt="Foto">
-                        <% } else { %>
-                            <i class="fa-solid fa-user"></i>
-                        <% } %>
+        select {
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #eeeeee;
+            color: #555;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .boton-cambiar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-cambiar-contraseña {
+            background: linear-gradient(180deg, #7adfc9 0%, #46c1a8 100%);
+            color: #1b6d57;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-cambiar-contraseña:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 850px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .botones-finales {
+                grid-column: 1;
+                flex-direction: column-reverse;
+                gap: 15px;
+            }
+
+            .ventana {
+                padding: 30px 25px;
+            }
+        }
+    </style>
+
+    <div class="main-container">
+        <div class="ventana">
+            <h1 class="titulo">Mi perfil</h1>
+
+            <form id="formPerfil" action="/guardar-perfil" method="POST" class="layout-grid">
+
+                <!-- Columna Izquierda -->
+                <div class="col-izq">
+                    <div class="tarjeta-verde">
+                        <div class="avatar">
+                            <% if (typeof asesor !=='undefined' && asesor.fotoUrl) { %>
+                                <img src="<%= asesor.fotoUrl %>" alt="Foto">
+                                <% } else { %>
+                                    <i class="fa-solid fa-user"></i>
+                                    <% } %>
+                        </div>
+                        <div class="info-usuario">
+                            <h2>
+                                <%= typeof asesor !=='undefined' ? asesor.nombre : 'Nombre Usuario' %>
+                            </h2>
+                            <p>
+                                <%= typeof asesor !=='undefined' ? asesor.correo : 'usuario@correo.com' %>
+                            </p>
+                            <div class="badge-asesor">Asesor</div>
+                        </div>
                     </div>
-                    <div class="info-usuario">
-                        <h2><%= typeof asesor !== 'undefined' ? asesor.nombre : 'Nombre Usuario' %></h2>
-                        <p><%= typeof asesor !== 'undefined' ? asesor.correo : 'usuario@correo.com' %></p>
-                        <div class="badge-asesor">Asesor</div>
+
+                    <div class="form-grupo">
+                        <label class="etiqueta">Nombre completo:</label>
+                        <input type="text" name="nombre" class="input-estilo"
+                            value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>"
+                            placeholder="Ingrese su nombre">
                     </div>
-                </div>
 
-                <div class="form-grupo">
-                    <label class="etiqueta">Nombre completo:</label>
-                    <input type="text" name="nombre" class="input-estilo" value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>" placeholder="Ingrese su nombre">
-                </div>
-
-                <div class="form-grupo">
-                    <label class="etiqueta">Carrera:</label>
-                    <input type="text" name="carrera" class="input-estilo" value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>" placeholder="Ingrese su carrera">
-                </div>
-
-                <div class="form-grupo">
-                    <label class="etiqueta">Cuatrimestre:</label>
-                    <select name="cuatrimestre" class="input-estilo">
-                        <% for(let i=1; i<=11; i++) { %>
-                            <option value="<%= i %>" <%= (typeof asesor !== 'undefined' && asesor.cuatrimestre == i) ? 'selected' : '' %>>
-                                <%= i %>º cuatrimestre
+                    <div class="form-grupo">
+                        <label class="etiqueta">Carrera:</label>
+                        <select name="carrera" id="carrera">
+                            <option value="QF">Ing. Química Farmacéutica</option>
+                            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
                             </option>
-                        <% } %>
-                    </select>
+                            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Desarrollo de Software Multiplataforma)</option>
+                            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Entornos
+                                Virtuales y Negocios Digitales)</option>
+                            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                                Inteligencia
+                                Artificial)</option>
+                            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                                Datos)
+                            </option>
+                            <option value="MI">ING. Mantenimiento Industrial</option>
+                            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grupo">
+                        <label class="etiqueta">Cuatrimestre:</label>
+                        <select name="cuatrimestre" class="input-estilo">
+                            <% for(let i=1; i<=11; i++) { %>
+                                <option value="<%= i %>" <%=(typeof asesor !=='undefined' && asesor.cuatrimestre==i)
+                                    ? 'selected' : '' %>>
+                                    <%= i %>º cuatrimestre
+                                </option>
+                                <% } %>
+                        </select>
+                    </div>
+
+                    <div class="form-group boton-cambiar">
+                        <button type="button" class="btn-cambiar-contraseña"
+                            onclick=" window.location.href = '/cambiar-contrasena';">Cambiar contraseña</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Columna Derecha -->
-            <div class="col-der">
-                <h2 class="seccion-titulo">Disponibilidad</h2>
+                <!-- Columna Derecha -->
+                <div class="col-der">
+                    <h2 class="seccion-titulo">Disponibilidad</h2>
 
-                <div class="add-disp-container">
-                    <input type="text" id="dispInput" class="input-estilo" placeholder="Ej: Lunes 14:00-16:00" readonly onclick="abrirModal()">
-                    <button type="button" class="btn-add" onclick="abrirModal()">+</button>
+                    <div class="add-disp-container">
+                        <input type="text" id="dispInput" class="input-estilo" placeholder="Ej: Lunes 14:00-16:00"
+                            readonly onclick="abrirModal()">
+                        <button type="button" class="btn-add" onclick="abrirModal()">+</button>
+                    </div>
+
+                    <div class="disponibilidad-lista" id="listaDisp">
+                        <% if (typeof asesor !=='undefined' && asesor.disponibilidad && asesor.disponibilidad.length> 0)
+                            { %>
+                            <% asesor.disponibilidad.forEach(function(item) { %>
+                                <div class="disponibilidad-item">
+                                    <span>
+                                        <%= item.texto %>
+                                    </span>
+                                    <button type="button" class="btn-delete"
+                                        onclick="eliminarDisp('<%= item.id_disponibilidad %>', this)">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                                <% }); %>
+                                    <% } else { %>
+                                        <div class="disponibilidad-item empty-msg"
+                                            style="justify-content: center; color: #bbb;">Sin disponibilidad registrada
+                                        </div>
+                                        <% } %>
+                    </div>
                 </div>
 
-                <div class="disponibilidad-lista" id="listaDisp">
-                    <% if (typeof asesor !== 'undefined' && asesor.disponibilidad && asesor.disponibilidad.length > 0) { %>
-                        <% asesor.disponibilidad.forEach(function(item) { %>
-                            <div class="disponibilidad-item">
-                                <span><%= item.texto %></span>
-                                <button type="button" class="btn-delete" onclick="eliminarDisp('<%= item.id_disponibilidad %>', this)">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        <% }); %>
-                    <% } else { %>
-                        <div class="disponibilidad-item empty-msg" style="justify-content: center; color: #bbb;">Sin disponibilidad registrada</div>
-                    <% } %>
+                <!-- Botones Finales -->
+                <div class="botones-finales">
+                    <button type="button" class="btn-accion btn-cancelar"
+                        onclick="window.history.back()">Cancelar</button>
+                    <button type="submit" class="btn-accion btn-guardar">Guardar cambios</button>
                 </div>
-            </div>
 
-            <!-- Botones Finales -->
-            <div class="botones-finales">
-                <button type="button" class="btn-accion btn-cancelar" onclick="window.history.back()">Cancelar</button>
-                <button type="submit" class="btn-accion btn-guardar">Guardar cambios</button>
-            </div>
-
-            <input type="hidden" name="id_asesor" value="<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>">
-        </form>
+                <input type="hidden" name="id_asesor"
+                    value="<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>">
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div id="modalDisp" class="modal">
-    <div class="modal-content">
-        <h3>Agregar Horario</h3>
-        <div class="form-grupo">
-            <label class="etiqueta">Día:</label>
-            <select id="modalDia" class="input-estilo">
-                <option value="Lunes">Lunes</option>
-                <option value="Martes">Martes</option>
-                <option value="Miércoles">Miércoles</option>
-                <option value="Jueves">Jueves</option>
-                <option value="Viernes">Viernes</option>
-                <option value="Sábado">Sábado</option>
-            </select>
-        </div>
-        <div class="form-grupo">
-            <label class="etiqueta">Hora Inicio:</label>
-            <input type="time" id="modalInicio" class="input-estilo">
-        </div>
-        <div class="form-grupo">
-            <label class="etiqueta">Hora Fin:</label>
-            <input type="time" id="modalFin" class="input-estilo">
-        </div>
-        <div style="display:flex; gap:15px; margin-top:25px;">
-            <button type="button" class="btn-accion btn-cancelar" style="flex:1; padding:12px;" onclick="cerrarModal()">Cancelar</button>
-            <button type="button" class="btn-accion btn-guardar" style="flex:1; padding:12px;" onclick="guardarNuevaDisp()">Agregar</button>
+    <!-- Modal -->
+    <div id="modalDisp" class="modal">
+        <div class="modal-content">
+            <h3>Agregar Horario</h3>
+            <div class="form-grupo">
+                <label class="etiqueta">Día:</label>
+                <select id="modalDia" class="input-estilo">
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                </select>
+            </div>
+            <div class="form-grupo">
+                <label class="etiqueta">Hora Inicio:</label>
+                <input type="time" id="modalInicio" class="input-estilo">
+            </div>
+            <div class="form-grupo">
+                <label class="etiqueta">Hora Fin:</label>
+                <input type="time" id="modalFin" class="input-estilo">
+            </div>
+            <div style="display:flex; gap:15px; margin-top:25px;">
+                <button type="button" class="btn-accion btn-cancelar" style="flex:1; padding:12px;"
+                    onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-accion btn-guardar" style="flex:1; padding:12px;"
+                    onclick="guardarNuevaDisp()">Agregar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    const idAsesorGlobal = "<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>";
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectCarrera = document.getElementById('carrera');
+            const carreraActual = "<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>";
 
-    function abrirModal() { document.getElementById('modalDisp').style.display = 'flex'; }
-    function cerrarModal() { document.getElementById('modalDisp').style.display = 'none'; }
+            if (selectCarrera && carreraActual) {
+                selectCarrera.value = carreraActual;
+            }
+        });
 
-    async function guardarNuevaDisp() {
-        const dia = document.getElementById('modalDia').value;
-        const inicio = document.getElementById('modalInicio').value;
-        const fin = document.getElementById('modalFin').value;
-        if (!inicio || !fin) { alert("Por favor seleccione las horas."); return; }
-        try {
-            const res = await fetch('/agregar-disponibilidad', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_asesor: idAsesorGlobal, dia, hora_inicio: inicio, hora_fin: fin })
-            });
-            const data = await res.json();
-            if (data.success) { location.reload(); }
-            else { alert("Error al guardar: " + (data.message || "Intente de nuevo")); }
-        } catch (error) { alert("Error de conexión"); }
-    }
+        const idAsesorGlobal = "<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>";
 
-    async function eliminarDisp(idDisp, btn) {
-        if (!confirm("¿Desea eliminar este horario?")) return;
-        try {
-            const res = await fetch('/eliminar-disponibilidad', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_disponibilidad: idDisp })
-            });
-            const data = await res.json();
-            if (data.success) {
-                btn.closest('.disponibilidad-item').remove();
-                if (document.querySelectorAll('.disponibilidad-item').length === 0) location.reload();
-            } else { alert("Error al eliminar"); }
-        } catch (error) { alert("Error de conexión"); }
-    }
+        function abrirModal() { document.getElementById('modalDisp').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('modalDisp').style.display = 'none'; }
 
-    window.onclick = function(event) {
-        const modal = document.getElementById('modalDisp');
-        if (event.target == modal) cerrarModal();
-    }
-</script>
+        async function guardarNuevaDisp() {
+            const dia = document.getElementById('modalDia').value;
+            const inicio = document.getElementById('modalInicio').value;
+            const fin = document.getElementById('modalFin').value;
+            if (!inicio || !fin) { alert("Por favor seleccione las horas."); return; }
+            try {
+                const res = await fetch('/agregar-disponibilidad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_asesor: idAsesorGlobal, dia, hora_inicio: inicio, hora_fin: fin })
+                });
+                const data = await res.json();
+                if (data.success) { location.reload(); }
+                else { alert("Error al guardar: " + (data.message || "Intente de nuevo")); }
+            } catch (error) { alert("Error de conexión"); }
+        }
 
-<%- include('templates/footer.ejs') %>
+        async function eliminarDisp(idDisp, btn) {
+            if (!confirm("¿Desea eliminar este horario?")) return;
+            try {
+                const res = await fetch('/eliminar-disponibilidad', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id_disponibilidad: idDisp })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    btn.closest('.disponibilidad-item').remove();
+                    if (document.querySelectorAll('.disponibilidad-item').length === 0) location.reload();
+                } else { alert("Error al eliminar"); }
+            } catch (error) { alert("Error de conexión"); }
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('modalDisp');
+            if (event.target == modal) cerrarModal();
+        }
+    </script>
+
+    <%- include('templates/footer.ejs') %>

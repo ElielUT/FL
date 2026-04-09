@@ -45,8 +45,8 @@
                     if (asesorias && asesorias.length > 0) {
                         const matters = new Set();
                         asesorias.forEach(a => {
-                            if(a.asesoria && a.asesoria.materia && a.asesoria.materia.nombre) {
-                                matters.add(a.asesoria.materia.nombre);
+                            if(a.materia && a.materia.nombre) {
+                                matters.add(a.materia.nombre);
                             }
                         });
                         Array.from(matters).forEach(m => {
@@ -63,46 +63,55 @@
         <% if (asesorias && asesorias.length > 0) { %>
             <% asesorias.forEach(asesoria => { 
                 let nombreMateria = "Sin Materia";
-                if(asesoria.asesoria && asesoria.asesoria.materia && asesoria.asesoria.materia.nombre) {
-                    nombreMateria = asesoria.asesoria.materia.nombre;
+                if(asesoria.materia && asesoria.materia.nombre) {
+                    nombreMateria = asesoria.materia.nombre;
+                }
+
+                let tomaActual = null;
+                if(asesoria.toma && asesoria.toma.length > 0) {
+                    tomaActual = asesoria.toma[0];
                 }
 
                 let nombreAsesorado = "Desconocido";
-                if(asesoria.alumno && asesoria.alumno.usuario) {
-                    nombreAsesorado = `${asesoria.alumno.usuario.nombres} ${asesoria.alumno.usuario.apellidos}`;
+                if(tomaActual && tomaActual.alumno && tomaActual.alumno.usuario) {
+                    nombreAsesorado = `${tomaActual.alumno.usuario.nombres} ${tomaActual.alumno.usuario.apellidos}`;
                 }
 
                 let nombreAsesor = "Desconocido";
-                if(asesoria.asesor && asesoria.asesor.usuario) {
-                    nombreAsesor = `${asesoria.asesor.usuario.nombres} ${asesoria.asesor.usuario.apellidos}`;
+                if(tomaActual && tomaActual.asesor && tomaActual.asesor.usuario) {
+                    nombreAsesor = `${tomaActual.asesor.usuario.nombres} ${tomaActual.asesor.usuario.apellidos}`;
                 }
 
-                let estado = "Desconocido";
-                let calificacion = asesoria.calificacion;
-                if(!asesoria.fecha) estado = "Pendiente";
-                else if(asesoria.fecha && (!calificacion || calificacion == 0)) estado = "Aceptada";
-                else if(asesoria.fecha && calificacion > 0) estado = "Completadas";
+                let estado = "Pendiente";
+                if(tomaActual && tomaActual.estado) {
+                    estado = tomaActual.estado;
+                }
+                
+                let calificacion = (tomaActual && tomaActual.calificacion) ? tomaActual.calificacion : 0;
+                let fechaDisplay = (tomaActual && tomaActual.fecha) ? tomaActual.fecha : '--/--/--';
+                let horaDisplay = (tomaActual && tomaActual.hora_in) ? tomaActual.hora_in.substring(0,5) : '--:--';
+                let idDisplay = asesoria.id_asesoria || '-';
 
-                let clasEstado = estado === "Aceptada" ? "badge-red" : (estado === "Pendiente" ? "badge-cyan" : "badge-green");
+                let clasEstado = estado === "Aceptada" || estado === "Aceptado" ? "badge-red" : (estado === "Pendiente" ? "badge-cyan" : "badge-green");
             %>
             <div class="asesoria-card" data-state="<%= estado %>" data-subject="<%= nombreMateria %>" data-text="<%= (nombreMateria + " " + nombreAsesor + " " + nombreAsesorado).toLowerCase() %>">
                 <div class="card-header-info">
                     <h3><%= nombreMateria %></h3>
-                    <span class="card-id">ID: <%= asesoria.id_asesor3 || asesoria.id_asesoria2 || '-' %></span>
+                    <span class="card-id">ID: <%= idDisplay %></span>
                 </div>
                 <div class="card-users">
                     <span class="user-info"><b>Asesorado:</b> <%= nombreAsesorado %></span>
                     <span class="user-info"><b>Asesor:</b> <%= nombreAsesor %></span>
                 </div>
                 <div class="card-datetime">
-                    <span><i class="far fa-calendar-alt"></i> Fecha: <%= asesoria.fecha || '--/--/--' %></span>
-                    <span><i class="far fa-clock"></i> Hora: <%= asesoria.hora_in ? asesoria.hora_in.substring(0,5) : '--:--' %></span>
+                    <span><i class="far fa-calendar-alt"></i> Fecha: <%= fechaDisplay %></span>
+                    <span><i class="far fa-clock"></i> Hora: <%= horaDisplay %></span>
                 </div>
                 <div class="card-footer">
-                    <span class="req-date">Solicitada el <%= asesoria.fecha || '--/--/--' %></span>
+                    <span class="req-date">Solicitada el <%= fechaDisplay %></span>
                     <span class="status-badge <%= clasEstado %>"><%= estado %></span>
                 </div>
-                <% if(estado === "Completadas") { %>
+                <% if(estado === "Completadas" || estado === "Completada") { %>
                 <div class="card-eval">
                     <div class="eval-header">
                         <span>Evaluación del estudiante:</span>

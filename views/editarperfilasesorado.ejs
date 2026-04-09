@@ -234,6 +234,42 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
+
+        select {
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #eeeeee;
+            color: #555;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .boton-cambiar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn-cambiar-contraseña {
+            background: linear-gradient(180deg, #7adfc9 0%, #46c1a8 100%);
+            color: #1b6d57;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 70%;
+        }
+
+        .btn-cambiar-contraseña:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
     </style>
 </head>
 
@@ -253,7 +289,7 @@
     <div class="main-container">
         <!-- Tarjeta Blanca Principal -->
         <div class="ventana">
-            <h1 class="titulo">Mi perfil</h1>
+            <!--<h1 class="titulo">Mi perfil</h1>-->
 
             <div class="contenido-perfil">
 
@@ -284,8 +320,31 @@
 
                     <div class="form-group">
                         <label>Carrera:</label>
-                        <input type="text" name="carrera" class="form-control" placeholder="Ingrese su carrera"
-                            value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>">
+                        <select name="carrera" id="carrera">
+                            <option value="QF">Ing. Química Farmacéutica</option>
+                            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                            </option>
+                            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Desarrollo de Software Multiplataforma)</option>
+                            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Entornos
+                                Virtuales y Negocios Digitales)</option>
+                            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                                Inteligencia
+                                Artificial)</option>
+                            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                                Datos)
+                            </option>
+                            <option value="MI">ING. Mantenimiento Industrial</option>
+                            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -300,10 +359,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Contraseña:</label>
-                        <input type="password" name="contraseña" class="form-control"
-                            placeholder="Ingrese su contraseña">
+                    <div class="form-group boton-cambiar">
+                        <button type="button" class="btn-cambiar-contraseña"
+                            onclick=" window.location.href = '/cambiar-contrasena';">Cambiar contraseña</button>
                     </div>
 
                     <!-- Botones -->
@@ -318,5 +376,16 @@
     </div>
 
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectCarrera = document.getElementById('carrera');
+        const carreraActual = "<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>";
+
+        if (selectCarrera && carreraActual) {
+            selectCarrera.value = carreraActual;
+        }
+    })
+</script>
 
 </html>

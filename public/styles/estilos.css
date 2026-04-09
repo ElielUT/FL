@@ -231,7 +231,7 @@ body {
     background-color: #eeeeee;
     color: var(--input-text-color);
     font-size: 1rem;
-    cursor: pointer;
+    cursor: text;
 }
 
 .rol-carrera-cuatrimestre {
@@ -294,7 +294,7 @@ body {
     background-color: #eeeeee;
     color: var(--input-text-color);
     font-size: 1rem;
-    cursor: pointer;
+    cursor: text;
 }
 
 .materias .carrera select,
@@ -626,7 +626,9 @@ BARRA DE BUSQUEDA Y FILTROS
     transition: transform 0.2s;
 }
 
-.btn-cancelar-circular:hover { transform: scale(1.1); }
+.btn-cancelar-circular:hover {
+    transform: scale(1.1);
+}
 
 .btn-guardar {
     background: linear-gradient(to right, #4db6ac, #80cbc4);
@@ -1100,7 +1102,7 @@ SOLICITAR ASESORÍA
 .search-box-materias i:last-child {
     margin-left: 12px;
     color: #999;
-    cursor: pointer;
+    cursor: text;
 }
 
 .search-box-materias input {
@@ -1168,4 +1170,107 @@ SOLICITAR ASESORÍA
     font-size: 0.7rem;
     color: #999;
     margin-top: 5px;
+}
+
+/*
+CAMBIAR CONTRASEÑA
+*/
+.ventana {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+.titulo {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #eeeeee;
+    color: var(--input-text-color);
+    font-size: 1rem;
+    cursor: text;
+}
+
+.form-control {
+    background-color: #f2f2f2;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #555;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    width: 100%;
+}
+
+.botones {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.btn-cancelar {
+    background-color: #dcdcdc;
+    color: #333;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-cancelar:hover {
+    background-color: #cecece;
+}
+
+.btn-guardar {
+    background: linear-gradient(180deg, #7adfc9 0%, #46c1a8 100%);
+    border: none;
+    color: #1b6d57;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-guardar:hover {
+    transform: translateY(-2px);
 }
