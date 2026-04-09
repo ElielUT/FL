@@ -608,6 +608,26 @@ BARRA DE BUSQUEDA Y FILTROS
     cursor: pointer;
 }
 
+.btn-cancelar-circular {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    transition: transform 0.2s;
+}
+
+.btn-cancelar-circular:hover { transform: scale(1.1); }
+
 .btn-guardar {
     background: linear-gradient(to right, #4db6ac, #80cbc4);
     color: #333;

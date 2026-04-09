@@ -1,8 +1,13 @@
 <%- include('templates/headerPanel.ejs', { rol: "Asesor" }) %>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/estilos.css">
+
 <div class="panel-asesor-container">
     <div class="panel-header">
-        <h1>Panel de asesor</h1>
         <p>Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
+        <a href="/historialAsesorias" style="display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #4db6ac, #80cbc4); color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-weight:600; font-size:0.9rem;">
+            <i class="fas fa-history"></i> Historial
+        </a>
     </div>
     <script>
         // Sincronizar nombre en el header (si es necesario)

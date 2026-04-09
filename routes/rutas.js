@@ -950,42 +950,70 @@ router.get('/panelAsesorado', async (req, res) => {
 });
 
 router.get("/historialAsesorias", async (req, res) => {
-    if (req.session.usuario !== 1) {
+    if (!req.session.usuario || ![1, 2].includes(req.session.usuario)) {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const idAsesor = req.session.id_asesor || 1;
     try {
-        const respuesta = await fetch(url_api + `/toma/buscarTomaAsesor/${idAsesor}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-        });
-        const dataTomas = await respuesta.json();
-        const tomas = dataTomas.items || [];
-        
-        const completadas = tomas.filter(t => t.calificacion && t.calificacion > 0);
-        
+        let tomas = [];
+
+        if (req.session.usuario === 1) {
+            // Asesor
+            const idAsesor = req.session.id_asesor;
+            const respuesta = await fetch(`${url_api}/toma/buscarTomaAsesor/${idAsesor}`, {
+                headers: { "Content-Type": "application/json" }
+            });
+            const data = await respuesta.json();
+            tomas = data.items || [];
+        } else {
+            // Asesorado
+            const idAlumno = req.session.id_alumno;
+            const respuesta = await fetch(`${url_api}/toma/buscarTomaAlumno/${idAlumno}`, {
+                headers: { "Content-Type": "application/json" }
+            });
+            const data = await respuesta.json();
+            tomas = data.items || [];
+        }
+
+        // Solo completadas
+        const completadas = tomas.filter(t => t.estado === 'completada');
+
+        // Calcular tiempo total
         let minutosTotales = 0;
         completadas.forEach(t => {
             if (t.hora_in && t.hora_fin) {
                 const [hIn, mIn] = t.hora_in.split(':').map(Number);
                 const [hFin, mFin] = t.hora_fin.split(':').map(Number);
                 const diff = (hFin * 60 + mFin) - (hIn * 60 + mIn);
-                minutosTotales += diff > 0 ? diff : 90;
-            } else {
-                minutosTotales += 90;
+                minutosTotales += diff > 0 ? diff : 0;
             }
         });
         const horasTotales = Math.floor(minutosTotales / 60);
         const minsExtra = minutosTotales % 60;
         const tiempoStr = horasTotales > 0 ? `${horasTotales} h ${minsExtra} min` : `${minsExtra} min`;
 
-        res.render("historialAsesorias", { 
-            asesorias: tomas,
-            total: tomas.length,
+        const rol = req.session.usuario === 1 ? "Asesor" : "Asesorado";
+
+        const asesorias = completadas.map(t => ({
+            materia: t.asesoria?.materia?.nombre || "Sin materia",
+            tema: t.asesoria?.tema || "Sin tema",
+            contraparte: req.session.usuario === 1
+                ? (t.alumno?.usuario ? `${t.alumno.usuario.nombres} ${t.alumno.usuario.apellidos}` : "Desconocido")
+                : (t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido"),
+            fecha: t.fecha || "Sin fecha",
+            hora_in: t.hora_in ? t.hora_in.substring(0, 5) : "--:--",
+            hora_fin: t.hora_fin ? t.hora_fin.substring(0, 5) : "--:--",
+            calificacion: t.calificacion || 0,
+            id_asesoria: t.id_asesoria1
+        }));
+
+        res.render("historialAsesorias", {
+            asesorias,
+            total: asesorias.length,
             tiempoTotal: tiempoStr,
-            rol: "Asesor"
+            rol
         });
+
     } catch (error) {
         console.error("Error al cargar historial:", error);
         res.render("historialAsesorias", { asesorias: [], total: 0, tiempoTotal: "0 min", rol: "Asesor" });
@@ -1154,5 +1182,8 @@ router.delete("/cancelarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (
     }
 });
 
+router.get('/sesion-info', (req, res) => {
+    res.json({ rol: req.session.usuario || null });
+});
 
 export default router;
