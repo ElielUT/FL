@@ -443,6 +443,63 @@ td {
     color: #999;
     padding: 30px;
 }
+
+/* =========================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================= */
+
+@media (max-width: 950px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-cards {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .stat-card {
+        width: 100%;
+        min-width: 100%;
+    }
+    .asesoria-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        text-align: center;
+    }
+    .fecha-hora {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .panel-asesor-container {
+        padding: 10px;
+    }
+    .evaluacion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .acciones button, .acciones a {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .asesoria-item > div:last-child button,
+    .asesoria-item > div:last-child a {
+        width: 100%;
+    }
+}
 </style>
 
 <script>

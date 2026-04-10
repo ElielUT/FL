@@ -270,6 +270,42 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
+
+        /* ----- Responsive Design ----- */
+        @media (max-width: 768px) {
+            .ventana {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 10px;
+            }
+            .ventana {
+                padding: 30px 20px;
+            }
+            .tarjeta-verde {
+                flex-direction: column;
+                padding: 20px;
+                text-align: center;
+                gap: 15px;
+            }
+            .info-usuario h2, .info-usuario p {
+                text-align: center;
+            }
+            .botones-container {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+            .btn-cancelar, .btn-guardar {
+                width: 100%;
+            }
+            .btn-cambiar-contraseña {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 

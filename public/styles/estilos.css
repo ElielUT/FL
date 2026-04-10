@@ -1274,3 +1274,250 @@ CAMBIAR CONTRASEÑA
 .btn-guardar:hover {
     transform: translateY(-2px);
 }
+
+/* =========================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================= */
+
+/* Tablets y Laptops pequeñas */
+@media (max-width: 1024px) {
+    .cuerpo {
+        height: auto;
+        min-height: 91vh;
+    }
+    .estadisticas-item p:nth-child(1),
+    .estadisticas-item p:nth-child(2) {
+        font-size: 1.1rem;
+    }
+}
+
+/* Tablets en Portrait */
+@media (max-width: 768px) {
+    .cuerpo {
+        flex-direction: column;
+    }
+    
+    .componentesDerechos, 
+    .componentesIzquierdos {
+        width: 100%;
+    }
+    
+    .estadisticas-cuentas {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .estadisticas-item {
+        width: 45%;
+    }
+    
+    .nombre-correo, 
+    .rol-carrera-cuatrimestre, 
+    .materias {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nombre-correo .nombre, 
+    .nombre-correo .apellidos, 
+    .nombre-correo .correo,
+    .rol-carrera-cuatrimestre .rol, 
+    .rol-carrera-cuatrimestre .carrera, 
+    .rol-carrera-cuatrimestre .cuatrimestre,
+    .materias .nombreMateria, 
+    .materias .carrera, 
+    .materias .cuatrimestre {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .busqueda_filtro {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .busqueda, .filtro, 
+    .materiasFiltros .busqueda, 
+    .materiasFiltros .filtro, 
+    .materiasFiltros .filtroCuatrimestre {
+        width: 100%;
+    }
+
+    .usuarios, .materias {
+        flex-direction: column;
+        padding: 0 4%;
+    }
+
+    .usuarioItem, .materiaItem {
+        width: 100%;
+    }
+
+    .botonesAdmin {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .botonesAdmin button {
+        width: 45%;
+        margin: 5px;
+        height: auto;
+        padding: 15px;
+    }
+    
+    .asesorias-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .supervisar-stats {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .stat-card {
+        width: 48%;
+        min-width: auto;
+        padding: 15px 10px;
+    }
+    
+    .filtros-acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filtros-acciones select {
+        width: 100%;
+    }
+    
+    .supervisar-container,
+    .solicitar-container {
+        width: 95%;
+    }
+}
+
+/* Teléfonos Móviles */
+@media (max-width: 480px) {
+    .top-bar {
+        padding: 0 10px;
+    }
+    
+    .header-actions {
+        gap: 15px;
+    }
+    
+    .action-btn i, .close-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+    }
+    
+    .action-btn span {
+        font-size: 11px;
+    }
+    
+    .volverIcon p {
+        font-size: 16px;
+    }
+    
+    .titulo {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .tituloDerecha button {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+    
+    .estadisticas-item {
+        width: 100%;
+        height: auto;
+        padding: 20px 0;
+    }
+    
+    .botonesAdmin button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .stat-card {
+        width: 100%;
+    }
+    
+    .crearUsuario, .nuevaMateria, 
+    .editarUsuario .interno, .editarMateria .interno {
+        width: 95%;
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 20px 15px;
+        box-sizing: border-box;
+    }
+
+    .contenedor-botones {
+        flex-direction: column;
+        width: 100%;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    
+    .btn-cancelar, .btn-guardar {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .ventana {
+        width: 90%;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .titulo {
+        font-size: 24px;
+    }
+    
+    .infoMateria .nombreMateria {
+        font-size: 1rem;
+    }
+    
+    .info {
+        font-size: 0.75rem;
+    }
+    
+    .imgMat {
+        width: 60%;
+        height: 60%;
+        font-size: 1.5rem;
+    }
+
+    .usuarioItem, .materiaItem {
+        flex-direction: column;
+        padding: 20px;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .imagen-categoria {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .usuarioInfo, .infoMateria {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+        padding: 0;
+    }
+
+    .usuarioItem .acciones, .materiaItem .acciones {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .usuarioItem .acciones button, .materiaItem .acciones button {
+        padding: 12px 0;
+        flex: 1;
+    }
+}

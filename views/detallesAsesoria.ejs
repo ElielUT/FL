@@ -158,10 +158,10 @@
 .meet-card { border: 1px solid #e0e0e0; border-radius: 14px; padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
 .meet-logo { width: 56px; height: 56px; border-radius: 12px; flex-shrink: 0; }
 .meet-logo-gray { filter: grayscale(40%) opacity(0.85); }
-.meet-info { display: flex; flex-direction: column; gap: 5px; }
+.meet-info { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
 .meet-title { font-weight: 700; font-size: 1rem; margin: 0; color: #222; }
-.meet-desc { font-size: 0.78rem; color: #666; margin: 0; line-height: 1.4; }
-.meet-domain { font-size: 0.75rem; color: #4db6ac; margin: 2px 0 6px; }
+.meet-desc { font-size: 0.78rem; color: #666; margin: 0; line-height: 1.4; word-wrap: break-word; white-space: normal; }
+.meet-domain { font-size: 0.75rem; color: #4db6ac; margin: 2px 0 6px; word-wrap: break-word; white-space: normal; }
 
 .btn-meet-unirse {
     background: linear-gradient(to right, #4db6ac, #80cbc4);
@@ -181,7 +181,26 @@
     display: flex; align-items: center; justify-content: center;
     color: white; font-size: 1.5rem; flex-shrink: 0;
 }
-.contacto-numero { font-size: 1rem; font-weight: 600; color: #222; margin: 4px 0 0; }
+.contacto-numero { font-size: 1rem; font-weight: 600; color: #222; margin: 4px 0 0; word-wrap: break-word; }
+
+@media (max-width: 768px) {
+    .detalles-card {
+        flex-direction: column;
+        padding: 25px 20px;
+        gap: 30px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .detalles-info, .detalles-meet {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .meet-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
 </style>
 
 <script>

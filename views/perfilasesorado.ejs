@@ -191,6 +191,40 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
+
+        /* ----- Responsive Design ----- */
+        @media (max-width: 768px) {
+            .ventana {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 10px;
+            }
+            .ventana {
+                padding: 30px 20px;
+            }
+            .tarjeta-verde {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+                min-width: 0;
+                width: 100%;
+            }
+            .info-usuario h2, .info-usuario p {
+                text-align: center;
+            }
+            .bloque-info {
+                align-items: stretch;
+                width: 100%;
+            }
+            .btn-editar {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 
