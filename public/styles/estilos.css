@@ -494,6 +494,10 @@ BARRA DE BUSQUEDA Y FILTROS
     width: 60%;
 }
 
+.infoMateria {
+    cursor: pointer;
+}
+
 
 .info {
     padding: 10px 0px 0px 0px;
@@ -1194,7 +1198,7 @@ CAMBIAR CONTRASEÑA
     font-size: 32px;
     font-weight: 700;
     color: #000;
-    margin-bottom: 30px;
+    /*margin-bottom: 30px;*/
     text-align: left;
 }
 
@@ -1275,6 +1279,112 @@ CAMBIAR CONTRASEÑA
     transform: translateY(-2px);
 }
 
+/*
+ASIGNAR MATERIAS
+*/
+.contenido-asignacion {
+    padding: 40px;
+    padding-top: 0px;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.seccion-asesores {
+    flex: 1;
+    width: 100%;
+}
+
+.titulo-asesores,
+.titulo-asignar {
+    margin-bottom: 15px;
+    color: #2B2E4A;
+}
+
+.asignar-materias-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.asignar-asesor-item {
+    width: 300px;
+    padding: 20px;
+    position: relative;
+    background-color: white;
+    border-radius: 25px;
+    box-shadow: -11px 12px 0px rgba(233, 233, 233, 1);
+}
+
+.acciones-desvincular {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0;
+    width: auto;
+}
+
+.btnDesvincular {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #E84545;
+    font-size: 1.2rem;
+}
+
+.nombre-asesor-bold {
+    font-weight: bold;
+}
+
+.seccion-asignar {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 350px;
+    min-width: 250px;
+    position: sticky;
+    top: 30px;
+}
+
+.form-asignar-nuevo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-asignar-nuevo-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-asignar-nuevo label {
+    font-weight: bold;
+}
+
+.form-asignar-nuevo select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    width: 100%;
+}
+
+.btn-vincular {
+    padding: 12px;
+    background: #00a185;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    width: fit-content;
+}
+
 /* =========================================
    RESPONSIVE DESIGN (MEDIA QUERIES)
    ========================================= */
@@ -1285,6 +1395,7 @@ CAMBIAR CONTRASEÑA
         height: auto;
         min-height: 91vh;
     }
+
     .estadisticas-item p:nth-child(1),
     .estadisticas-item p:nth-child(2) {
         font-size: 1.1rem;
@@ -1293,15 +1404,37 @@ CAMBIAR CONTRASEÑA
 
 /* Tablets en Portrait */
 @media (max-width: 768px) {
+
+    /* Asignar materias */
+    .contenido-asignacion {
+        flex-direction: column;
+        padding: 20px 0;
+        gap: 20px;
+    }
+
+    .seccion-asignar {
+        max-width: 100%;
+        position: static;
+    }
+
+    .asignar-materias-grid {
+        justify-content: center;
+    }
+
+    .asignar-asesor-item {
+        width: 100%;
+        max-width: 100%;
+    }
+
     .cuerpo {
         flex-direction: column;
     }
-    
-    .componentesDerechos, 
+
+    .componentesDerechos,
     .componentesIzquierdos {
         width: 100%;
     }
-    
+
     .estadisticas-cuentas {
         flex-wrap: wrap;
         gap: 15px;
@@ -1310,22 +1443,22 @@ CAMBIAR CONTRASEÑA
     .estadisticas-item {
         width: 45%;
     }
-    
-    .nombre-correo, 
-    .rol-carrera-cuatrimestre, 
+
+    .nombre-correo,
+    .rol-carrera-cuatrimestre,
     .materias {
         flex-direction: column;
         gap: 15px;
     }
 
-    .nombre-correo .nombre, 
-    .nombre-correo .apellidos, 
+    .nombre-correo .nombre,
+    .nombre-correo .apellidos,
     .nombre-correo .correo,
-    .rol-carrera-cuatrimestre .rol, 
-    .rol-carrera-cuatrimestre .carrera, 
+    .rol-carrera-cuatrimestre .rol,
+    .rol-carrera-cuatrimestre .carrera,
     .rol-carrera-cuatrimestre .cuatrimestre,
-    .materias .nombreMateria, 
-    .materias .carrera, 
+    .materias .nombreMateria,
+    .materias .carrera,
     .materias .cuatrimestre {
         width: 100%;
         align-items: stretch;
@@ -1336,19 +1469,22 @@ CAMBIAR CONTRASEÑA
         gap: 15px;
     }
 
-    .busqueda, .filtro, 
-    .materiasFiltros .busqueda, 
-    .materiasFiltros .filtro, 
+    .busqueda,
+    .filtro,
+    .materiasFiltros .busqueda,
+    .materiasFiltros .filtro,
     .materiasFiltros .filtroCuatrimestre {
         width: 100%;
     }
 
-    .usuarios, .materias {
+    .usuarios,
+    .materias {
         flex-direction: column;
         padding: 0 4%;
     }
 
-    .usuarioItem, .materiaItem {
+    .usuarioItem,
+    .materiaItem {
         width: 100%;
     }
 
@@ -1356,38 +1492,38 @@ CAMBIAR CONTRASEÑA
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .botonesAdmin button {
         width: 45%;
         margin: 5px;
         height: auto;
         padding: 15px;
     }
-    
+
     .asesorias-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .supervisar-stats {
         flex-wrap: wrap;
         gap: 15px;
     }
-    
+
     .stat-card {
         width: 48%;
         min-width: auto;
         padding: 15px 10px;
     }
-    
+
     .filtros-acciones {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .filtros-acciones select {
         width: 100%;
     }
-    
+
     .supervisar-container,
     .solicitar-container {
         width: 95%;
@@ -1396,57 +1532,89 @@ CAMBIAR CONTRASEÑA
 
 /* Teléfonos Móviles */
 @media (max-width: 480px) {
+    .contenido-asignacion {
+        padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .asignar-asesor-item {
+        padding: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
     .top-bar {
         padding: 0 10px;
     }
-    
+
     .header-actions {
         gap: 15px;
     }
-    
-    .action-btn i, .close-icon {
+
+    .action-btn i,
+    .close-icon {
         font-size: 24px;
         width: 24px;
         height: 24px;
     }
-    
+
     .action-btn span {
         font-size: 11px;
     }
-    
+
     .volverIcon p {
         font-size: 16px;
     }
-    
+
     .titulo {
         flex-direction: column;
         align-items: center;
         gap: 10px;
         text-align: center;
     }
-    
+
+    .tituloIzquierda {
+        align-items: center;
+        width: 100%;
+    }
+
+    .tituloIzquierda h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+
+    .tituloIzquierda h2 {
+        font-size: 1rem;
+    }
+
     .tituloDerecha button {
         width: 100%;
         font-size: 0.9rem;
     }
-    
+
     .estadisticas-item {
         width: 100%;
         height: auto;
         padding: 20px 0;
     }
-    
+
     .botonesAdmin button {
         width: 100%;
         margin: 5px 0;
     }
-    
+
     .stat-card {
         width: 100%;
     }
-    
-    .crearUsuario, .nuevaMateria, 
-    .editarUsuario .interno, .editarMateria .interno {
+
+    .crearUsuario,
+    .nuevaMateria,
+    .editarUsuario .interno,
+    .editarMateria .interno {
         width: 95%;
         max-height: 85vh;
         overflow-y: auto;
@@ -1460,8 +1628,9 @@ CAMBIAR CONTRASEÑA
         padding: 0 20px;
         box-sizing: border-box;
     }
-    
-    .btn-cancelar, .btn-guardar {
+
+    .btn-cancelar,
+    .btn-guardar {
         width: 100%;
         margin-bottom: 10px;
     }
@@ -1471,52 +1640,56 @@ CAMBIAR CONTRASEÑA
         padding: 20px;
         margin-top: 20px;
     }
-    
+
     .titulo {
         font-size: 24px;
     }
-    
+
     .infoMateria .nombreMateria {
         font-size: 1rem;
     }
-    
+
     .info {
         font-size: 0.75rem;
     }
-    
+
     .imgMat {
         width: 60%;
         height: 60%;
         font-size: 1.5rem;
     }
 
-    .usuarioItem, .materiaItem {
+    .usuarioItem,
+    .materiaItem {
         flex-direction: column;
         padding: 20px;
         text-align: center;
         gap: 10px;
     }
-    
+
     .imagen-categoria {
         width: 100%;
         margin-bottom: 5px;
     }
 
-    .usuarioInfo, .infoMateria {
+    .usuarioInfo,
+    .infoMateria {
         width: 100%;
         align-items: center;
         text-align: center;
         padding: 0;
     }
 
-    .usuarioItem .acciones, .materiaItem .acciones {
+    .usuarioItem .acciones,
+    .materiaItem .acciones {
         width: 100%;
         justify-content: center;
         gap: 15px;
         margin-top: 10px;
     }
-    
-    .usuarioItem .acciones button, .materiaItem .acciones button {
+
+    .usuarioItem .acciones button,
+    .materiaItem .acciones button {
         padding: 12px 0;
         flex: 1;
     }

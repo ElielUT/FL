@@ -230,7 +230,7 @@ router.get('/perfil-asesor', async (req, res) => {
 
     try {
         const correo = req.session.correo;
-        console.log("Cargando perfil para asesor:", correo);
+        //console.log("Cargando perfil para asesor:", correo);
 
         // 1. Buscar el asesor por el correo del usuario
         const resAsesor = await fetch(url_api + `/asesores/buscarAsesorUsuario/${encodeURIComponent(correo)}`, {
@@ -306,7 +306,7 @@ router.get('/perfil-asesorado', async (req, res) => {
 
     try {
         const id_usuario = req.session.id_usuario;
-        console.log("Cargando perfil para asesorado, id_usuario:", id_usuario);
+        //console.log("Cargando perfil para asesorado, id_usuario:", id_usuario);
 
         if (!id_usuario) throw new Error("Sesión expirada o ID de usuario no encontrado. Por favor cierra sesión y vuelve a entrar.");
 
@@ -739,10 +739,10 @@ router.post('/crear-solicitud', async (req, res) => {
         }
 
         const asesoriaData = await crearAsesoriaResp.json();
-        console.log("asesoriaData:", JSON.stringify(asesoriaData));
+        //console.log("asesoriaData:", JSON.stringify(asesoriaData));
         const id_asesoria = asesoriaData.items?.id_asesoria || asesoriaData.id_asesoria;
 
-        console.log("materiaId:", materiaId, "tipo:", typeof materiaId);
+        //console.log("materiaId:", materiaId, "tipo:", typeof materiaId);
         // 2. Crear la toma (solicitud)
         const crearTomaResp = await fetch(url_api + "/toma/crearToma/", {
             method: "POST",
@@ -804,13 +804,13 @@ router.get('/panelAsesor', async (req, res) => {
         ]);
 
         const dataTomas = await respuestaTomasAsesor.json();
-        console.log("RESPONSE COMPLETO:", JSON.stringify(dataTomas).substring(0, 500));
+        //console.log("RESPONSE COMPLETO:", JSON.stringify(dataTomas).substring(0, 500));
         const tomas = dataTomas.items || [];
-        console.log("TOMAS RECIBIDAS:", JSON.stringify(tomas.map(t => ({
-            estado: t.estado,
-            materia: t.asesoria?.materia?.nombre,
-            estudiante: t.alumno?.usuario?.nombres
-        }))));
+        //console.log("TOMAS RECIBIDAS:", JSON.stringify(tomas.map(t => ({
+        //    estado: t.estado,
+        //    materia: t.asesoria?.materia?.nombre,
+        //    estudiante: t.alumno?.usuario?.nombres
+        //}))));
 
         const solicitudesPendientes = tomas
             .filter(t => t.estado === 'pendiente' || !t.estado)
@@ -1188,10 +1188,10 @@ router.get('/sesion-info', (req, res) => {
 
 router.get('/cambiar-contrasena', (req, res) => {
     if (req.session.id_usuario) {
-        res.render('cambiarContraseña', { 
-            url_api: url_api, 
-            correo: req.session.correo, 
-            id_usuario: req.session.id_usuario 
+        res.render('cambiarContraseña', {
+            url_api: url_api,
+            correo: req.session.correo,
+            id_usuario: req.session.id_usuario
         });
     } else {
         res.redirect('/login');

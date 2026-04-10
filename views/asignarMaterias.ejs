@@ -13,27 +13,24 @@
         </div>
     </div>
 
-    <div class="contenido-asignacion"
-        style="padding: 40px; padding-top: 0px; display: flex; flex-direction: row; gap: 40px; align-items: flex-start; width: 100%;">
+    <div class="contenido-asignacion">
 
         <!-- Asesores actuales -->
-        <div class="seccion-asesores" style="flex: 1;">
-            <h3 style="margin-bottom: 15px; color: #2B2E4A;">Asesores asignados</h3>
+        <div class="seccion-asesores">
+            <h3 class="titulo-asesores">Asesores asignados</h3>
 
             <% if (asesores.length> 0) { %>
-                <div class="materias" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="asignar-materias-grid">
                     <% asesores.forEach(asesor=> { %>
-                        <div class="materiaItem" style="width: 300px; padding: 20px; position: relative;">
-                            <div class="acciones" id="<%= asesor.id_asesor %>"
-                                style="position: absolute; top: 10px; right: 10px;">
-                                <button type="button" class="btnDesvincular" title="Desvincular asesor"
-                                    style="background: none; border: none; cursor: pointer; color: #E84545; font-size: 1.2rem;">
+                        <div class="materiaItem asignar-asesor-item">
+                            <div class="acciones-desvincular" id="<%= asesor.id_asesor %>">
+                                <button type="button" class="btnDesvincular" title="Desvincular asesor">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
                             <div class="infoMateria">
                                 <div class="nombreMateria">
-                                    <p style="font-weight: bold;">
+                                    <p class="nombre-asesor-bold">
                                         <%= asesor.nombres %>
                                             <%= asesor.apellidos %>
                                     </p>
@@ -57,16 +54,14 @@
         </div>
 
         <!-- Asignar nuevo asesor -->
-        <div class="seccion-asignar"
-            style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 350px; min-width: 250px; position: sticky; top: 30px;">
-            <h3 style="margin-bottom: 15px; color: #2B2E4A;">Asignar a otro asesor</h3>
-            <form id="formAsignarNuevo" style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="seccion-asignar">
+            <h3 class="titulo-asignar">Asignar a otro asesor</h3>
+            <form id="formAsignarNuevo" class="form-asignar-nuevo">
                 <input type="hidden" id="id_materia" value="<%= materia.id_materia %>">
 
-                <div style="display: flex; flex-direction: column; gap: 5px;">
-                    <label for="id_asesor" style="font-weight: bold;">Seleccionar Asesor:</label>
-                    <select name="id_asesor" id="id_asesor"
-                        style="padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-family: inherit;">
+                <div class="form-asignar-nuevo-group">
+                    <label for="id_asesor">Seleccionar Asesor:</label>
+                    <select name="id_asesor" id="id_asesor">
                         <option value="">-- Seleccione un asesor --</option>
                         <% todosAsesores.forEach(ta=> {
                             const yaAsignado = asesores.some(a => a.id_asesor === ta.id_asesor);
@@ -80,8 +75,7 @@
                     </select>
                 </div>
 
-                <button type="button" id="btnAsignar"
-                    style="padding: 12px; background: #00a185; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: fit-content;">Vincular
+                <button type="button" id="btnAsignar" class="btn-vincular">Vincular
                     Asesor</button>
             </form>
         </div>
