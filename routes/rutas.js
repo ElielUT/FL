@@ -940,6 +940,20 @@ router.get('/panelAsesorado', async (req, res) => {
                 materia: t.asesoria?.materia?.nombre || "Sin materia",
                 asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
                 fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--",
+                estado: t.estado,
+                calificacion: t.calificacion || 0
+            }));
+
+        const porCalificar = tomas
+            .filter(t => t.estado === 'completada' && (!t.calificacion || t.calificacion === 0))
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
                 hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
             }));
 
@@ -964,6 +978,7 @@ router.get('/panelAsesorado', async (req, res) => {
         res.render('panelAsesorado', {
             asesoriasProgramadas,
             solicitudesPendientes,
+            porCalificar,
             estadisticas
         });
 
@@ -1283,6 +1298,41 @@ router.get('/slots/:id_asesor', async (req, res) => {
         res.json({ slots });
     } catch (error) {
         res.status(500).json({ slots: [] });
+    }
+});
+
+router.post("/registrarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (req, res) => {
+    if (req.session.usuario !== 1)
+        return res.status(403).json({ error: "No autorizado" });
+    try {
+        const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+        const respuesta = await fetch(`${url_api}/toma/registrar/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) return res.status(400).json({ error: data.detail || "Error al registrar" });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: "Error interno" });
+    }
+});
+
+router.post("/calificar/:id_asesor3/:id_asesoria1/:id_alumno1", async (req, res) => {
+    if (req.session.usuario !== 2)
+        return res.status(403).json({ error: "No autorizado" });
+    try {
+        const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+        const { calificacion } = req.body;
+        const respuesta = await fetch(`${url_api}/toma/actualizarEstado/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ calificacion: parseInt(calificacion) })
+        });
+        if (!respuesta.ok) return res.status(502).json({ error: "Error al guardar calificación" });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: "Error interno" });
     }
 });
 

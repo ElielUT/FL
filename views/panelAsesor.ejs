@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             <div style="display:flex; gap:8px; flex-direction:column;">
-                                <button class="btn-registrar" onclick="registrarAsesoria('<%= asesoria.id_toma %>')">
+                                <button class="btn-registrar" onclick="registrarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
                                     Registrar
                                 </button>
                                 <a href="/detallesAsesoria/<%= asesoria.id_asesoria %>" class="btn-registrar" style="text-align:center; text-decoration:none;">
@@ -561,7 +561,24 @@ td {
             alert('Error de conexión.');
         }
     }
-
+    
+    async function registrarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Confirmas que la asesoría ya se llevó a cabo?')) return;
+        try {
+            const resp = await fetch(`/registrarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST'
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                alert('✅ Asesoría registrada como completada.');
+                window.location.reload();
+            } else {
+                alert('❌ ' + (data.error || 'Error al registrar'));
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
+    }
     document.getElementById('nombreUsuario').innerText = "Asesor";
     
 </script>
