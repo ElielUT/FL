@@ -129,15 +129,15 @@ router.post("/registro", async (req, res) => {
                 "Content-Type": "application/json"
             }
         })
-        const Pre_id_usuario = await recID.json().item;
-        const id_usuario = Pre_id_usuario[0].id_usuario;
+        const Pre_id_usuario = await recID.json();
+        const id_usuario = Pre_id_usuario.item.id_usuario;
         const respuesta2 = await fetch(url_api + "/alumnos", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                id_usuario: id_usuario,
+                id_usuario1: id_usuario,
                 carrera: carrera,
             })
         })
