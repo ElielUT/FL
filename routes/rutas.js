@@ -129,7 +129,7 @@ router.post("/registro", async (req, res) => {
                 "Content-Type": "application/json"
             }
         })
-        const Pre_id_usuario = await recID.json();
+        const Pre_id_usuario = await recID.json().item;
         const id_usuario = Pre_id_usuario[0].id_usuario;
         const respuesta2 = await fetch(url_api + "/alumnos", {
             method: "POST",
