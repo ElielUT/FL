@@ -551,7 +551,7 @@ router.post('/agregar-disponibilidad', async (req, res) => {
         } else {
             const errData = await response.json();
             console.error("Error Backend Availability:", errData);
-            res.status(500).json({ success: false, message: "Error al crear disponibilidad en el servidor" });
+            res.status(400).json({ success: false, message: errData.detail || "Error al crear disponibilidad" });
         }
     } catch (error) {
         console.error("Error API disponibilidad:", error);
