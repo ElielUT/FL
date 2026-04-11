@@ -725,7 +725,7 @@ router.post('/crear-solicitud', async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad } = req.body;
+    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad, id_horario } = req.body;
 
     if (!req.session.id_alumno) {
         return res.send(`
@@ -734,6 +734,15 @@ router.post('/crear-solicitud', async (req, res) => {
                 window.location.href = "/solicitarAsesoria";
             </script>
         `);
+    }
+
+    // Marcar el slot como no disponible
+    if (id_horario) {
+        await fetch(`${url_api}/disponibilidad/actualizarDisponible/${id_horario}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ disponible: false })
+        });
     }
 
     try {
@@ -774,7 +783,8 @@ router.post('/crear-solicitud', async (req, res) => {
                 fecha: fecha,
                 hora_in: hora_in,
                 hora_fin: hora_fin,
-                calificacion: 0
+                calificacion: 0,
+                id_horario: parseInt(id_horario)
             })
         });
 
@@ -1189,11 +1199,30 @@ router.delete("/cancelarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (
         return res.status(403).json({ error: "No autorizado" });
     try {
         const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+
+        // 1. Obtener el id_horario antes de borrar
+        const detResp = await fetch(`${url_api}/toma/detalles/${id_asesoria1}`, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const detData = detResp.ok ? await detResp.json() : null;
+        const id_horario = detData?.id_horario || null;
+
+        // 2. Cancelar la toma y asesoría
         const respuesta = await fetch(`${url_api}/toma/cancelar/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });
         if (!respuesta.ok) return res.status(502).json({ error: "Error al cancelar" });
+
+        // 3. Liberar el slot si existe
+        if (id_horario) {
+            await fetch(`${url_api}/disponibilidad/actualizarDisponible/${id_horario}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ disponible: true })
+            });
+        }
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error interno" });
@@ -1213,6 +1242,47 @@ router.get('/cambiar-contrasena', (req, res) => {
         });
     } else {
         res.redirect('/login');
+    }
+});
+
+router.get('/slots/:id_asesor', async (req, res) => {
+    try {
+        const respuesta = await fetch(`${url_api}/disponibilidad/${req.params.id_asesor}`, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        const horarios = data.items || [];
+
+        // Generar slots de 1 hora por cada horario disponible
+        const slots = [];
+        const dayMap = {
+            "2024-01-01": "Lunes", "2024-01-02": "Martes", "2024-01-03": "Miércoles",
+            "2024-01-04": "Jueves", "2024-01-05": "Viernes", "2024-01-06": "Sábado"
+        };
+
+        horarios.forEach(h => {
+            if (!h.disponible) return; // solo horarios disponibles
+            const dia = dayMap[h.dia] || h.dia;
+            const [hIn, mIn] = h.hora_in.split(':').map(Number);
+            const [hFin] = h.hora_fin.split(':').map(Number);
+
+            for (let hora = hIn; hora < hFin; hora++) {
+                const horaInStr = `${String(hora).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
+                const horaFinStr = `${String(hora + 1).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
+                slots.push({
+                    id_horario: h.id_horario,
+                    dia: dia,
+                    fecha_raw: h.dia,
+                    hora_in: horaInStr,
+                    hora_fin: horaFinStr,
+                    label: `${dia} ${horaInStr} - ${horaFinStr}`
+                });
+            }
+        });
+
+        res.json({ slots });
+    } catch (error) {
+        res.status(500).json({ slots: [] });
     }
 });
 

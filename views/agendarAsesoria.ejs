@@ -56,20 +56,14 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="fecha">Fecha preferida:</label>
-                <input type="date" name="fecha" id="fecha" required>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="hora_in">Hora de inicio:</label>
-                    <input type="time" name="hora_in" id="hora_in" required>
-                </div>
-                <div class="form-group">
-                    <label for="hora_fin">Hora de fin:</label>
-                    <input type="time" name="hora_fin" id="hora_fin" required>
-                </div>
+            <div class="form-group" id="slotsContainer" style="display:none;">
+                <label>Horario disponible:</label>
+                <div id="slotsList" class="slots-grid"></div>
+                <input type="hidden" name="fecha" id="fechaHidden">
+                <input type="hidden" name="hora_in" id="horaInHidden">
+                <input type="hidden" name="hora_fin" id="horaFinHidden">
+                <input type="hidden" name="id_horario" id="idHorarioHidden">
+                <p id="sinSlots" style="color:#aaa; display:none;">Este asesor no tiene horarios disponibles.</p>
             </div>
 
             <div class="botones-accion">
@@ -223,25 +217,85 @@
     display: none;
 }
 
+.slots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.slot-btn {
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.slot-btn:hover {
+    border-color: #4db6ac;
+    background: #e0f2f1;
+}
+
+.slot-selected {
+    border-color: #4db6ac !important;
+    background: #4db6ac !important;
+    color: white !important;
+}
+
 </style>
 
 <script>
-    // Validar que hora_fin sea después de hora_in
-    const horaIn = document.getElementById('hora_in');
-    const horaFin = document.getElementById('hora_fin');
+    const selectAsesor = document.getElementById('asesor');
+    selectAsesor.addEventListener('change', async function() {
+        const idAsesor = this.value;
+        const container = document.getElementById('slotsContainer');
+        const slotsList = document.getElementById('slotsList');
+        const sinSlots = document.getElementById('sinSlots');
 
-    function validarHoras() {
-        if (horaIn.value && horaFin.value) {
-            if (horaFin.value <= horaIn.value) {
-                horaFin.setCustomValidity('La hora de fin debe ser después de la hora de inicio');
-            } else {
-                horaFin.setCustomValidity('');
-            }
+        if (!idAsesor) {
+            container.style.display = 'none';
+            return;
         }
-    }
 
-    horaIn.addEventListener('change', validarHoras);
-    horaFin.addEventListener('change', validarHoras);
+        slotsList.innerHTML = '<p style="color:#aaa;">Cargando horarios...</p>';
+        container.style.display = 'block';
+        sinSlots.style.display = 'none';
+
+        try {
+            const resp = await fetch(`/slots/${idAsesor}`);
+            const data = await resp.json();
+            const slots = data.slots || [];
+
+            slotsList.innerHTML = '';
+
+            if (slots.length === 0) {
+                sinSlots.style.display = 'block';
+                return;
+            }
+
+            slots.forEach((slot, i) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'slot-btn';
+                btn.textContent = slot.label;
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('slot-selected'));
+                    this.classList.add('slot-selected');
+                    document.getElementById('fechaHidden').value = slot.fecha_raw;
+                    document.getElementById('horaInHidden').value = slot.hora_in + ':00';
+                    document.getElementById('horaFinHidden').value = slot.hora_fin + ':00';
+                    document.getElementById('idHorarioHidden').value = slot.id_horario;
+                });
+                slotsList.appendChild(btn);
+            });
+        } catch(e) {
+            slotsList.innerHTML = '<p style="color:#f28b82;">Error al cargar horarios.</p>';
+        }
+    });
 </script>
 
 <%- include('templates/footer.ejs') %>
