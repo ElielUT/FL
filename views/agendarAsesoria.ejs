@@ -12,7 +12,7 @@
             <!-- <p>ID de materia: <%= materiaId %></p> -->
         </div>
 
-        <form action="/crear-solicitud" method="POST" class="agendar-form">
+        <form action="/crear-solicitud" method="POST" class="agendar-form" onsubmit="return validarFormulario()">
             <input type="hidden" name="materiaId" value="<%= materiaId %>">
             <input type="hidden" name="materiaNombre" value="<%= materiaNombre %>">
 
@@ -296,6 +296,15 @@
             slotsList.innerHTML = '<p style="color:#f28b82;">Error al cargar horarios.</p>';
         }
     });
+
+    function validarFormulario() {
+        const idHorario = document.getElementById('idHorarioHidden').value;
+        if (!idHorario) {
+            alert('Por favor selecciona un horario disponible.');
+            return false;
+        }
+        return true;
+    }
 </script>
 
 <%- include('templates/footer.ejs') %>
