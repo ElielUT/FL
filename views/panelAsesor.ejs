@@ -3,12 +3,12 @@
 <link rel="stylesheet" href="/styles/estilos.css">
 
 <div class="panel-asesor-container">
-    <div class="panel-header">
-        <p>Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
-        <a href="/historialAsesorias" style="display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #4db6ac, #80cbc4); color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-weight:600; font-size:0.9rem;">
-            <i class="fas fa-history"></i> Historial
-        </a>
-    </div>
+    <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+    <p style="color:#666;">Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
+    <a href="/historialAsesorias" style="display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #4db6ac, #80cbc4); color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-weight:600; font-size:0.9rem;">
+        <i class="fas fa-history"></i> Historial
+    </a>
+</div>
     <script>
         // Sincronizar nombre en el header (si es necesario)
         window.addEventListener('DOMContentLoaded', () => {
@@ -51,9 +51,9 @@
                     %>
                     <% for (let i = 1; i <= 5; i++) { %>
                         <% if (promedio > 0 && i <= Math.round(promedio)) { %>
-                            <i class="fas fa-paw"></i>
+                            <i class="fas fa-paw" style="color:#f1c40f;"></i>
                         <% } else { %>
-                            <i class="far fa-paw"></i>
+                            <i class="fas fa-paw" style="color:#ccc;"></i>
                         <% } %>
                     <% } %>
                 </div>
@@ -117,7 +117,6 @@
                                 </div>
                             </div>
                             <p><i class="fas fa-user"></i> Estudiante: <%= evaluacion.estudiante %></p>
-                            <p class="comentario">"<%= evaluacion.comentario %>"</p>
                         </div>
                     <% }) %>
                 <% } else { %>
