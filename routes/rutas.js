@@ -904,6 +904,84 @@ router.get('/panelAsesor', async (req, res) => {
     }
 });
 
+router.get('/panelAsesorado', async (req, res) => {
+    if (req.session.usuario !== 2) {
+        return res.render("index", { error: "No tienes permiso para acceder a esta página" });
+    }
+
+    const idAlumno = req.session.id_alumno;
+
+    try {
+        const respuestaTomas = await fetch(`${url_api}/toma/buscarTomaAlumno/${idAlumno}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const dataTomas = await respuestaTomas.json();
+        const tomas = dataTomas.items || [];
+
+        const asesoriasProgramadas = tomas
+            .filter(t => t.estado === 'aceptada')
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--",
+                estado: t.estado,
+                calificacion: t.calificacion || 0
+            }));
+
+        const porCalificar = tomas
+            .filter(t => t.estado === 'completada' && (!t.calificacion || t.calificacion === 0))
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
+            }));
+
+        const solicitudesPendientes = tomas
+            .filter(t => t.estado === 'pendiente' || !t.estado)
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
+            }));
+
+        const estadisticas = {
+            pendientes: solicitudesPendientes.length,
+            aceptadas: asesoriasProgramadas.length,
+            completadas: tomas.filter(t => t.estado === 'completada').length
+        };
+
+        res.render('panelAsesorado', {
+            asesoriasProgramadas,
+            solicitudesPendientes,
+            porCalificar,
+            estadisticas
+        });
+
+    } catch (error) {
+        console.error("Error al cargar panel asesorado:", error);
+        res.render('panelAsesorado', {
+            asesoriasProgramadas: [],
+            solicitudesPendientes: [],
+            porCalificar: [],
+            estadisticas: { pendientes: 0, aceptadas: 0, completadas: 0 }
+        });
+    }
+});
+
 router.get("/historialAsesorias", async (req, res) => {
     if (!req.session.usuario || ![1, 2].includes(req.session.usuario)) {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
