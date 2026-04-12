@@ -1,38 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LobiFind - Detalles de sesión</title>
-    <link rel="icon" href="images/Logo.png">
-    <link rel="stylesheet" href="/styles/estilos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-</head>
-<body>
-
-<!-- Header verde igual al de los paneles -->
-<header class="top-bar">
-    <div class="volverIcon" onclick="window.history.back()" style="cursor:pointer;">
-        <i class="bi bi-caret-left-square-fill"></i>
-        <p>Volver</p>
-    </div>
-    <div class="titulo-panel">
-        <h4>Panel de <%= rol %></h4>
-    </div>
-    <div class="header-actions">
-        <a href="/perfil-<%= rol.toLowerCase() === 'asesor' ? 'asesor' : 'asesorado' %>" class="action-btn">
-            <i class="bi bi-person"></i>
-            <span>Perfil</span>
-        </a>
-        <a href="/borrarSesion" class="action-btn">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Salir</span>
-        </a>
-        <div class="close-icon" onclick="window.location.href='/'">&#x2715;</div>
-    </div>
-</header>
+<%- include('templates/headerPanel.ejs', { rol: rol }) %>
 
 <div class="detalles-container">
 
@@ -88,7 +54,7 @@
 
         </div>
 
-        <!-- Columna derecha Jitsi Meet -->
+        <!-- Columna derecha -->
         <div class="detalles-meet">
             <% if (sesion.modalidad === 'virtual') { %>
                 <h3>Código de Acceso</h3>
@@ -149,23 +115,9 @@
     margin: 30px auto 40px;
     font-family: 'Poppins', sans-serif;
 }
-
-.detalles-header {
-    margin-bottom: 24px;
-}
-
-.detalles-header h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #222;
-    margin: 0;
-}
-
-.detalles-subtitle {
-    color: #888;
-    margin: 4px 0 0;
-    font-size: 0.95rem;
-}
+.detalles-header { margin-bottom: 24px; }
+.detalles-header h1 { font-size: 1.8rem; font-weight: 700; color: #222; margin: 0; }
+.detalles-subtitle { color: #888; margin: 4px 0 0; font-size: 0.95rem; }
 
 .detalles-card {
     background: #fff;
@@ -178,47 +130,13 @@
     flex-wrap: wrap;
 }
 
-/* Columna izquierda */
-.detalles-info {
-    flex: 1;
-    min-width: 280px;
-}
+.detalles-info { flex: 1; min-width: 280px; }
+.detalles-materia-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+.detalles-materia-header h2 { font-size: 1.25rem; font-weight: 700; color: #222; margin: 0; }
+.detalles-personas { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.detalles-persona-item { display: flex; flex-direction: column; font-size: 0.95rem; line-height: 1.4; }
+.persona-label { font-weight: 600; color: #444; }
 
-.detalles-materia-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-}
-
-.detalles-materia-header h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #222;
-    margin: 0;
-}
-
-.detalles-personas {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 28px;
-}
-
-.detalles-persona-item {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.95rem;
-    line-height: 1.4;
-}
-
-.persona-label {
-    font-weight: 600;
-    color: #444;
-}
-
-/* Pill central */
 .detalles-pill {
     background: #80cbc4;
     border-radius: 16px;
@@ -229,143 +147,60 @@
     margin-bottom: 28px;
     min-width: 200px;
 }
+.detalles-pill p { margin: 4px 0; font-weight: 500; }
 
-.detalles-pill p {
-    margin: 4px 0;
-    font-weight: 500;
-}
+.detalles-footer-info { display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.88rem; color: #666; align-items: center; }
+.detalles-footer-info span { display: flex; align-items: center; gap: 6px; }
 
-/* Pie de tarjeta */
-.detalles-footer-info {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: 0.88rem;
-    color: #666;
-    align-items: center;
-}
+.detalles-meet { min-width: 260px; max-width: 360px; flex: 0 0 auto; }
+.detalles-meet h3 { font-size: 1.1rem; font-weight: 600; color: #333; margin-bottom: 14px; }
 
-.detalles-footer-info span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* Columna derecha: Meet */
-.detalles-meet {
-    min-width: 260px;
-    max-width: 360px;
-    flex: 0 0 auto;
-}
-
-.detalles-meet h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 14px;
-}
-
-.meet-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-.meet-logo {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    flex-shrink: 0;
-}
-
-.meet-logo-gray {
-    filter: grayscale(40%) opacity(0.85);
-}
-
-.meet-info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.meet-title {
-    font-weight: 700;
-    font-size: 1rem;
-    margin: 0;
-    color: #222;
-}
-
-.meet-desc {
-    font-size: 0.78rem;
-    color: #666;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.meet-domain {
-    font-size: 0.75rem;
-    color: #4db6ac;
-    margin: 2px 0 6px;
-}
+.meet-card { border: 1px solid #e0e0e0; border-radius: 14px; padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+.meet-logo { width: 56px; height: 56px; border-radius: 12px; flex-shrink: 0; }
+.meet-logo-gray { filter: grayscale(40%) opacity(0.85); }
+.meet-info { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
+.meet-title { font-weight: 700; font-size: 1rem; margin: 0; color: #222; }
+.meet-desc { font-size: 0.78rem; color: #666; margin: 0; line-height: 1.4; word-wrap: break-word; white-space: normal; }
+.meet-domain { font-size: 0.75rem; color: #4db6ac; margin: 2px 0 6px; word-wrap: break-word; white-space: normal; }
 
 .btn-meet-unirse {
     background: linear-gradient(to right, #4db6ac, #80cbc4);
-    color: #fff;
-    padding: 8px 18px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: inline-block;
-    margin-top: 4px;
-    transition: opacity 0.2s;
+    color: #fff; padding: 8px 18px; border-radius: 20px;
+    text-decoration: none; font-size: 0.85rem; font-weight: 600;
+    display: inline-block; margin-top: 4px; transition: opacity 0.2s;
 }
-
 .btn-meet-unirse:hover { opacity: 0.88; }
 
-.meet-link-resultado {
-    margin-top: 12px;
-    font-size: 0.88rem;
-    color: #444;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-.meet-link-resultado a {
-    color: #00897b;
-    word-break: break-all;
-}
-
-#btnGenerarMeet:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+.meet-link-resultado { margin-top: 12px; font-size: 0.88rem; color: #444; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.meet-link-resultado a { color: #00897b; word-break: break-all; }
+#btnGenerarMeet:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .contacto-icono {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
+    width: 56px; height: 56px; border-radius: 12px;
     background: linear-gradient(to right, #4db6ac, #80cbc4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.5rem; flex-shrink: 0;
 }
+.contacto-numero { font-size: 1rem; font-weight: 600; color: #222; margin: 4px 0 0; word-wrap: break-word; }
 
-.contacto-numero {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #222;
-    margin: 4px 0 0;
+@media (max-width: 768px) {
+    .detalles-card {
+        flex-direction: column;
+        padding: 25px 20px;
+        gap: 30px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .detalles-info, .detalles-meet {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+    .meet-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
-
 </style>
 
 <script>
@@ -397,5 +232,3 @@ async function generarMeet() {
 </script>
 
 <%- include('templates/footer.ejs') %>
-</body>
-</html>

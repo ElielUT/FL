@@ -123,14 +123,20 @@
         var password = document.getElementById("password"), confirm_password = document.getElementById("confirm_password");
 
         function validatePassword() {
+            if (password.value.length < 6) {
+                password.setCustomValidity("La contraseña debe tener al menos 6 caracteres.");
+            } else {
+                password.setCustomValidity('');
+            }
+
             if (password.value != confirm_password.value) {
                 confirm_password.setCustomValidity("Las contraseñas no coinciden");
             } else {
                 confirm_password.setCustomValidity('');
             }
         }
-        password.onchange = validatePassword;
-        confirm_password.onkeyup = validatePassword;
+        password.addEventListener('input', validatePassword);
+        confirm_password.addEventListener('input', validatePassword);
 
         let regexCorreo = /^[a-zA-Z0-9._%-]+@utsjr\.edu\.mx$/;
 

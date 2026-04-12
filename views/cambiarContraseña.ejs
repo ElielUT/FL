@@ -1,0 +1,128 @@
+<%- include('templates/header.ejs') %>
+    <!-- Tarjeta Blanca Principal -->
+    <div class="main-container"
+        style="display: flex; justify-content: center; align-items: center; height: 85vh; width: 100%;">
+        <div class="ventana">
+            <h1 class="titulo">Cambiar contraseña</h1>
+
+            <div class="contenido-perfil">
+                <form id="formCambiarContraseña">
+                    <div class="form-group">
+                        <label for="contraseñaActual">Contraseña actual</label>
+                        <input type="password" id="contraseñaActual" name="contraseñaActual" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nuevaContraseña">Nueva contraseña</label>
+                        <input type="password" id="nuevaContraseña" name="nuevaContraseña" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmarContraseña">Confirmar contraseña</label>
+                        <input type="password" id="confirmarContraseña" name="confirmarContraseña" required>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="botones">
+                        <button type="button" onclick="window.history.back()" class="btn-cancelar"
+                            id="cancelar">Cancelar</button>
+                        <button type="submit" class="btn-guardar" id="guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const url_api_cifrada = "<%= Buffer.from(url_api).toString('base64') %>";
+
+        Object.defineProperty(window, 'url_api', {
+            get: function () {
+                return atob(url_api_cifrada);
+            }
+        });
+
+        const correoUsuario = "<%= correo %>";
+        const idUsuario = "<%= id_usuario %>";
+
+        const formCambiarContraseña = document.getElementById('formCambiarContraseña');
+        const inputActual = document.getElementById('contraseñaActual');
+        const inputNueva = document.getElementById('nuevaContraseña');
+        const inputConfirmar = document.getElementById('confirmarContraseña');
+
+        // Limpiar errores personalizados al momento de escribir
+        inputActual.addEventListener('input', () => inputActual.setCustomValidity(''));
+        inputNueva.addEventListener('input', () => inputNueva.setCustomValidity(''));
+        inputConfirmar.addEventListener('input', () => inputConfirmar.setCustomValidity(''));
+
+        formCambiarContraseña.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const actual = inputActual.value;
+            const nueva = inputNueva.value;
+            const confirmar = inputConfirmar.value;
+
+            // Limpiamos los estados de validación previos
+            inputActual.setCustomValidity('');
+            inputNueva.setCustomValidity('');
+            inputConfirmar.setCustomValidity('');
+
+            if (nueva !== confirmar) {
+                inputConfirmar.setCustomValidity("La nueva contraseña y la confirmación no coinciden.");
+                inputConfirmar.reportValidity();
+                return;
+            }
+
+            try {
+                // 1. Validar la contraseña actual
+                const resValidacion = await fetch(url_api + "/usuarios/inicio", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ correo: correoUsuario, contraseña: actual })
+                });
+
+                const dataValidacion = await resValidacion.json();
+
+                // Si dataValidacion.Inicio es falso o no existe, la contraseña es incorrecta
+                if (!dataValidacion.Inicio) {
+                    inputActual.setCustomValidity("La contraseña actual es incorrecta.");
+                    inputActual.reportValidity();
+                    return;
+                }
+
+                if (nueva === actual) {
+                    inputNueva.setCustomValidity("La nueva contraseña no puede ser igual a la contraseña actual.");
+                    inputNueva.reportValidity();
+                    return;
+                }
+                if (nueva.length < 6) {
+                    inputNueva.setCustomValidity("La nueva contraseña debe tener al menos 6 caracteres.");
+                    inputNueva.reportValidity();
+                    return;
+                }
+
+                // 2. Si es correcta, actualizar a la nueva contraseña
+                const resActualizacion = await fetch(url_api + "/usuarios/cambiarContraseña/" + idUsuario, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ contraseña: nueva })
+                });
+
+                if (resActualizacion.ok) {
+                    alert("¡Contraseña cambiada exitosamente!");
+                    window.location.href = "/borrarSesion";
+                } else {
+                    alert("Ocurrió un error al intentar cambiar la contraseña.");
+                }
+
+            } catch (error) {
+                console.error("Error cambiando contraseña:", error);
+                alert("Error de conexión con el servidor.");
+            }
+        });
+    </script>
+    <%- include('templates/footer.ejs') %>

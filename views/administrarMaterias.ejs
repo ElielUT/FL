@@ -116,7 +116,7 @@
     </div>
     <div class="materias">
         <% materias.forEach(materia=> { %>
-            <div class="materiaItem">
+            <div class="materiaItem" data-nombre="<%= materia.nombre.toLowerCase() %>" data-carrera="<%= materia.carrera %>" data-cuatri="<%= materia.cuatrimestre %>">
                 <div class="imagenMateria">
                     <div class="imgMat">
                         <i class="bi bi-journal"></i>
@@ -374,5 +374,39 @@
                 }
             });
         });
+
+        // ------------- LÓGICA DE FILTRADO --------------
+        const inputBusqueda = document.querySelector('.busqueda');
+        const selectCarreraFiltro = document.querySelector('.filtro');
+        const selectCuatriFiltro = document.querySelector('.filtroCuatrimestre');
+
+        const filtrarMateriasFunc = () => {
+            const texto = inputBusqueda.value.toLowerCase();
+            const carrera = selectCarreraFiltro.value;
+            const cuatri = selectCuatriFiltro.value;
+
+            document.querySelectorAll('.materiaItem').forEach(item => {
+                const itemNombre = item.getAttribute('data-nombre');
+                const itemCarrera = item.getAttribute('data-carrera');
+                const itemCuatri = item.getAttribute('data-cuatri');
+
+                const coincideTexto = texto === '' || itemNombre.includes(texto);
+                const coincideCarrera = carrera === 'todos' || itemCarrera === carrera;
+                const coincideCuatri = cuatri === 'todos' || itemCuatri === cuatri;
+
+                if (coincideTexto && coincideCarrera && coincideCuatri) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        };
+
+        if(inputBusqueda && selectCarreraFiltro && selectCuatriFiltro) {
+            inputBusqueda.addEventListener('input', filtrarMateriasFunc);
+            selectCarreraFiltro.addEventListener('change', filtrarMateriasFunc);
+            selectCuatriFiltro.addEventListener('change', filtrarMateriasFunc);
+        }
+        // -----------------------------------------------
     </script>
     <%- include('templates/footer.ejs') %>

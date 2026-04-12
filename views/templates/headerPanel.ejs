@@ -5,32 +5,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LobiFind</title>
-    <link rel="icon" href="images/Logo.png">
-    <link rel="stylesheet" href="styles/estilos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="/images/Logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/styles/estilos.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #0fb88f;
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .header-left .title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            gap: 4px;
+            transition: opacity 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            opacity: 0.8;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-close:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px 20px;
+            }
+            .header-left .title {
+                font-size: 18px;
+            }
+            .header-right {
+                gap: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <header class="top-bar">
-        <div class="volverIcon" id="volver" onclick="window.history.back()">
-            <i class="bi bi-caret-left-square-fill"></i>
-            <p>Volver</p>
+    <header class="header">
+        <div class="header-left">
+            <h1 class="title">Panel de <%= typeof rol !=='undefined' ? rol : 'Usuario' %>
+            </h1>
         </div>
-        <div class="titulo-panel">
-            <h4>Panel de <%= typeof rol !=='undefined' ? rol : 'Usuario' %>
-            </h4>
-        </div>
-        <div class="header-actions">
-            <% if (typeof rol !=='undefined' && rol.toLowerCase()==='asesorado' || rol.toLowerCase()==='asesor' ) { %>
-                <!-- Botón Perfil -->
-                <a href="/perfil-<%= (typeof rol !== 'undefined' && rol.toLowerCase() === 'asesor') ? 'asesor' : 'asesorado' %>"
-                    class="action-btn">
-                    <i class="bi bi-person"></i>
+        <div class="header-right">
+            <% if (typeof rol !=='undefined' && (rol.toLowerCase()==='asesor' || rol.toLowerCase()==='asesorado' )) { %>
+                <a href="/perfil-<%= rol.toLowerCase() === 'asesor' ? 'asesor' : 'asesorado' %>" class="nav-item">
+                    <i class="fa-regular fa-user"></i>
                     <span>Perfil</span>
                 </a>
                 <% } %>
-                    <div class="close-icon" id="cerrar" onclick="window.location.href='/'">&times;</div>
+                    <a href="/borrarSesion" class="nav-item">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Salir</span>
+                    </a>
         </div>
     </header>

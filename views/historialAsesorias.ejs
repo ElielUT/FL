@@ -1,251 +1,155 @@
-<%- include('templates/header.ejs') %>
+<%- include('templates/headerPanel.ejs', { rol: rol }) %>
 
-    <div class="supervisar-container">
-        <div class="supervisar-header">
-            <h1>Historial de asesorías</h1>
-            <p>Registro de todas las sesiones completadas</p>
-        </div>
+<style>
+    .supervisar-stats .card-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 8px;
+    }
 
-        <!-- Indicadores / Estadísticas -->
-        <div class="supervisar-stats">
-            <div class="stat-card">
-                <div class="card-header-info">
-                    <h4>Total de sesiones</h4>
-                    <i class="fas fa-history icon-total fa-lg"></i>
-                </div>
-                <p>
-                    <%= typeof total !=='undefined' ? total : 0 %>
-                </p>
+    .supervisar-stats .stat-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 25px;
+    }
+
+    .supervisar-stats .stat-card p {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+</style>
+
+<div class="supervisar-container">
+    <div class="supervisar-header">
+        <h1>Historial de asesorías</h1>
+        <p>Registro de todas las sesiones completadas</p>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="supervisar-stats">
+        <div class="stat-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:8px;">
+                <h4 style="margin:0; font-size:0.9rem; color:#333;">Total de sesiones       </h4>
+                <i class="fas fa-history icon-total fa-lg"></i>
             </div>
-            <div class="stat-card">
-                <div class="card-header-info">
-                    <h4>Tiempo total</h4>
-                    <i class="far fa-clock icon-total fa-lg"></i>
-                </div>
-                <p>
-                    <%= typeof tiempoTotal !=='undefined' ? tiempoTotal : '0 min' %>
-                </p>
-            </div>
+            <p style="font-size:2rem; font-weight:700; margin:0;"><%= typeof total !== 'undefined' ? total : 0 %></p>
         </div>
+        <div class="stat-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:8px;">
+                <h4 style="margin:0; font-size:0.9rem; color:#333;">Tiempo total      </h4>
+                <i class="fas fa-clock icon-total fa-lg"></i>
+            </div>
+            <p style="font-size:2rem; font-weight:700; margin:0;"><%= typeof tiempoTotal !== 'undefined' ? tiempoTotal : '0 min' %></p>
+        </div>
+    </div>
 
-        <!-- Vista de Historial / Asesorias Grid -->
-        <div class="asesorias-grid">
-            <% if (typeof asesorias !=='undefined' && asesorias.length> 0) { %>
-                <% asesorias.forEach((asesoria, index)=> {
-                    const materia = asesoria.asesoria && asesoria.asesoria.materia ? asesoria.asesoria.materia.nombre :
-                    "Sin materia";
-                    const tema = asesoria.asesoria && asesoria.asesoria.tema ? asesoria.asesoria.tema : "Sin tema";
-                    const estudiante = asesoria.alumno && asesoria.alumno.usuario ? asesoria.alumno.usuario.nombres + "
-                    " + asesoria.alumno.usuario.apellidos : "Desconocido";
+    <!-- Grid de asesorías -->
+    <div class="asesorias-grid">
+        <% if (typeof asesorias !== 'undefined' && asesorias.length > 0) { %>
+            <% asesorias.forEach(function(asesoria, index) { %>
+                <div class="asesoria-card" style="cursor: pointer;" onclick="abrirModal(<%= index %>)">
+                    <div class="card-header-info">
+                        <h3><%= asesoria.materia %></h3>
+                        <span class="status-badge badge-green">Completada</span>
+                    </div>
 
-                    let duracion = 90;
-                    if (asesoria.hora_in && asesoria.hora_fin) {
-                    const [hIn, mIn] = asesoria.hora_in.split(':').map(Number);
-                    const [hFin, mFin] = asesoria.hora_fin.split(':').map(Number);
-                    const diff = (hFin * 60 + mFin) - (hIn * 60 + mIn);
-                    if (diff > 0) duracion = diff;
-                    }
+                    <div class="card-users">
+                        <span>
+                            <% if (rol === 'Asesor') { %>Estudiante:<% } else { %>Asesor:<% } %>
+                            <%= asesoria.contraparte %>
+                            <br>
+                            Tema: <%= asesoria.tema %>
+                        </span>
+                    </div>
 
-                    // Determinar el estado
-                    let estado = asesoria.estado || "";
-                    if (!estado) {
-                    if (asesoria.calificacion && asesoria.calificacion > 0) {
-                    estado = "Completada";
-                    } else if (asesoria.fecha) {
-                    estado = "Programada";
-                    } else {
-                    estado = "Pendiente";
-                    }
-                    } else {
-                    // Capitalizar
-                    estado = estado.charAt(0).toUpperCase() + estado.slice(1);
-                    }
-
-                    let badgeColor = "#27ae60"; // verde por defecto para completada
-                    if (estado.toLowerCase() === "pendiente") badgeColor = "#f39c12"; // amarillo
-                    if (estado.toLowerCase() === "programada" || estado.toLowerCase() === "aceptada") badgeColor =
-                    "#2980b9"; // azul
-                    %>
-                    <div class="asesoria-card" style="cursor: pointer;" onclick="abrirModal(<%= index %>)">
-                        <!-- Título y Estado -->
-                        <div class="card-header-info">
-                            <h3>
-                                <%= materia %>
-                            </h3>
-                            <span class="status-badge"
-                                style="background-color: <%= badgeColor %>; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
-                                <%= estado %>
-                            </span>
+                    <div class="card-footer">
+                        <div class="card-datetime">
+                            <span><i class="far fa-calendar-alt"></i> <%= asesoria.fecha %></span>
+                            <span><i class="far fa-clock"></i> <%= asesoria.hora_in %> - <%= asesoria.hora_fin %></span>
                         </div>
-
-                        <!-- Integrantes / Tema -->
-                        <div class="card-users">
-                            <span>
-                                Estudiante: <%= estudiante %>
-                                    <br>
-                                    Tema: <%= tema %>
-                            </span>
-                        </div>
-
-                        <!-- Fecha y hora y Calificación en el footer de la tarjeta -->
-                        <div class="card-footer">
-                            <div class="card-datetime">
-                                <span><i class="far fa-calendar-alt"></i>
-                                    <%= asesoria.fecha || "Sin fecha" %>
-                                </span>
-                                <span><i class="far fa-clock"></i>
-                                    <%= duracion %> min
-                                </span>
-                            </div>
-                            <div>
-                                <% for(let i=0; i<5; i++) { %>
-                                    <% if(i < (asesoria.calificacion || 0)) { %>
-                                        <i class="fas fa-paw" style="color: #f1c40f;"></i>
-                                        <% } else { %>
-                                            <i class="far fa-paw" style="color: #ccc;"></i>
-                                            <% } %>
-                                                <% } %>
-                                                    <small>
-                                                        <%= asesoria.calificacion || 0 %>/5
-                                                    </small>
-                            </div>
-                        </div>
-
-                        <!-- Comentario de evaluación -->
-                        <div class="card-eval">
-                            <% if(asesoria.comentario) { %>
-                                <div class="eval-comment"><i class="fas fa-quote-left"
-                                        style="color:#ccc; margin-right:5px;"></i>
-                                    <%= asesoria.comentario %><i class="fas fa-quote-right"
-                                            style="color:#ccc; margin-left:5px;"></i>
-                                </div>
+                        <div>
+                            <% for (let i = 0; i < 5; i++) { %>
+                                <% if (i < (asesoria.calificacion || 0)) { %>
+                                    <i class="fas fa-paw" style="color: #f1c40f;"></i>
                                 <% } else { %>
-                                    <div class="eval-comment" style="font-style: italic; color: #888;">Sin comentario
-                                    </div>
-                                    <% } %>
+                                    <i class="fas fa-paw" style="color: #ccc;"></i>
+                                <% } %>
+                            <% } %>
+                            <small><%= asesoria.calificacion || 0 %>/5</small>
                         </div>
                     </div>
-                    <% }) %>
-                        <% } else { %>
-                            <p>No tienes asesorías completadas en tu historial.</p>
-                            <% } %>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p style="color:#aaa; padding:30px; text-align:center;">No tienes asesorías completadas en tu historial.</p>
+        <% } %>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modalAsesoria" class="editarUsuario ocultar">
+    <div class="asesoria-card" style="width: 90%; max-width: 600px;">
+        <div class="card-header-info">
+            <h3 id="modalMateria" style="font-size: 1.5rem;"></h3>
+            <span class="status-badge badge-green">Completada</span>
+        </div>
+        <div class="card-users" style="font-size: 1rem; margin-top: 10px;">
+            <span id="modalContraparte"></span><br>
+            <span id="modalTema"></span>
+        </div>
+        <div class="card-footer" style="margin-top: 20px;">
+            <div class="card-datetime" style="font-size: 1rem;">
+                <span id="modalFecha"></span>
+                <span id="modalTiempo"></span>
+            </div>
+            <div id="modalStars" style="font-size: 1.2rem;"></div>
+        </div>
+        <div class="contenedor-botones" style="margin-top: 20px;">
+            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cerrar detalles</button>
         </div>
     </div>
+</div>
 
-    <!-- Modal (oculto usando clases del CSS global) -->
-    <div id="modalAsesoria" class="editarUsuario ocultar">
-        <div class="asesoria-card" style="width: 90%; max-width: 600px;">
-            <div class="card-header-info">
-                <h3 id="modalMateria" style="font-size: 1.5rem;"></h3>
-                <span id="modalEstadoBadge" class="status-badge"
-                    style="padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;"></span>
-            </div>
+<script id="asesorias-data" type="text/template">
+    <%- JSON.stringify(typeof asesorias !== 'undefined' ? asesorias : []) %>
+</script>
 
-            <div class="card-users" style="font-size: 1rem; margin-top: 10px;">
-                <span>
-                    <span id="modalEstudiante"></span>
-                    <br>
-                    <span id="modalTema"></span>
-                </span>
-            </div>
+<script>
+    const asesoriasData = JSON.parse(document.getElementById('asesorias-data').textContent);
+    const rolActual = '<%= rol %>';
 
-            <div class="card-footer" style="margin-top: 20px;">
-                <div class="card-datetime" style="font-size: 1rem;">
-                    <span id="modalFecha"></span>
-                    <span id="modalTiempo"></span>
-                </div>
-                <div id="modalStars" style="font-size: 1.2rem;">
-                </div>
-            </div>
+    function abrirModal(index) {
+        const d = asesoriasData[index];
+        if (!d) return;
 
-            <div class="card-eval" style="padding: 20px; margin-top: 20px;">
-                <div id="modalComentario" class="eval-comment" style="font-size: 1rem;"></div>
-            </div>
-
-            <div class="contenedor-botones" style="margin-top: 20px;">
-                <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cerrar detalles</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Inyectamos los datos como un script inofensivo para que el IDE no marque error de JS -->
-    <script id="asesorias-data" type="text/template">
-        <%- JSON.stringify(typeof asesorias !== 'undefined' ? asesorias : []) %>
-    </script>
-
-    <script>
-        const asesoriasData = JSON.parse(document.getElementById('asesorias-data').textContent);
-
-        function abrirModal(index) {
-            const data = asesoriasData[index];
-            if (!data) return;
-
-            const materia = data.asesoria && data.asesoria.materia ? data.asesoria.materia.nombre : "Sin materia";
-            const tema = data.asesoria && data.asesoria.tema ? data.asesoria.tema : "Sin tema";
-            const estudiante = data.alumno && data.alumno.usuario ? data.alumno.usuario.nombres + " " + data.alumno.usuario.apellidos : "Desconocido";
-
-            let duracion = 90;
-            if (data.hora_in && data.hora_fin) {
-                const [hIn, mIn] = data.hora_in.split(':').map(Number);
-                const [hFin, mFin] = data.hora_fin.split(':').map(Number);
-                const diff = (hFin * 60 + mFin) - (hIn * 60 + mIn);
-                if (diff > 0) duracion = diff;
-            }
-
-            let estado = data.estado || "";
-            if (!estado) {
-                if (data.calificacion && data.calificacion > 0) {
-                    estado = "Completada";
-                } else if (data.fecha) {
-                    estado = "Programada";
-                } else {
-                    estado = "Pendiente";
-                }
-            } else {
-                estado = estado.charAt(0).toUpperCase() + estado.slice(1);
-            }
-
-            let badgeColor = "#27ae60";
-            if (estado.toLowerCase() === "pendiente") badgeColor = "#f39c12";
-            if (estado.toLowerCase() === "programada" || estado.toLowerCase() === "aceptada") badgeColor = "#2980b9";
-
-            let starsHtml = '';
-            // Validar si calificación es float o null
-            const calif = data.calificacion || 0;
-            for (let i = 0; i < 5; i++) {
-                if (i < calif) {
-                    starsHtml += '<i class="fas fa-paw" style="color: #f1c40f;"></i> ';
-                } else {
-                    starsHtml += '<i class="far fa-paw" style="color: #ccc;"></i> ';
-                }
-            }
-
-            document.getElementById('modalMateria').innerText = materia;
-            const badge = document.getElementById('modalEstadoBadge');
-            badge.innerText = estado;
-            badge.style.backgroundColor = badgeColor;
-            badge.style.color = "white";
-
-            document.getElementById('modalEstudiante').innerText = "Estudiante: " + estudiante;
-            document.getElementById('modalTema').innerText = "Tema: " + tema;
-            document.getElementById('modalFecha').innerHTML = `<i class="far fa-calendar-alt"></i> ${data.fecha || "Sin fecha"}`;
-            document.getElementById('modalTiempo').innerHTML = `<i class="far fa-clock"></i> ${duracion} min`;
-            document.getElementById('modalStars').innerHTML = `${starsHtml} <small>${calif}/5</small>`;
-            document.getElementById('modalComentario').innerText = data.comentario ? data.comentario : "Sin comentario";
-
-            document.getElementById('modalAsesoria').classList.remove('ocultar');
+        let starsHtml = '';
+        const calif = d.calificacion || 0;
+        for (let i = 0; i < 5; i++) {
+            starsHtml += i < calif
+                ? '<i class="fas fa-paw" style="color:#f1c40f;"></i> '
+                : '<i class="fas fa-paw" style="color:#ccc;"></i> ';
         }
 
-        function cerrarModal() {
-            document.getElementById('modalAsesoria').classList.add('ocultar');
-        }
+        document.getElementById('modalMateria').innerText = d.materia;
+        document.getElementById('modalContraparte').innerText = (rolActual === 'Asesor' ? 'Estudiante: ' : 'Asesor: ') + d.contraparte;
+        document.getElementById('modalTema').innerText = 'Tema: ' + d.tema;
+        document.getElementById('modalFecha').innerHTML = '<i class="fas fa-calendar-alt"></i> ' + d.fecha;
+        document.getElementById('modalTiempo').innerHTML = '<i class="fas fa-clock"></i> ' + d.hora_in + ' - ' + d.hora_fin;
+        document.getElementById('modalStars').innerHTML = starsHtml + '<small>' + calif + '/5</small>';
+        document.getElementById('modalAsesoria').classList.remove('ocultar');
+    }
 
-        // Cerrar si se da click fuera del cuadro blanco
-        document.getElementById('modalAsesoria').addEventListener('click', function (e) {
-            if (e.target === this) {
-                cerrarModal();
-            }
-        });
-    </script>
+    function cerrarModal() {
+        document.getElementById('modalAsesoria').classList.add('ocultar');
+    }
 
-    <%- include('templates/footer.ejs') %>
+    document.getElementById('modalAsesoria').addEventListener('click', function(e) {
+        if (e.target === this) cerrarModal();
+    });
+</script>
+
+<%- include('templates/footer.ejs') %>

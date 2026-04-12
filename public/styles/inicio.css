@@ -124,3 +124,22 @@ body {
     text-decoration: underline;
     font-weight: 600;
 }
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px;
+    }
+    .login-card {
+        padding: 30px 20px;
+        width: 100%;
+        border-radius: 20px;
+    }
+    .btn-login {
+        width: 80%;
+    }
+    .logo-circle {
+        width: 90px;
+        height: 90px;
+    }
+}

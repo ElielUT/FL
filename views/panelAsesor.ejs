@@ -1,9 +1,14 @@
 <%- include('templates/headerPanel.ejs', { rol: "Asesor" }) %>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/estilos.css">
+
 <div class="panel-asesor-container">
-    <div class="panel-header">
-        <h1>Panel de asesor</h1>
-        <p>Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
-    </div>
+    <div class="panel-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+    <p style="color:#666;">Bienvenido, <span id="nombreUsuario">Cargando...</span></p>
+    <a href="/historialAsesorias" style="display:inline-flex; align-items:center; gap:8px; background: linear-gradient(135deg, #4db6ac, #80cbc4); color:white; padding:10px 20px; border-radius:20px; text-decoration:none; font-weight:600; font-size:0.9rem;">
+        <i class="fas fa-history"></i> Historial
+    </a>
+</div>
     <script>
         // Sincronizar nombre en el header (si es necesario)
         window.addEventListener('DOMContentLoaded', () => {
@@ -46,9 +51,9 @@
                     %>
                     <% for (let i = 1; i <= 5; i++) { %>
                         <% if (promedio > 0 && i <= Math.round(promedio)) { %>
-                            <i class="fas fa-paw"></i>
+                            <i class="fas fa-paw" style="color:#f1c40f;"></i>
                         <% } else { %>
-                            <i class="far fa-paw"></i>
+                            <i class="fas fa-paw" style="color:#ccc;"></i>
                         <% } %>
                     <% } %>
                 </div>
@@ -76,12 +81,15 @@
                                 </div>
                             </div>
                             <div style="display:flex; gap:8px; flex-direction:column;">
-                                <button class="btn-registrar" onclick="registrarAsesoria('<%= asesoria.id_toma %>')">
+                                <button class="btn-registrar" onclick="registrarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
                                     Registrar
                                 </button>
                                 <a href="/detallesAsesoria/<%= asesoria.id_asesoria %>" class="btn-registrar" style="text-align:center; text-decoration:none;">
                                     Ver detalles
                                 </a>
+                                <button class="btn-rechazar" onclick="cancelarAsesoria('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
                             </div>
                         </div>
                     <% }) %>    
@@ -109,7 +117,6 @@
                                 </div>
                             </div>
                             <p><i class="fas fa-user"></i> Estudiante: <%= evaluacion.estudiante %></p>
-                            <p class="comentario">"<%= evaluacion.comentario %>"</p>
                         </div>
                     <% }) %>
                 <% } else { %>
@@ -145,10 +152,10 @@
                                         <td><%= solicitud.fecha %></td>
                                         <td><%= solicitud.hora %></td>
                                         <td class="acciones">
-                                            <button class="btn-aceptar" onclick="aceptarSolicitud('<%= solicitud.id_toma %>')">
+                                            <button class="btn-aceptar" onclick="aceptarSolicitud('<%= solicitud.id_asesor3 %>', '<%= solicitud.id_asesoria %>', '<%= solicitud.id_alumno1 %>')">
                                                 <i class="fas fa-check"></i> Aceptar
                                             </button>
-                                            <button class="btn-rechazar" onclick="rechazarSolicitud('<%= solicitud.id_toma %>')">
+                                            <button class="btn-rechazar" onclick="rechazarSolicitud('<%= solicitud.id_asesor3 %>', '<%= solicitud.id_asesoria %>', '<%= solicitud.id_alumno1 %>')">
                                                 <i class="fas fa-times"></i> Rechazar
                                             </button>
                                             <a href="/detallesAsesoria/<%= solicitud.id_asesoria %>" class="btn-aceptar" style="text-decoration:none;">
@@ -435,30 +442,144 @@ td {
     color: #999;
     padding: 30px;
 }
+
+/* =========================================
+   RESPONSIVE DESIGN (MEDIA QUERIES)
+   ========================================= */
+
+@media (max-width: 950px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-cards {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    .stat-card {
+        width: 100%;
+        min-width: 100%;
+    }
+    .asesoria-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        text-align: center;
+    }
+    .fecha-hora {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .panel-asesor-container {
+        padding: 10px;
+    }
+    .evaluacion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .acciones button, .acciones a {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .asesoria-item > div:last-child button,
+    .asesoria-item > div:last-child a {
+        width: 100%;
+    }
+}
 </style>
 
 <script>
-    // Función para registrar asesoría (completar)
+    async function aceptarSolicitud(id_asesor3, id_asesoria, id_alumno1) {
+        try {
+            const resp = await fetch(`/actualizarEstado/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: 'aceptada' })
+            });
+            if (resp.ok) {
+                alert('✅ Solicitud aceptada');
+                window.location.reload();
+            } else {
+                alert('Error al aceptar la solicitud');
+            }
+        } catch(e) {
+            alert('Error de conexión');
+        }
+    }
+
+    async function rechazarSolicitud(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de rechazar esta solicitud?')) return;
+        try {
+            const resp = await fetch(`/actualizarEstado/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: 'rechazada' })
+            });
+            if (resp.ok) {
+                alert('❌ Solicitud rechazada');
+                window.location.reload();
+            } else {
+                alert('Error al rechazar la solicitud');
+            }
+        } catch(e) {
+            alert('Error de conexión');
+        }
+    }
+
     function registrarAsesoria(idToma) {
         console.log("Registrar asesoría:", idToma);
         alert("Función en desarrollo: Registrar asesoría " + idToma);
     }
 
-    // Función para aceptar solicitud
-    function aceptarSolicitud(idToma) {
-        console.log("Aceptar solicitud:", idToma);
-        alert("Función en desarrollo: Aceptar solicitud " + idToma);
+    async function cancelarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de cancelar esta asesoría? Esta acción no se puede deshacer.')) return;
+        try {
+            const resp = await fetch(`/cancelarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'DELETE'
+            });
+            if (resp.ok) {
+                alert('Asesoría cancelada.');
+                window.location.reload();
+            } else {
+                alert('Error al cancelar la asesoría.');
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
     }
-
-    // Función para rechazar solicitud
-    function rechazarSolicitud(idToma) {
-        console.log("Rechazar solicitud:", idToma);
-        alert("Función en desarrollo: Rechazar solicitud " + idToma);
+    
+    async function registrarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Confirmas que la asesoría ya se llevó a cabo?')) return;
+        try {
+            const resp = await fetch(`/registrarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST'
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                alert('✅ Asesoría registrada como completada.');
+                window.location.reload();
+            } else {
+                alert('❌ ' + (data.error || 'Error al registrar'));
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
     }
-
-    // Cargar nombre del usuario (desde sesión o backend)
-    // TODO: Obtener nombre real del asesor logueado
     document.getElementById('nombreUsuario').innerText = "Asesor";
+    
 </script>
 
 <%- include('templates/footer.ejs') %>

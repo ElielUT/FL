@@ -59,6 +59,23 @@
 @media (max-width: 768px) {
     .register-card {
         flex-direction: column;
+        gap: 20px;
+        padding: 25px 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        gap: 15px;
+        padding: 20px 15px;
+        border-radius: 20px;
+    }
+    .register-right .logo-circle {
+        width: 100px;
+        height: 100px;
+    }
+    .btn-register {
+        width: 80%;
     }
 }
 

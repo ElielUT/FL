@@ -1,68 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Perfil Asesor</title>
-    <!-- Fuente Montserrat -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<%- include('templates/headerPanel.ejs', { rol: "Asesor" }) %>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        body {
-            background-color: #f4f6f8;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ----- Header Top Bar ----- */
-        .top-bar {
-            background-color: #0fb88f;
-            height: 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-nav {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .btn-nav i {
-            font-size: 20px;
-        }
-
-        .btn-nav.volver i {
-            transform: scaleX(-1);
-        }
-
-        .btn-nav.close i {
-            font-size: 26px;
-        }
-
-        /* ----- Main Layout ----- */
         .main-container {
             flex: 1;
             display: flex;
@@ -88,7 +26,6 @@
             gap: 60px;
         }
 
-        /* ----- Columna Izquierda ----- */
         .titulo {
             font-size: 32px;
             font-weight: 800;
@@ -158,7 +95,6 @@
             min-width: 100px;
         }
 
-        /* ----- Formulario ----- */
         .form-grupo {
             margin-bottom: 25px;
         }
@@ -202,7 +138,6 @@
             background-size: 20px;
         }
 
-        /* ----- Columna Derecha: Disponibilidad ----- */
         .seccion-titulo {
             font-size: 16px;
             font-weight: 750;
@@ -283,7 +218,6 @@
             opacity: 1;
         }
 
-        /* ----- Botones Finales ----- */
         .botones-finales {
             grid-column: 1 / span 2;
             display: flex;
@@ -306,32 +240,34 @@
             transform: scale(0.95);
         }
 
-        .btn-cancelar {
+        .btn-accion.btn-cancelar {
             background-color: #c9c9c9;
             color: #444;
         }
 
-        .btn-cancelar:hover {
+        .btn-accion.btn-cancelar:hover {
             background-color: #bebebe;
         }
 
-        .btn-guardar {
+        .btn-accion.btn-guardar {
             background: linear-gradient(135deg, #a7ebd8 0%, #68d1b7 100%);
             color: #16644f;
             box-shadow: 0 4px 12px rgba(104, 209, 183, 0.3);
         }
 
-        .btn-guardar:hover {
+        .btn-accion.btn-guardar:hover {
             box-shadow: 0 6px 15px rgba(104, 209, 183, 0.4);
             filter: brightness(1.05);
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -343,13 +279,49 @@
             padding: 35px;
             border-radius: 15px;
             width: 400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-content h3 { 
-            margin-bottom: 25px; 
+        .modal-content h3 {
+            margin-bottom: 25px;
             font-weight: 800;
             font-size: 22px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #eeeeee;
+            color: #555;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .boton-cambiar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-cambiar-contraseña {
+            background: linear-gradient(180deg, #7adfc9 0%, #46c1a8 100%);
+            color: #1b6d57;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-cambiar-contraseña:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         @media (max-width: 850px) {
@@ -357,114 +329,172 @@
                 grid-template-columns: 1fr;
                 gap: 30px;
             }
+
             .botones-finales {
                 grid-column: 1;
                 flex-direction: column-reverse;
                 gap: 15px;
             }
+
             .ventana {
                 padding: 30px 25px;
             }
         }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 10px;
+            }
+            .ventana {
+                padding: 30px 20px;
+            }
+            .tarjeta-verde {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+                gap: 15px;
+            }
+            .info-usuario h2, .info-usuario p {
+                text-align: center;
+            }
+            .modal-content {
+                width: 90%;
+                padding: 25px 20px;
+            }
+            .btn-cambiar-contraseña {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
-</head>
 
-<body>
-
-    <!-- Header Verde Superior -->
-    <div class="top-bar">
-        <button class="btn-nav volver" onclick="window.history.back()">
-            <i class="fa-solid fa-reply"></i> Volver
-        </button>
-        <button class="btn-nav close" onclick="window.location.href='/borrarSesion'">
-            <i class="fa-regular fa-circle-xmark"></i>
-        </button>
-    </div>
-
-    <!-- Contenido Principal -->
     <div class="main-container">
         <div class="ventana">
             <h1 class="titulo">Mi perfil</h1>
 
             <form id="formPerfil" action="/guardar-perfil" method="POST" class="layout-grid">
-                
+
                 <!-- Columna Izquierda -->
                 <div class="col-izq">
                     <div class="tarjeta-verde">
                         <div class="avatar">
-                            <% if (typeof asesor !== 'undefined' && asesor.fotoUrl) { %>
+                            <% if (typeof asesor !=='undefined' && asesor.fotoUrl) { %>
                                 <img src="<%= asesor.fotoUrl %>" alt="Foto">
-                            <% } else { %>
-                                <i class="fa-solid fa-user"></i>
-                            <% } %>
+                                <% } else { %>
+                                    <i class="fa-solid fa-user"></i>
+                                    <% } %>
                         </div>
                         <div class="info-usuario">
-                            <h2><%= typeof asesor !== 'undefined' ? asesor.nombre : 'Nombre Usuario' %></h2>
-                            <p><%= typeof asesor !== 'undefined' ? asesor.correo : 'usuario@correo.com' %></p>
+                            <h2>
+                                <%= typeof asesor !=='undefined' ? asesor.nombre : 'Nombre Usuario' %>
+                            </h2>
+                            <p>
+                                <%= typeof asesor !=='undefined' ? asesor.correo : 'usuario@correo.com' %>
+                            </p>
                             <div class="badge-asesor">Asesor</div>
                         </div>
                     </div>
 
                     <div class="form-grupo">
                         <label class="etiqueta">Nombre completo:</label>
-                        <input type="text" name="nombre" class="input-estilo" value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>" placeholder="Ingrese su nombre">
+                        <input type="text" name="nombre" class="input-estilo"
+                            value="<%= typeof asesor !== 'undefined' ? asesor.nombre : '' %>"
+                            placeholder="Ingrese su nombre">
                     </div>
 
                     <div class="form-grupo">
                         <label class="etiqueta">Carrera:</label>
-                        <input type="text" name="carrera" class="input-estilo" value="<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>" placeholder="Ingrese su carrera">
+                        <select name="carrera" id="carrera">
+                            <option value="QF">Ing. Química Farmacéutica</option>
+                            <option value="DS">Ing. en Energía y Desarrollo Sostenible (TSU. Energía Turbo Solar)
+                            </option>
+                            <option value="QI">Ing. Química (TSU. Química Industrial)</option>
+                            <option value="CQ">ING. Civil (TSU. Construcción)</option>
+                            <option value="MA">ING. Mecatrónica (TSU. Automatización)</option>
+                            <option value="MR">ING. Mecatrónica (TSU. Robótica)</option>
+                            <option value="TDSM">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Desarrollo de Software Multiplataforma)</option>
+                            <option value="EVND">ING. Tecnologías De La Información e Innovación digital (TSU. En
+                                Entornos
+                                Virtuales y Negocios Digitales)</option>
+                            <option value="TIA">ING. Tecnologías De La Información e Innovación digital (TSU.
+                                Inteligencia
+                                Artificial)</option>
+                            <option value="TCD">ING. Tecnologías De La Información e Innovación digital (TSU. Ciencia de
+                                Datos)
+                            </option>
+                            <option value="MI">ING. Mantenimiento Industrial</option>
+                            <option value="IA">ING. Industrial (TSU. Automotriz)</option>
+                            <option value="IPP">ING. Industrial (TSU. Procesos Productivos)</option>
+                            <option value="ISGC">ING. Industrial (TSU Sistema de Gestión de Calidad)</option>
+                            <option value="NMM">LIC. Negocios y Mercadotecnia (TSU. Mercadotecnia)</option>
+                        </select>
                     </div>
 
                     <div class="form-grupo">
                         <label class="etiqueta">Cuatrimestre:</label>
                         <select name="cuatrimestre" class="input-estilo">
                             <% for(let i=1; i<=11; i++) { %>
-                                <option value="<%= i %>" <%= (typeof asesor !== 'undefined' && asesor.cuatrimestre == i) ? 'selected' : '' %>>
+                                <option value="<%= i %>" <%=(typeof asesor !=='undefined' && asesor.cuatrimestre==i)
+                                    ? 'selected' : '' %>>
                                     <%= i %>º cuatrimestre
                                 </option>
-                            <% } %>
+                                <% } %>
                         </select>
+                    </div>
+
+                    <div class="form-group boton-cambiar">
+                        <button type="button" class="btn-cambiar-contraseña"
+                            onclick=" window.location.href = '/cambiar-contrasena';">Cambiar contraseña</button>
                     </div>
                 </div>
 
                 <!-- Columna Derecha -->
                 <div class="col-der">
                     <h2 class="seccion-titulo">Disponibilidad</h2>
-                    
+
                     <div class="add-disp-container">
-                        <input type="text" id="dispInput" class="input-estilo" placeholder="Ej: Lunes 14:00-16:00" readonly onclick="abrirModal()">
+                        <input type="text" id="dispInput" class="input-estilo" placeholder="Ej: Lunes 14:00-16:00"
+                            readonly onclick="abrirModal()">
                         <button type="button" class="btn-add" onclick="abrirModal()">+</button>
                     </div>
 
                     <div class="disponibilidad-lista" id="listaDisp">
-                        <% if (typeof asesor !== 'undefined' && asesor.disponibilidad && asesor.disponibilidad.length > 0) { %>
+                        <% if (typeof asesor !=='undefined' && asesor.disponibilidad && asesor.disponibilidad.length> 0)
+                            { %>
                             <% asesor.disponibilidad.forEach(function(item) { %>
                                 <div class="disponibilidad-item">
-                                    <span><%= item.texto %></span>
-                                    <button type="button" class="btn-delete" onclick="eliminarDisp('<%= item.id_disponibilidad %>', this)">
+                                    <span>
+                                        <%= item.texto %>
+                                    </span>
+                                    <button type="button" class="btn-delete"
+                                        onclick="eliminarDisp('<%= item.id_disponibilidad %>', this)">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>
-                            <% }); %>
-                        <% } else { %>
-                            <div class="disponibilidad-item empty-msg" style="justify-content: center; color: #bbb;">Sin disponibilidad registrada</div>
-                        <% } %>
+                                <% }); %>
+                                    <% } else { %>
+                                        <div class="disponibilidad-item empty-msg"
+                                            style="justify-content: center; color: #bbb;">Sin disponibilidad registrada
+                                        </div>
+                                        <% } %>
                     </div>
                 </div>
 
                 <!-- Botones Finales -->
                 <div class="botones-finales">
-                    <button type="button" class="btn-accion btn-cancelar" onclick="window.history.back()">Cancelar</button>
+                    <button type="button" class="btn-accion btn-cancelar"
+                        onclick="window.history.back()">Cancelar</button>
                     <button type="submit" class="btn-accion btn-guardar">Guardar cambios</button>
                 </div>
 
-                <!-- Campo oculto para el ID del asesor -->
-                <input type="hidden" name="id_asesor" value="<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>">
+                <input type="hidden" name="id_asesor"
+                    value="<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>">
             </form>
         </div>
     </div>
 
-    <!-- Modal para Agregar Disponibilidad -->
+    <!-- Modal -->
     <div id="modalDisp" class="modal">
         <div class="modal-content">
             <h3>Agregar Horario</h3>
@@ -488,88 +518,66 @@
                 <input type="time" id="modalFin" class="input-estilo">
             </div>
             <div style="display:flex; gap:15px; margin-top:25px;">
-                <button type="button" class="btn-accion btn-cancelar" style="flex:1; padding: 12px;" onclick="cerrarModal()">Cancelar</button>
-                <button type="button" class="btn-accion btn-guardar" style="flex:1; padding: 12px;" onclick="guardarNuevaDisp()">Agregar</button>
+                <button type="button" class="btn-accion btn-cancelar" style="flex:1; padding:12px;"
+                    onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-accion btn-guardar" style="flex:1; padding:12px;"
+                    onclick="guardarNuevaDisp()">Agregar</button>
             </div>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectCarrera = document.getElementById('carrera');
+            const carreraActual = "<%= typeof asesor !== 'undefined' ? asesor.carrera : '' %>";
+
+            if (selectCarrera && carreraActual) {
+                selectCarrera.value = carreraActual;
+            }
+        });
+
         const idAsesorGlobal = "<%= typeof asesor !== 'undefined' ? asesor.id_asesor : '' %>";
 
-        function abrirModal() {
-            document.getElementById('modalDisp').style.display = 'flex';
-        }
-
-        function cerrarModal() {
-            document.getElementById('modalDisp').style.display = 'none';
-        }
+        function abrirModal() { document.getElementById('modalDisp').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('modalDisp').style.display = 'none'; }
 
         async function guardarNuevaDisp() {
             const dia = document.getElementById('modalDia').value;
             const inicio = document.getElementById('modalInicio').value;
             const fin = document.getElementById('modalFin').value;
-
-            if (!inicio || !fin) {
-                alert("Por favor seleccione las horas.");
-                return;
-            }
-
+            if (!inicio || !fin) { alert("Por favor seleccione las horas."); return; }
             try {
                 const res = await fetch('/agregar-disponibilidad', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id_asesor: idAsesorGlobal,
-                        dia: dia,
-                        hora_inicio: inicio,
-                        hora_fin: fin
-                    })
+                    body: JSON.stringify({ id_asesor: idAsesorGlobal, dia, hora_inicio: inicio, hora_fin: fin })
                 });
-
                 const data = await res.json();
-                if (data.success) {
-                    location.reload(); 
-                } else {
-                    alert("Error al guardar: " + (data.message || "Intente de nuevo"));
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Error de conexión");
-            }
+                if (data.success) { location.reload(); }
+                else { alert("Error al guardar: " + (data.message || "Intente de nuevo")); }
+            } catch (error) { alert("Error de conexión"); }
         }
 
         async function eliminarDisp(idDisp, btn) {
             if (!confirm("¿Desea eliminar este horario?")) return;
-
             try {
                 const res = await fetch('/eliminar-disponibilidad', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id_disponibilidad: idDisp })
                 });
-
                 const data = await res.json();
                 if (data.success) {
                     btn.closest('.disponibilidad-item').remove();
-                    if(document.querySelectorAll('.disponibilidad-item').length === 0) {
-                        location.reload(); 
-                    }
-                } else {
-                    alert("Error al eliminar");
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Error de conexión");
-            }
+                    if (document.querySelectorAll('.disponibilidad-item').length === 0) location.reload();
+                } else { alert("Error al eliminar"); }
+            } catch (error) { alert("Error de conexión"); }
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('modalDisp');
             if (event.target == modal) cerrarModal();
         }
     </script>
 
-</body>
-
-</html>
+    <%- include('templates/footer.ejs') %>
