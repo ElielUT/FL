@@ -928,7 +928,6 @@ router.get("/historialAsesorias", async (req, res) => {
 });
 
 
-
 // ── Detalles de sesión ────────────────────────────────────────────────────────
 router.get("/detallesAsesoria/:id_asesoria", async (req, res) => {
     if (!req.session.usuario || ![1, 2].includes(req.session.usuario)) {
