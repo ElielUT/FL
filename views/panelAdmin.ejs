@@ -60,20 +60,33 @@
             </div>
         </div>
         <div class="componentesIzquierdos">
+            <style>
+                .badge-porcentaje {
+                    background-color: var(--clr-admin, #0097b2);
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 0.8rem;
+                    margin-left: 5px;
+                    font-weight: 600;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    display: inline-block;
+                }
+            </style>
             <div class="distribucion">
                 <h3>Distribución de usuarios</h3>
                 <div class="distribucion-cuentas">
                     <div class="distribucion-item">
-                        <p>Asesorados:</p>
-                        <progress value="<%= asesorados %>" max="<%= usuarios %>"></progress>
+                        <p>Asesorados: <span class="badge-porcentaje"><%= usuarios > 0 ? Math.round((asesorados / usuarios) * 100) : 0 %>%</span></p>
+                        <progress value="<%= asesorados || 0 %>" max="<%= usuarios || 1 %>"></progress>
                     </div>
                     <div class="distribucion-item">
-                        <p>Asesores:</p>
-                        <progress value="<%= adsesores %>" max="<%= usuarios %>"></progress>
+                        <p>Asesores: <span class="badge-porcentaje"><%= usuarios > 0 ? Math.round((adsesores / usuarios) * 100) : 0 %>%</span></p>
+                        <progress value="<%= adsesores || 0 %>" max="<%= usuarios || 1 %>"></progress>
                     </div>
                     <div class="distribucion-item">
-                        <p>Administradores:</p>
-                        <progress value="<%= administradores %>" max="<%= usuarios %>"></progress>
+                        <p>Administradores: <span class="badge-porcentaje"><%= usuarios > 0 ? Math.round((administradores / usuarios) * 100) : 0 %>%</span></p>
+                        <progress value="<%= administradores || 0 %>" max="<%= usuarios || 1 %>"></progress>
                     </div>
                 </div>
             </div>
@@ -81,16 +94,16 @@
                 <h3>Estado de asesorías</h3>
                 <div class="distribucion-cuentas">
                     <div class="distribucion-item">
-                        <p>Pendientes:</p>
-                        <progress value="<%= pendientes %>" max="<%= totalAsesorias %>"></progress>
+                        <p>Pendientes: <span class="badge-porcentaje"><%= totalAsesorias > 0 ? Math.round((pendientes / totalAsesorias) * 100) : 0 %>%</span></p>
+                        <progress value="<%= pendientes || 0 %>" max="<%= totalAsesorias || 1 %>"></progress>
                     </div>
                     <div class="distribucion-item">
-                        <p>Aceptadas:</p>
-                        <progress value="<%= aceptadas %>" max="<%= totalAsesorias %>"></progress>
+                        <p>Aceptadas: <span class="badge-porcentaje"><%= totalAsesorias > 0 ? Math.round((aceptadas / totalAsesorias) * 100) : 0 %>%</span></p>
+                        <progress value="<%= aceptadas || 0 %>" max="<%= totalAsesorias || 1 %>"></progress>
                     </div>
                     <div class="distribucion-item">
-                        <p>Completadas:</p>
-                        <progress value="<%= completadas %>" max="<%= totalAsesorias %>"></progress>
+                        <p>Completadas: <span class="badge-porcentaje"><%= totalAsesorias > 0 ? Math.round((completadas / totalAsesorias) * 100) : 0 %>%</span></p>
+                        <progress value="<%= completadas || 0 %>" max="<%= totalAsesorias || 1 %>"></progress>
                     </div>
                 </div>
             </div>

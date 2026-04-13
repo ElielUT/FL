@@ -593,7 +593,7 @@ router.get('/panelAdmin', async (req, res) => {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch(url_api + "/asesoria/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -627,7 +627,7 @@ router.get('/supervisarAsesorias', async (req, res) => {
 
     try {
         const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
-            fetch(url_api + "/asesoria/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
