@@ -1,5 +1,28 @@
 <%- include('templates/headerPanel.ejs', { rol: rol }) %>
 
+<style>
+    .supervisar-stats .card-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .supervisar-stats .stat-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 25px;
+    }
+
+    .supervisar-stats .stat-card p {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+</style>
+
 <div class="supervisar-container">
     <div class="supervisar-header">
         <h1>Historial de asesorías</h1>
@@ -9,18 +32,18 @@
     <!-- Estadísticas -->
     <div class="supervisar-stats">
         <div class="stat-card">
-            <div class="card-header-info">
-                <h4>Total de sesiones</h4>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:8px;">
+                <h4 style="margin:0; font-size:0.9rem; color:#333;">Total de sesiones       </h4>
                 <i class="fas fa-history icon-total fa-lg"></i>
             </div>
-            <p><%= typeof total !== 'undefined' ? total : 0 %></p>
+            <p style="font-size:2rem; font-weight:700; margin:0;"><%= typeof total !== 'undefined' ? total : 0 %></p>
         </div>
         <div class="stat-card">
-            <div class="card-header-info">
-                <h4>Tiempo total</h4>
-                <i class="far fa-clock icon-total fa-lg"></i>
+            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:8px;">
+                <h4 style="margin:0; font-size:0.9rem; color:#333;">Tiempo total      </h4>
+                <i class="fas fa-clock icon-total fa-lg"></i>
             </div>
-            <p><%= typeof tiempoTotal !== 'undefined' ? tiempoTotal : '0 min' %></p>
+            <p style="font-size:2rem; font-weight:700; margin:0;"><%= typeof tiempoTotal !== 'undefined' ? tiempoTotal : '0 min' %></p>
         </div>
     </div>
 
@@ -53,16 +76,10 @@
                                 <% if (i < (asesoria.calificacion || 0)) { %>
                                     <i class="fas fa-paw" style="color: #f1c40f;"></i>
                                 <% } else { %>
-                                    <i class="far fa-paw" style="color: #ccc;"></i>
+                                    <i class="fas fa-paw" style="color: #ccc;"></i>
                                 <% } %>
                             <% } %>
                             <small><%= asesoria.calificacion || 0 %>/5</small>
-                        </div>
-                    </div>
-
-                    <div class="card-eval">
-                        <div class="eval-comment" style="<%= !asesoria.comentario ? 'font-style:italic; color:#888;' : '' %>">
-                            <%= asesoria.comentario || 'Sin comentario' %>
                         </div>
                     </div>
                 </div>
@@ -91,9 +108,6 @@
             </div>
             <div id="modalStars" style="font-size: 1.2rem;"></div>
         </div>
-        <div class="card-eval" style="padding: 20px; margin-top: 20px;">
-            <div id="modalComentario" class="eval-comment" style="font-size: 1rem;"></div>
-        </div>
         <div class="contenedor-botones" style="margin-top: 20px;">
             <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cerrar detalles</button>
         </div>
@@ -117,17 +131,15 @@
         for (let i = 0; i < 5; i++) {
             starsHtml += i < calif
                 ? '<i class="fas fa-paw" style="color:#f1c40f;"></i> '
-                : '<i class="far fa-paw" style="color:#ccc;"></i> ';
+                : '<i class="fas fa-paw" style="color:#ccc;"></i> ';
         }
 
         document.getElementById('modalMateria').innerText = d.materia;
         document.getElementById('modalContraparte').innerText = (rolActual === 'Asesor' ? 'Estudiante: ' : 'Asesor: ') + d.contraparte;
         document.getElementById('modalTema').innerText = 'Tema: ' + d.tema;
-        document.getElementById('modalFecha').innerHTML = '<i class="far fa-calendar-alt"></i> ' + d.fecha;
-        document.getElementById('modalTiempo').innerHTML = '<i class="far fa-clock"></i> ' + d.hora_in + ' - ' + d.hora_fin;
+        document.getElementById('modalFecha').innerHTML = '<i class="fas fa-calendar-alt"></i> ' + d.fecha;
+        document.getElementById('modalTiempo').innerHTML = '<i class="fas fa-clock"></i> ' + d.hora_in + ' - ' + d.hora_fin;
         document.getElementById('modalStars').innerHTML = starsHtml + '<small>' + calif + '/5</small>';
-        document.getElementById('modalComentario').innerText = d.comentario || 'Sin comentario';
-
         document.getElementById('modalAsesoria').classList.remove('ocultar');
     }
 

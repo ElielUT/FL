@@ -175,6 +175,35 @@
                 <div class="stat-number"><%= typeof estadisticas !== 'undefined' ? estadisticas.completadas : 0 %></div>
             </div>
         </div>
+        <!-- Por calificar -->
+        <% if (typeof porCalificar !== 'undefined' && porCalificar.length > 0) { %>
+        <div style="margin-top:5px;">
+            <h2 class="section-title">⭐ Por calificar ⭐</h2>
+            <div class="asesorias-lista">
+                <div class="scroll-track"><div class="scroll-thumb"></div></div>
+                <% porCalificar.forEach(function(asesoria) { %>
+                    <div class="asesoria-card" >
+                        <div class="card-title"><%= asesoria.materia %></div>
+                        <div class="card-subtitle">Asesor: <%= asesoria.asesor %></div>
+                        <div class="card-footer">
+                            <div class="info-item">
+                                <i class="fa-regular fa-calendar-days"></i>
+                                <%= asesoria.fecha %>
+                            </div>
+                            <div class="info-item">
+                                <i class="fa-solid fa-clock"></i>
+                                <%= asesoria.hora %> hrs
+                            </div>
+                        </div>
+                        <button class="btn-ver-detalles" style="background: linear-gradient(to right, #7bf0cb, #e4cb2a); margin-top:10px; border:none; cursor:pointer; width:100%;"
+                            onclick="abrirCalificacion('<%= asesoria.id_asesor3 %>', '<%= asesoria.id_asesoria %>', '<%= asesoria.id_alumno1 %>')">
+                            <i class="fa-solid fa-paw"></i> Calificar asesoría
+                        </button>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
     </div>
 
     <!-- Right Panel -->
@@ -248,25 +277,102 @@
                 <% } %>
             </div>
         </div>
-
     </div>
 </main>
 
+<!-- Modal de calificación -->
+<div id="modalCalificacion" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:20px; padding:40px; max-width:400px; width:90%; text-align:center;">
+        <h3 style="margin-bottom:8px; font-size:1.3rem; font-weight:800;">Calificar asesoría</h3>
+        <p style="color:#888; margin-bottom:24px; font-size:0.9rem;">¿Cómo fue tu experiencia?</p>
+        
+        <div id="huellas" style="display:flex; justify-content:center; gap:12px; margin-bottom:30px;">
+            <% for(let i=1; i<=5; i++) { %>
+                <i class="fas fa-paw huella-btn" data-val="<%= i %>" 
+                   style="font-size:2rem; color:#ddd; cursor:pointer; transition: all 0.2s;"></i>
+            <% } %>
+        </div>
+        <input type="hidden" id="calificacionSeleccionada" value="0">
+        <input type="hidden" id="calAsesor3" value="">
+        <input type="hidden" id="calAsesoria" value="">
+        <input type="hidden" id="calAlumno1" value="">
+
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button onclick="cerrarCalificacion()" style="padding:10px 24px; border-radius:20px; border:none; background:#e0e0e0; color:#666; cursor:pointer; font-weight:600;">Cancelar</button>
+            <button onclick="enviarCalificacion()" id="btnEnviarCal" style="padding:10px 24px; border-radius:20px; border:none; background:linear-gradient(to right, #4db6ac, #80cbc4); color:white; cursor:pointer; font-weight:600;" disabled>Enviar</button>
+        </div>
+    </div>
+</div>
+
 <script>
-async function cancelarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
-    if (!confirm('¿Estás seguro de cancelar esta asesoría? Esta acción no se puede deshacer.')) return;
-    try {
-        const resp = await fetch(`/cancelarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, { method: 'DELETE' });
-        if (resp.ok) {
-            alert('Asesoría cancelada.');
-            window.location.reload();
-        } else {
-            alert('Error al cancelar la asesoría.');
+    async function cancelarAsesoria(id_asesor3, id_asesoria, id_alumno1) {
+        if (!confirm('¿Estás seguro de cancelar esta asesoría? Esta acción no se puede deshacer.')) return;
+        try {
+            const resp = await fetch(`/cancelarAsesoria/${id_asesor3}/${id_asesoria}/${id_alumno1}`, { method: 'DELETE' });
+            if (resp.ok) {
+                alert('Asesoría cancelada.');
+                window.location.reload();
+            } else {
+                alert('Error al cancelar la asesoría.');
+            }
+        } catch(e) {
+            alert('Error de conexión.');
         }
-    } catch(e) {
-        alert('Error de conexión.');
     }
-}
+
+    function abrirCalificacion(id_asesor3, id_asesoria, id_alumno1) {
+        document.getElementById('calAsesor3').value = id_asesor3;
+        document.getElementById('calAsesoria').value = id_asesoria;
+        document.getElementById('calAlumno1').value = id_alumno1;
+        document.getElementById('calificacionSeleccionada').value = 0;
+        document.querySelectorAll('.huella-btn').forEach(h => h.style.color = '#ddd');
+        document.getElementById('btnEnviarCal').disabled = true;
+        document.getElementById('modalCalificacion').style.display = 'flex';
+    }
+
+    function cerrarCalificacion() {
+        document.getElementById('modalCalificacion').style.display = 'none';
+    }
+
+    document.querySelectorAll('.huella-btn').forEach(huella => {
+        huella.addEventListener('click', function() {
+            const val = parseInt(this.getAttribute('data-val'));
+            document.getElementById('calificacionSeleccionada').value = val;
+            document.querySelectorAll('.huella-btn').forEach((h, i) => {
+                h.style.color = i < val ? '#f1c40f' : '#ddd';
+            });
+            document.getElementById('btnEnviarCal').disabled = false;
+        });
+    });
+
+    async function enviarCalificacion() {
+        const id_asesor3 = document.getElementById('calAsesor3').value;
+        const id_asesoria = document.getElementById('calAsesoria').value;
+        const id_alumno1 = document.getElementById('calAlumno1').value;
+        const calificacion = document.getElementById('calificacionSeleccionada').value;
+
+        if (!calificacion || calificacion == 0) {
+            alert('Por favor selecciona una calificación.');
+            return;
+        }
+
+        try {
+            const resp = await fetch(`/calificar/${id_asesor3}/${id_asesoria}/${id_alumno1}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ calificacion })
+            });
+            if (resp.ok) {
+                alert('✅ ¡Gracias por tu calificación!');
+                cerrarCalificacion();
+                window.location.reload();
+            } else {
+                alert('Error al enviar calificación.');
+            }
+        } catch(e) {
+            alert('Error de conexión.');
+        }
+    }
 </script>
 
 <%- include('templates/footer.ejs') %>

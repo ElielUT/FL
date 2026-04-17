@@ -551,7 +551,7 @@ router.post('/agregar-disponibilidad', async (req, res) => {
         } else {
             const errData = await response.json();
             console.error("Error Backend Availability:", errData);
-            res.status(500).json({ success: false, message: "Error al crear disponibilidad en el servidor" });
+            res.status(400).json({ success: false, message: errData.detail || "Error al crear disponibilidad" });
         }
     } catch (error) {
         console.error("Error API disponibilidad:", error);
@@ -593,7 +593,7 @@ router.get('/panelAdmin', async (req, res) => {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
-            fetch(url_api + "/asesoria/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             })
@@ -627,7 +627,7 @@ router.get('/supervisarAsesorias', async (req, res) => {
 
     try {
         const [respuestaEstadisticas, respuestaTomas] = await Promise.all([
-            fetch(url_api + "/asesoria/estadisticas", {
+            fetch(url_api + "/toma/estadisticas", {
                 method: "GET",
                 headers: { "Content-Type": "application/json" }
             }),
@@ -725,7 +725,7 @@ router.post('/crear-solicitud', async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad } = req.body;
+    const { materiaId, id_asesor, tema, fecha, hora_in, hora_fin, modalidad, id_horario } = req.body;
 
     if (!req.session.id_alumno) {
         return res.send(`
@@ -734,6 +734,15 @@ router.post('/crear-solicitud', async (req, res) => {
                 window.location.href = "/solicitarAsesoria";
             </script>
         `);
+    }
+
+    // Marcar el slot como no disponible
+    if (id_horario) {
+        await fetch(`${url_api}/disponibilidad/actualizarDisponible/${id_horario}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ disponible: false })
+        });
     }
 
     try {
@@ -761,7 +770,7 @@ router.post('/crear-solicitud', async (req, res) => {
         const id_asesoria = asesoriaData.items?.id_asesoria || asesoriaData.id_asesoria;
 
         //console.log("materiaId:", materiaId, "tipo:", typeof materiaId);
-        // 2. Crear la toma (solicitud)
+        // 2. Crear la toma
         const crearTomaResp = await fetch(url_api + "/toma/crearToma/", {
             method: "POST",
             headers: {
@@ -774,7 +783,8 @@ router.post('/crear-solicitud', async (req, res) => {
                 fecha: fecha,
                 hora_in: hora_in,
                 hora_fin: hora_fin,
-                calificacion: 0
+                calificacion: 0,
+                id_horario: parseInt(id_horario)
             })
         });
 
@@ -810,25 +820,13 @@ router.get('/panelAsesor', async (req, res) => {
     const idAsesor = req.session.id_asesor || 1;
 
     try {
-        const [respuestaTomasAsesor, respuestaCalificaciones] = await Promise.all([
-            fetch(url_api + `/toma/buscarTomaAsesor/${idAsesor}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            }),
-            fetch(url_api + `/toma/calificacionesAsesor/${idAsesor}`, {
-                method: "GET",
-                headers: { "Content-Type": "application/json" }
-            })
-        ]);
+        const respuestaTomasAsesor = await fetch(url_api + `/toma/buscarTomaAsesor/${idAsesor}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
 
         const dataTomas = await respuestaTomasAsesor.json();
-        //console.log("RESPONSE COMPLETO:", JSON.stringify(dataTomas).substring(0, 500));
         const tomas = dataTomas.items || [];
-        //console.log("TOMAS RECIBIDAS:", JSON.stringify(tomas.map(t => ({
-        //    estado: t.estado,
-        //    materia: t.asesoria?.materia?.nombre,
-        //    estudiante: t.alumno?.usuario?.nombres
-        //}))));
 
         const solicitudesPendientes = tomas
             .filter(t => t.estado === 'pendiente' || !t.estado)
@@ -860,20 +858,18 @@ router.get('/panelAsesor', async (req, res) => {
             .map(t => ({
                 materia: t.asesoria?.materia?.nombre || "Sin materia",
                 estudiante: t.alumno?.usuario ? `${t.alumno.usuario.nombres} ${t.alumno.usuario.apellidos}` : "Desconocido",
-                comentario: t.comentario || "Sin comentario",
                 calificacion: t.calificacion
             }));
 
         const pendientes = solicitudesPendientes.length;
         const completadas = tomas.filter(t => t.estado === 'completada').length;
 
+        // Calcular promedio directamente de las tomas
+        const tomasConCalificacion = tomas.filter(t => t.calificacion && t.calificacion > 0);
         let calificacionPromedio = 0;
-        if (respuestaCalificaciones.ok) {
-            const dataCalif = await respuestaCalificaciones.json();
-            if (dataCalif.items && dataCalif.items.length > 0) {
-                const suma = dataCalif.items.reduce((acc, curr) => acc + (curr.calificacion || 0), 0);
-                calificacionPromedio = Number((suma / dataCalif.items.length).toFixed(1));
-            }
+        if (tomasConCalificacion.length > 0) {
+            const suma = tomasConCalificacion.reduce((acc, curr) => acc + curr.calificacion, 0);
+            calificacionPromedio = Number((suma / tomasConCalificacion.length).toFixed(1));
         }
 
         let nombreAsesor = "Asesor";
@@ -882,17 +878,20 @@ router.get('/panelAsesor', async (req, res) => {
         }
 
         res.render('panelAsesor', {
-            pendientes: pendientes,
-            completadas: completadas,
-            calificacionPromedio: calificacionPromedio,
-            proximasAsesorias: proximasAsesorias,
-            evaluacionesRecientes: evaluacionesRecientes,
-            solicitudesPendientes: solicitudesPendientes,
-            nombreAsesor: nombreAsesor
+            pendientes,
+            completadas,
+            calificacionPromedio,
+            proximasAsesorias,
+            evaluacionesRecientes,
+            solicitudesPendientes,
+            nombreAsesor
         });
-
+        //console.log("TOMAS CON CALIFICACION:", tomasConCalificacion.map(t => t.calificacion));
+        //console.log("PROMEDIO:", calificacionPromedio);
+        
     } catch (error) {
         console.error("Error al cargar panel de asesor:", error);
+        //console.log("TOMAS:", JSON.stringify(tomas?.slice(0,2)));
         res.render('panelAsesor', {
             pendientes: 0,
             completadas: 0,
@@ -930,6 +929,20 @@ router.get('/panelAsesorado', async (req, res) => {
                 materia: t.asesoria?.materia?.nombre || "Sin materia",
                 asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
                 fecha: t.fecha || "Por definir",
+                hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--",
+                estado: t.estado,
+                calificacion: t.calificacion || 0
+            }));
+
+        const porCalificar = tomas
+            .filter(t => t.estado === 'completada' && (!t.calificacion || t.calificacion === 0))
+            .map(t => ({
+                id_asesoria: t.id_asesoria1,
+                id_asesor3: t.id_asesor3,
+                id_alumno1: t.id_alumno1,
+                materia: t.asesoria?.materia?.nombre || "Sin materia",
+                asesor: t.asesor?.usuario ? `${t.asesor.usuario.nombres} ${t.asesor.usuario.apellidos}` : "Desconocido",
+                fecha: t.fecha || "Por definir",
                 hora: t.hora_in ? t.hora_in.substring(0, 5) : "--:--"
             }));
 
@@ -954,6 +967,7 @@ router.get('/panelAsesorado', async (req, res) => {
         res.render('panelAsesorado', {
             asesoriasProgramadas,
             solicitudesPendientes,
+            porCalificar,
             estadisticas
         });
 
@@ -962,6 +976,7 @@ router.get('/panelAsesorado', async (req, res) => {
         res.render('panelAsesorado', {
             asesoriasProgramadas: [],
             solicitudesPendientes: [],
+            porCalificar: [],
             estadisticas: { pendientes: 0, aceptadas: 0, completadas: 0 }
         });
     }
@@ -1038,9 +1053,6 @@ router.get("/historialAsesorias", async (req, res) => {
     }
 });
 
-router.get("/solicitudesDisponibles", (req, res) => {
-    res.render("solicitudesDisponibles");
-});
 
 // ── Detalles de sesión ────────────────────────────────────────────────────────
 router.get("/detallesAsesoria/:id_asesoria", async (req, res) => {
@@ -1189,11 +1201,30 @@ router.delete("/cancelarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (
         return res.status(403).json({ error: "No autorizado" });
     try {
         const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+
+        // 1. Obtener el id_horario antes de borrar
+        const detResp = await fetch(`${url_api}/toma/detalles/${id_asesoria1}`, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const detData = detResp.ok ? await detResp.json() : null;
+        const id_horario = detData?.id_horario || null;
+
+        // 2. Cancelar la toma y asesoría
         const respuesta = await fetch(`${url_api}/toma/cancelar/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });
         if (!respuesta.ok) return res.status(502).json({ error: "Error al cancelar" });
+
+        // 3. Liberar el slot si existe
+        if (id_horario) {
+            await fetch(`${url_api}/disponibilidad/actualizarDisponible/${id_horario}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ disponible: true })
+            });
+        }
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: "Error interno" });
@@ -1213,6 +1244,82 @@ router.get('/cambiar-contrasena', (req, res) => {
         });
     } else {
         res.redirect('/login');
+    }
+});
+
+router.get('/slots/:id_asesor', async (req, res) => {
+    try {
+        const respuesta = await fetch(`${url_api}/disponibilidad/${req.params.id_asesor}`, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        const horarios = data.items || [];
+
+        // Generar slots de 1 hora por cada horario disponible
+        const slots = [];
+        const dayMap = {
+            "2024-01-01": "Lunes", "2024-01-02": "Martes", "2024-01-03": "Miércoles",
+            "2024-01-04": "Jueves", "2024-01-05": "Viernes", "2024-01-06": "Sábado"
+        };
+
+        horarios.forEach(h => {
+            if (!h.disponible) return; // solo horarios disponibles
+            const dia = dayMap[h.dia] || h.dia;
+            const [hIn, mIn] = h.hora_in.split(':').map(Number);
+            const [hFin] = h.hora_fin.split(':').map(Number);
+
+            for (let hora = hIn; hora < hFin; hora++) {
+                const horaInStr = `${String(hora).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
+                const horaFinStr = `${String(hora + 1).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
+                slots.push({
+                    id_horario: h.id_horario,
+                    dia: dia,
+                    fecha_raw: h.dia,
+                    hora_in: horaInStr,
+                    hora_fin: horaFinStr,
+                    label: `${dia} ${horaInStr} - ${horaFinStr}`
+                });
+            }
+        });
+
+        res.json({ slots });
+    } catch (error) {
+        res.status(500).json({ slots: [] });
+    }
+});
+
+router.post("/registrarAsesoria/:id_asesor3/:id_asesoria1/:id_alumno1", async (req, res) => {
+    if (req.session.usuario !== 1)
+        return res.status(403).json({ error: "No autorizado" });
+    try {
+        const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+        const respuesta = await fetch(`${url_api}/toma/registrar/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) return res.status(400).json({ error: data.detail || "Error al registrar" });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: "Error interno" });
+    }
+});
+
+router.post("/calificar/:id_asesor3/:id_asesoria1/:id_alumno1", async (req, res) => {
+    if (req.session.usuario !== 2)
+        return res.status(403).json({ error: "No autorizado" });
+    try {
+        const { id_asesor3, id_asesoria1, id_alumno1 } = req.params;
+        const { calificacion } = req.body;
+        const respuesta = await fetch(`${url_api}/toma/actualizarEstado/${id_asesor3}/${id_asesoria1}/${id_alumno1}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ calificacion: parseInt(calificacion) })
+        });
+        if (!respuesta.ok) return res.status(502).json({ error: "Error al guardar calificación" });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: "Error interno" });
     }
 });
 
