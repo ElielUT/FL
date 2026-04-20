@@ -8,7 +8,7 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 const url_api = process.env.URL_API ? process.env.URL_API.replace(/\/$/, '') : '';
 
-async function verificarRecaptcha(token, req) {
+/*async function verificarRecaptcha(token, req) {
     if (req && (req.hostname === 'localhost' || req.hostname === '127.0.0.1')) return true;
     if (!token) return false;
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -22,7 +22,7 @@ async function verificarRecaptcha(token, req) {
         console.error("Error verificando reCAPTCHA", e);
         return false;
     }
-}
+}*/
 
 const router = Router();
 
@@ -38,10 +38,10 @@ router.post("/", async (req, res) => {
     const { correo, contraseña, "g-recaptcha-response": recaptchaToken } = req.body;
 
     try {
-        const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
+        /*const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
         if (!isValidRecaptcha) {
             return res.render("index", { error: "Actividad sospechosa detectada por reCAPTCHA" });
-        }
+        }*/
         if (correo !== "admin") {
             const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({
                 email: correo,
@@ -104,10 +104,10 @@ router.post("/registro", async (req, res) => {
     const rol = "asesorado";
 
     try {
-        const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
+        /*const isValidRecaptcha = await verificarRecaptcha(recaptchaToken, req);
         if (!isValidRecaptcha) {
             return res.render("registrarse", { error: "Actividad sospechosa detectada por reCAPTCHA" });
-        }
+        }*/
         const respuesta = await fetch(url_api + "/usuarios/crearUsuario", {
             method: "POST",
             headers: {
@@ -888,7 +888,7 @@ router.get('/panelAsesor', async (req, res) => {
         });
         //console.log("TOMAS CON CALIFICACION:", tomasConCalificacion.map(t => t.calificacion));
         //console.log("PROMEDIO:", calificacionPromedio);
-        
+
     } catch (error) {
         console.error("Error al cargar panel de asesor:", error);
         //console.log("TOMAS:", JSON.stringify(tomas?.slice(0,2)));
@@ -1269,8 +1269,8 @@ router.get('/slots/:id_asesor', async (req, res) => {
             const [hFin] = h.hora_fin.split(':').map(Number);
 
             for (let hora = hIn; hora < hFin; hora++) {
-                const horaInStr = `${String(hora).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
-                const horaFinStr = `${String(hora + 1).padStart(2,'0')}:${String(mIn).padStart(2,'0')}`;
+                const horaInStr = `${String(hora).padStart(2, '0')}:${String(mIn).padStart(2, '0')}`;
+                const horaFinStr = `${String(hora + 1).padStart(2, '0')}:${String(mIn).padStart(2, '0')}`;
                 slots.push({
                     id_horario: h.id_horario,
                     dia: dia,
