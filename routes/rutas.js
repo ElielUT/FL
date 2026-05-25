@@ -173,7 +173,7 @@ router.post("/gestionUsuarios", async (req, res) => {
         return res.render("index", { error: "No tienes permiso para acceder a esta página" });
     }
 
-    const { nombre, apellidos, correo, rol, carrera, cuatrimestre, contraseña } = req.body;
+    const { nombre, apellidos, correo, rol, carrera, cuatrimestre, contraseña, categoriaAsesor } = req.body;
 
     const respuesta = await fetch(url_api + "/usuarios/crearUsuario", {
         method: "POST",
@@ -220,7 +220,7 @@ router.post("/gestionUsuarios", async (req, res) => {
         user = await subirAsesorado.json();
     }
     else if (rol === "asesor") {
-        var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
+        var disponible = true, categoriaAS = categoriaAsesor || "alumno", contacto = "0000000000";
         const subirAsesor = await fetch(url_api + "/asesores/crearAsesor", {
             method: "POST",
             headers: {

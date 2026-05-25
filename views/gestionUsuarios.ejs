@@ -85,6 +85,15 @@
                 </div>
                 <input type="hidden" name="contraseña" id="contraseña" value="default">
             </div>
+            <div class="categoria-asesor" id="divCategoriaAsesorCrear"
+                style="display: none; flex-direction: column; align-items: flex-start; justify-content: center; width: 30%; padding-bottom: 2%;">
+                <label for="categoriaAsesorCrear">Categoría de Asesor:</label>
+                <select name="categoriaAsesor" id="categoriaAsesorCrear"
+                    style="width: 100%; padding: 10px 20px; border: none; border-radius: 5px; background-color: #eeeeee; color: var(--input-text-color); font-size: 1rem; cursor: pointer;">
+                    <option value="alumno">Alumno</option>
+                    <option value="docente">Docente</option>
+                </select>
+            </div>
         </form>
     </div>
     <div class="busqueda_filtro">
@@ -217,6 +226,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="categoria-asesor" id="divCategoriaAsesorEditar"
+                    style="display: none; flex-direction: column; align-items: flex-start; justify-content: center; width: 30%; padding-bottom: 2%;">
+                    <label for="categoriaAsesorEditar">Categoría de Asesor:</label>
+                    <select name="categoriaAsesor" id="categoriaAsesorEditar"
+                        style="width: 100%; padding: 10px 20px; border: none; border-radius: 5px; background-color: #eeeeee; color: var(--input-text-color); font-size: 1rem; cursor: pointer;">
+                        <option value="alumno">Alumno</option>
+                        <option value="docente">Docente</option>
+                    </select>
+                </div>
             </form>
         </div>
     </div>
@@ -240,6 +258,27 @@
         const inputBusqueda = document.querySelector(".busqueda");
         const selectFiltro = document.querySelector(".filtro");
         const usuariosItems = document.querySelectorAll(".usuarioItem");
+
+        const selectRolCrear = document.querySelector("#rol");
+        const divCategoriaAsesorCrear = document.querySelector("#divCategoriaAsesorCrear");
+        const selectRolEditar = form.querySelector('select[name="rol"]');
+        const divCategoriaAsesorEditar = document.querySelector("#divCategoriaAsesorEditar");
+
+        selectRolCrear.addEventListener("change", () => {
+            if (selectRolCrear.value === "asesor") {
+                divCategoriaAsesorCrear.style.display = "flex";
+            } else {
+                divCategoriaAsesorCrear.style.display = "none";
+            }
+        });
+
+        selectRolEditar.addEventListener("change", () => {
+            if (selectRolEditar.value === "asesor") {
+                divCategoriaAsesorEditar.style.display = "flex";
+            } else {
+                divCategoriaAsesorEditar.style.display = "none";
+            }
+        });
 
         var catACT = "";
 
@@ -319,7 +358,8 @@
             const data = await respuesta.json();
             console.log(data);
             const catSel = form.querySelector('select[name="rol"]').value;
-            const carrera = form.querySelector('select[name="carrera"]').value
+            const carrera = form.querySelector('select[name="carrera"]').value;
+            const categoriaAsesor = form.querySelector('select[name="categoriaAsesor"]').value;
             if (catSel != catACT) {
                 if (catSel == "admin") {
                     const eliminarAlumno = await fetch(url_api + "/alumnos/eliminarAlumnoForaneo/" + idUsuario, {
@@ -344,7 +384,7 @@
                         }
                     })
                     const elAlum = await eliminarAlumno.json();
-                    var disponible = true, categoriaAS = "alumno", contacto = "0000000000";
+                    var disponible = true, categoriaAS = categoriaAsesor, contacto = "0000000000";
                     const subirAsesor = await fetch(url_api + "/asesores/crearAsesor", {
                         method: "POST",
                         headers: {
@@ -377,7 +417,7 @@
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ carrera: carrera })
+                        body: JSON.stringify({ carrera: carrera, categoria: categoriaAsesor })
                     });
                 } else if (catSel == "asesorado") {
                     await fetch(url_api + "/alumnos/actualizarAlumnoForaneo/" + idUsuario, {
@@ -416,6 +456,12 @@
                     }
                 });
             }
+            if (usuario.categoria == "asesor" && carrera && carrera.categoria) {
+                form.querySelector('select[name="categoriaAsesor"]').value = carrera.categoria;
+                divCategoriaAsesorEditar.style.display = "flex";
+            } else {
+                divCategoriaAsesorEditar.style.display = "none";
+            }
             catACT = usuario.categoria;
         }
 
@@ -435,6 +481,7 @@
         cancelar.addEventListener("click", () => {
             crearUsuario.classList.add("ocultar");
             formCrearUsuario.reset();
+            divCategoriaAsesorCrear.style.display = "none";
             nuevoUsuario.classList.remove("ocultar");
         });
 
